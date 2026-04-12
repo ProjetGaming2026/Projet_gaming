@@ -38,7 +38,7 @@ public class EntityCapture : MonoBehaviour
 
         if (distance <= captureDistance)
         {
-            Debug.Log("Le joueur a ete capture par l'Entite.");
+            Debug.Log("Le joueur a ete capture par le monster.");
             gameManager.TriggerLoss();
             enabled = false;
         }

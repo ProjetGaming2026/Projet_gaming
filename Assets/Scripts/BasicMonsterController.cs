@@ -13,6 +13,7 @@ public class BasicMonsterController : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 9f;
+    [SerializeField] private float slowedMoveSpeed = 3f;
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float gravity = -20f;
     [SerializeField] private float stoppingDistance = 1.5f;
@@ -20,10 +21,14 @@ public class BasicMonsterController : MonoBehaviour
     [Header("Rotation")]
     [SerializeField] private float turnSpeed = 10f;
 
+    public bool IsSlowed => slowTimer > 0f;
+    public float SlowTimeRemaining => Mathf.Max(0f, slowTimer);
+
     private CharacterController controller;
     private Vector3 horizontalVelocity;
     private float verticalVelocity;
     private float forcedRevealTimer;
+    private float slowTimer;
 
     private void Awake()
     {
@@ -56,6 +61,11 @@ public class BasicMonsterController : MonoBehaviour
             forcedRevealTimer -= Time.deltaTime;
         }
 
+        if (slowTimer > 0f)
+        {
+            slowTimer -= Time.deltaTime;
+        }
+
         HandleMovement();
     }
 
@@ -63,6 +73,12 @@ public class BasicMonsterController : MonoBehaviour
     {
         forcedRevealTimer = Mathf.Max(forcedRevealTimer, duration);
         Debug.Log("Position du joueur revelee a l'Entite pendant " + duration + " secondes.");
+    }
+
+    public void ApplyStaticTrap(float duration)
+    {
+        slowTimer = Mathf.Max(slowTimer, duration);
+        Debug.Log("L'Entite est ralentie pendant " + duration + " secondes.");
     }
 
     private void HandleMovement()
@@ -93,8 +109,9 @@ public class BasicMonsterController : MonoBehaviour
 
             if ((canDetectNormally || hasForcedReveal) && distanceToPlayer > stoppingDistance)
             {
+                float currentMoveSpeed = IsSlowed ? slowedMoveSpeed : moveSpeed;
                 Vector3 chaseDirection = flatOffset.normalized;
-                targetVelocity = chaseDirection * moveSpeed;
+                targetVelocity = chaseDirection * currentMoveSpeed;
 
                 Quaternion targetRotation = Quaternion.LookRotation(chaseDirection);
                 transform.rotation = Quaternion.Slerp(

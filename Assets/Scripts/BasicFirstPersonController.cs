@@ -8,11 +8,13 @@ public class BasicFirstPersonController : MonoBehaviour
         None,
         Overclock,
         Hidden,
-        PhaseCharge
+        PhaseCharge,
+        StaticTrap
     }
 
     [Header("References")]
     [SerializeField] private Transform cameraHolder;
+    [SerializeField] private GameObject staticTrapPrefab;
 
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 5f;
@@ -33,15 +35,18 @@ public class BasicFirstPersonController : MonoBehaviour
     [SerializeField] private float overclockSpeed = 12f;
     [SerializeField] private KeyCode phaseKey = KeyCode.F;
     [SerializeField] private float phaseDuration = 0.75f;
+    [SerializeField] private KeyCode trapKey = KeyCode.G;
 
     public bool IsOverclockActive => overclockTimer > 0f;
     public bool IsHiddenActive => hiddenTimer > 0f;
     public bool HasPhaseCharge => phaseCharges > 0;
     public bool IsPhaseActive => phaseTimer > 0f;
+    public bool HasStaticTrap => staticTrapCharges > 0;
     public float OverclockTimeRemaining => Mathf.Max(0f, overclockTimer);
     public float HiddenTimeRemaining => Mathf.Max(0f, hiddenTimer);
     public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
     public int PhaseChargeCount => phaseCharges;
+    public int StaticTrapCount => staticTrapCharges;
     public GlitchType LastReceivedGlitch { get; private set; } = GlitchType.None;
 
     private CharacterController controller;
@@ -55,7 +60,7 @@ public class BasicFirstPersonController : MonoBehaviour
     private float hiddenTimer;
     private float phaseTimer;
     private int phaseCharges;
-    private int wallLayer;
+    private int staticTrapCharges;
 
     private void Awake()
     {
@@ -65,8 +70,6 @@ public class BasicFirstPersonController : MonoBehaviour
         {
             cameraHolder = Camera.main.transform;
         }
-
-        wallLayer = LayerMask.NameToLayer("Wall");
     }
 
     private void Start()
@@ -95,7 +98,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
     public void GiveRandomGlitch(float overclockDuration, float hiddenDuration)
     {
-        int randomIndex = Random.Range(0, 3);
+        int randomIndex = Random.Range(0, 4);
 
         switch (randomIndex)
         {
@@ -115,6 +118,12 @@ public class BasicFirstPersonController : MonoBehaviour
                 AddPhaseCharge(1);
                 LastReceivedGlitch = GlitchType.PhaseCharge;
                 Debug.Log("Glitch obtenu : PhaseCharge");
+                break;
+
+            case 3:
+                AddStaticTrap(1);
+                LastReceivedGlitch = GlitchType.StaticTrap;
+                Debug.Log("Glitch obtenu : StaticTrap");
                 break;
         }
     }
@@ -137,6 +146,12 @@ public class BasicFirstPersonController : MonoBehaviour
         Debug.Log("Charge de Phase recue. Total : " + phaseCharges);
     }
 
+    public void AddStaticTrap(int amount)
+    {
+        staticTrapCharges += amount;
+        Debug.Log("Piege statique recu. Total : " + staticTrapCharges);
+    }
+
     public bool ConsumePhaseCharge()
     {
         if (phaseCharges <= 0)
@@ -145,6 +160,17 @@ public class BasicFirstPersonController : MonoBehaviour
         }
 
         phaseCharges--;
+        return true;
+    }
+
+    public bool ConsumeStaticTrap()
+    {
+        if (staticTrapCharges <= 0)
+        {
+            return false;
+        }
+
+        staticTrapCharges--;
         return true;
     }
 
@@ -177,6 +203,11 @@ public class BasicFirstPersonController : MonoBehaviour
         {
             StartPhaseMode();
         }
+
+        if (Input.GetKeyDown(trapKey) && HasStaticTrap)
+        {
+            PlaceStaticTrap();
+        }
     }
 
     private void StartPhaseMode()
@@ -188,7 +219,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
         phaseTimer = phaseDuration;
         controller.detectCollisions = false;
-        Debug.Log("PhaseCharge utilise. Traversée temporaire active.");
+        Debug.Log("PhaseCharge utilise. Traversee temporaire active.");
     }
 
     private void EndPhaseMode()
@@ -196,6 +227,26 @@ public class BasicFirstPersonController : MonoBehaviour
         phaseTimer = 0f;
         controller.detectCollisions = true;
         Debug.Log("PhaseCharge termine.");
+    }
+
+    private void PlaceStaticTrap()
+    {
+        if (!ConsumeStaticTrap())
+        {
+            return;
+        }
+
+        if (staticTrapPrefab == null)
+        {
+            Debug.LogWarning("Aucun prefab de piege statique assigne.");
+            return;
+        }
+
+        Vector3 spawnPosition = transform.position + transform.forward * 1.2f;
+        spawnPosition.y = 0.15f;
+
+        Instantiate(staticTrapPrefab, spawnPosition, Quaternion.identity);
+        Debug.Log("Piege statique pose.");
     }
 
     private void HandleLook()
@@ -231,16 +282,9 @@ public class BasicFirstPersonController : MonoBehaviour
         float inputZ = Input.GetAxisRaw("Vertical");
         Vector3 inputDirection = new Vector3(inputX, 0f, inputZ).normalized;
 
-        float targetSpeed;
-
-        if (IsOverclockActive)
-        {
-            targetSpeed = overclockSpeed;
-        }
-        else
-        {
-            targetSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed;
-        }
+        float targetSpeed = IsOverclockActive
+            ? overclockSpeed
+            : (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed);
 
         Vector3 targetVelocity = transform.TransformDirection(inputDirection) * targetSpeed;
 
