@@ -9,6 +9,8 @@ public class TaskTerminal : MonoBehaviour, IInteractable
     [SerializeField] private float revealDurationOnFailure = 3f;
     [SerializeField] private float overclockDurationOnSuccess = 5f;
     [SerializeField] private float hiddenDurationOnSuccess = 5f;
+    [SerializeField] private float suspicionDurationOnUse = 5f;
+    [SerializeField] private float failureSuspicionDuration = 8f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent onSuccess;
@@ -51,6 +53,11 @@ public class TaskTerminal : MonoBehaviour, IInteractable
                 playerController.GiveRandomGlitch(overclockDurationOnSuccess, hiddenDurationOnSuccess);
             }
 
+            if (monsterController != null)
+            {
+                monsterController.NotifySuspiciousActivity(transform.position, suspicionDurationOnUse, false);
+            }
+
             onSuccess.Invoke();
             Debug.Log("Terminal reussi. Glitch aleatoire obtenu.");
 
@@ -66,6 +73,7 @@ public class TaskTerminal : MonoBehaviour, IInteractable
             if (monsterController != null)
             {
                 monsterController.RevealPlayerPosition(revealDurationOnFailure);
+                monsterController.NotifySuspiciousActivity(transform.position, failureSuspicionDuration, true);
             }
 
             Debug.Log("Terminal echoue. Position revelee temporairement.");
