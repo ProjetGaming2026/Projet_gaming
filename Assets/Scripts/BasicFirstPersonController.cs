@@ -84,12 +84,18 @@ public class BasicFirstPersonController : MonoBehaviour
         }
 
         currentPitch = pitch;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        ApplyCursorState();
     }
 
     private void Update()
     {
+        if (LevelSelectBootstrap.IsMenuOpen)
+        {
+            ApplyCursorState();
+            return;
+        }
+
+        ApplyCursorState();
         UpdateTimers();
         HandleGlitchInput();
         HandleLook();
@@ -306,5 +312,18 @@ public class BasicFirstPersonController : MonoBehaviour
     private void OnDisable()
     {
         controller.detectCollisions = true;
+    }
+
+    private void ApplyCursorState()
+    {
+        if (LevelSelectBootstrap.IsMenuOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            return;
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
