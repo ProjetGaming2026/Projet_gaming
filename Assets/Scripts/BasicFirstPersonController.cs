@@ -47,6 +47,9 @@ public class BasicFirstPersonController : MonoBehaviour
     public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
     public int PhaseChargeCount => phaseCharges;
     public int StaticTrapCount => staticTrapCharges;
+    public Vector3 PlanarVelocity => new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z);
+    public float CurrentPlanarSpeed => PlanarVelocity.magnitude;
+    public bool IsSprinting { get; private set; }
     public GlitchType LastReceivedGlitch { get; private set; } = GlitchType.None;
 
     private CharacterController controller;
@@ -91,6 +94,7 @@ public class BasicFirstPersonController : MonoBehaviour
     {
         if (LevelSelectBootstrap.IsMenuOpen)
         {
+            IsSprinting = false;
             ApplyCursorState();
             return;
         }
@@ -287,10 +291,12 @@ public class BasicFirstPersonController : MonoBehaviour
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputZ = Input.GetAxisRaw("Vertical");
         Vector3 inputDirection = new Vector3(inputX, 0f, inputZ).normalized;
+        bool wantsSprint = inputDirection.sqrMagnitude > 0.001f && Input.GetKey(KeyCode.LeftShift) && !IsOverclockActive;
+        IsSprinting = wantsSprint;
 
         float targetSpeed = IsOverclockActive
             ? overclockSpeed
-            : (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed);
+            : (wantsSprint ? sprintSpeed : walkSpeed);
 
         Vector3 targetVelocity = transform.TransformDirection(inputDirection) * targetSpeed;
 
@@ -311,6 +317,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void OnDisable()
     {
+        IsSprinting = false;
         controller.detectCollisions = true;
     }
 

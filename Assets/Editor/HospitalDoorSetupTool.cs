@@ -10,6 +10,8 @@ public static class HospitalDoorSetupTool
 {
     private const string OpenDoorClipPath = "Assets/audio/opendoor.mp3";
     private const string CloseDoorClipPath = "Assets/audio/closedoor.mp3";
+    private static readonly string[] DoorKeywords = { "door", "cabinet", "closet", "locker", "wardrobe", "cupboard", "armoire" };
+    private static readonly string[] ExcludedKeywords = { "frame", "drawer", "body" };
 
     [MenuItem("Tools/Gameplay/Setup Interactive Doors")]
     public static void SetupInteractiveDoors()
@@ -182,7 +184,7 @@ public static class HospitalDoorSetupTool
             return false;
         }
 
-        if (!LooksLikeDoorPanel(candidateBounds))
+        if (!LooksLikeDoorPanel(candidate, candidateBounds))
         {
             return false;
         }
@@ -200,7 +202,7 @@ public static class HospitalDoorSetupTool
 
     private static bool LooksLikeDoor(string name)
     {
-        return name.IndexOf("door", StringComparison.OrdinalIgnoreCase) >= 0;
+        return HasKeyword(name, DoorKeywords) && !HasKeyword(name, ExcludedKeywords);
     }
 
     private static bool IsDoorRelated(Transform candidate)
@@ -224,7 +226,7 @@ public static class HospitalDoorSetupTool
         Transform current = candidate;
         while (current != null)
         {
-            if (current.name.IndexOf("frame", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (HasKeyword(current.name, ExcludedKeywords))
             {
                 return true;
             }
@@ -242,7 +244,7 @@ public static class HospitalDoorSetupTool
             return false;
         }
 
-        return TryGetWorldBounds(candidate.gameObject, out Bounds bounds) && LooksLikeDoorPanel(bounds);
+        return TryGetWorldBounds(candidate.gameObject, out Bounds bounds) && LooksLikeDoorPanel(candidate, bounds);
     }
 
     private static bool HasAnyCollider(GameObject doorObject)
@@ -258,28 +260,72 @@ public static class HospitalDoorSetupTool
         }
     }
 
-    private static bool LooksLikeDoorPanel(Bounds bounds)
+    private static bool LooksLikeDoorPanel(Transform candidate, Bounds bounds)
     {
         Vector3 size = bounds.size;
         float horizontalMax = Mathf.Max(size.x, size.z);
         float horizontalMin = Mathf.Min(size.x, size.z);
+        bool furnitureDoor = IsFurnitureDoor(candidate);
 
-        if (size.y < 1.2f || size.y > 3.5f)
+        float minHeight = furnitureDoor ? 0.35f : 1.2f;
+        float maxHeight = furnitureDoor ? 2.6f : 3.5f;
+        float minWidth = furnitureDoor ? 0.18f : 0.35f;
+        float maxWidth = furnitureDoor ? 1.8f : 2.5f;
+        float maxThickness = furnitureDoor ? 0.9f : 0.8f;
+
+        if (size.y < minHeight || size.y > maxHeight)
         {
             return false;
         }
 
-        if (horizontalMax < 0.35f || horizontalMax > 2.5f)
+        if (horizontalMax < minWidth || horizontalMax > maxWidth)
         {
             return false;
         }
 
-        if (horizontalMin > 0.8f)
+        if (horizontalMin > maxThickness)
         {
             return false;
         }
 
         return true;
+    }
+
+    private static bool IsFurnitureDoor(Transform candidate)
+    {
+        Transform current = candidate;
+        while (current != null)
+        {
+            string lowerName = current.name.ToLowerInvariant();
+            if ((lowerName.Contains("cabinet") ||
+                 lowerName.Contains("closet") ||
+                 lowerName.Contains("locker") ||
+                 lowerName.Contains("wardrobe") ||
+                 lowerName.Contains("cupboard") ||
+                 lowerName.Contains("armoire")) &&
+                !lowerName.Contains("body") &&
+                !lowerName.Contains("drawer"))
+            {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+    private static bool HasKeyword(string source, string[] keywords)
+    {
+        for (int i = 0; i < keywords.Length; i++)
+        {
+            if (source.IndexOf(keywords[i], StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryGetWorldBounds(GameObject root, out Bounds bounds)
