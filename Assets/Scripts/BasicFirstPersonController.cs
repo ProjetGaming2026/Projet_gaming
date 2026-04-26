@@ -302,6 +302,15 @@ public class BasicFirstPersonController : MonoBehaviour
 
         horizontalVelocity = Vector3.Lerp(horizontalVelocity, targetVelocity, acceleration * Time.deltaTime);
 
+        float maxPlanarSpeed = targetSpeed;
+        Vector3 planarVelocity = new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z);
+        if (planarVelocity.magnitude > maxPlanarSpeed)
+        {
+            planarVelocity = planarVelocity.normalized * maxPlanarSpeed;
+            horizontalVelocity.x = planarVelocity.x;
+            horizontalVelocity.z = planarVelocity.z;
+        }
+
         if (isGrounded && Input.GetButtonDown("Jump"))
         {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);

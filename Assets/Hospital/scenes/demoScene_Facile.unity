@@ -1709,6 +1709,13 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &900000300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
 --- !u!114 &21268721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9660,8 +9667,8 @@ MonoBehaviour:
   chaseMusic: {fileID: 0}
   chaseDistance: 10
   fadeSpeed: 1.5
-  winMusic: {fileID: 0}
-  loseMusic: {fileID: 0}
+  winMusic: {fileID: 8300000, guid: c5c63636e6d0b9d48a8ae8a07a4dcab9, type: 3}
+  loseMusic: {fileID: 8300000, guid: a9649e1ac391c614ea1b77fbbeeda582, type: 3}
 --- !u!4 &140893400
 Transform:
   m_ObjectHideFlags: 0
@@ -31286,7 +31293,7 @@ MonoBehaviour:
   walkFootsteps:
   - {fileID: 8300000, guid: 424c3b93e072bea45a97bb5e83a3c0cc, type: 3}
   sprintFootsteps:
-  - {fileID: 8300000, guid: a54f83f803b589547a0d9e83ddede42b, type: 3}
+  - {fileID: 8300000, guid: 8fae84ef9d417b0459ca607160be9ccf, type: 3}
   walkStepInterval: 0.5
   sprintStepInterval: 0.3
   jumpSound: {fileID: 0}
@@ -142534,12 +142541,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSounds
   ambientSource: {fileID: 1636903839}
   actionSource: {fileID: 1189540280}
+  footstepSource: {fileID: 1189540280}
   idleGrowls:
   - {fileID: 8300000, guid: 39f85d3596b6e224fb63b8de4cb8b7b2, type: 3}
+  walkFootsteps:
+  - {fileID: 8300000, guid: 424c3b93e072bea45a97bb5e83a3c0cc, type: 3}
+  chaseFootsteps:
+  - {fileID: 8300000, guid: 8fae84ef9d417b0459ca607160be9ccf, type: 3}
   minGrowlInterval: 4
   maxGrowlInterval: 10
   growlDistance: 20
+  walkStepInterval: 0.72
+  chaseStepInterval: 0.42
+  movementThreshold: 0.18
+  runSpeedThreshold: 4.8
   growlVolume: 0.72
+  footstepVolume: 0.68
 --- !u!135 &1768635466
 SphereCollider:
   m_ObjectHideFlags: 0

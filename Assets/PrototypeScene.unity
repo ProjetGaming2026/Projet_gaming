@@ -453,7 +453,7 @@ MonoBehaviour:
   walkFootsteps:
   - {fileID: 8300000, guid: 424c3b93e072bea45a97bb5e83a3c0cc, type: 3}
   sprintFootsteps:
-  - {fileID: 8300000, guid: a54f83f803b589547a0d9e83ddede42b, type: 3}
+  - {fileID: 8300000, guid: 8fae84ef9d417b0459ca607160be9ccf, type: 3}
   walkStepInterval: 0.5
   sprintStepInterval: 0.3
   jumpSound: {fileID: 0}
@@ -608,6 +608,8 @@ MonoBehaviour:
   revealDurationOnFailure: 3
   overclockDurationOnSuccess: 5
   hiddenDurationOnSuccess: 5
+  suspicionDurationOnUse: 5
+  failureSuspicionDuration: 8
   onSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -1201,8 +1203,8 @@ MonoBehaviour:
   chaseMusic: {fileID: 0}
   chaseDistance: 10
   fadeSpeed: 1.5
-  winMusic: {fileID: 0}
-  loseMusic: {fileID: 0}
+  winMusic: {fileID: 8300000, guid: 1e21c4629db6c76439c4717331a80ca8, type: 3}
+  loseMusic: {fileID: 8300000, guid: 9e9cf2731497cbe46a5f1ce838534b25, type: 3}
 --- !u!4 &493627271
 Transform:
   m_ObjectHideFlags: 0
@@ -1645,6 +1647,8 @@ MonoBehaviour:
   revealDurationOnFailure: 3
   overclockDurationOnSuccess: 5
   hiddenDurationOnSuccess: 5
+  suspicionDurationOnUse: 5
+  failureSuspicionDuration: 8
   onSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -1963,6 +1967,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &900000100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
 --- !u!1 &929278753
 GameObject:
   m_ObjectHideFlags: 0
@@ -2929,6 +2940,8 @@ MonoBehaviour:
   revealDurationOnFailure: 3
   overclockDurationOnSuccess: 5
   hiddenDurationOnSuccess: 5
+  suspicionDurationOnUse: 5
+  failureSuspicionDuration: 8
   onSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -3612,12 +3625,56 @@ MonoBehaviour:
   gameManager: {fileID: 2067864564}
   playerController: {fileID: 0}
   detectionRadius: 5
+  visionAngle: 110
+  closeRangeDetectionRadius: 2
+  hearingRadius: 7
+  sprintHearingRadius: 11
+  movementNoiseThreshold: 4
+  memoryDuration: 6
+  forcedSearchDuration: 4
+  sightBlockerMask:
+    serializedVersion: 2
+    m_Bits: 59
+  hardSceneName: demoScene_Difficile
+  taskProgressDetectionBonus: 4
+  taskProgressHearingBonus: 5
+  taskProgressMemoryBonus: 3
   moveSpeed: 5
   slowedMoveSpeed: 3
+  investigationMoveSpeed: 2.8
+  taskProgressChaseSpeedBonus: 2
   acceleration: 6
   gravity: -20
   stoppingDistance: 1.5
+  patrolMoveSpeed: 1.8
+  patrolStoppingDistance: 0.75
+  patrolWaitTime: 0.4
+  obstacleCheckDistance: 1.25
+  obstacleCheckRadius: 0.35
+  obstacleAvoidanceStrength: 0.9
+  obstacleSideCheckAngle: 35
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 59
   turnSpeed: 7
+  patrolPoints: []
+  hardPatrolSpeedMultiplier: 1.05
+  hardTurnSpeedMultiplier: 1.35
+  maxPredictionTime: 1.1
+  predictionStrength: 0.9
+  searchRadius: 5.5
+  searchRetargetInterval: 1.25
+  searchPointCount: 6
+  exitGuardDistance: 3.5
+  exitGuardRetargetInterval: 1
+  animatedVisual: {fileID: 0}
+  walkBobAmplitude: 0.02
+  runBobAmplitude: 0.075
+  walkBobFrequency: 2.3
+  runBobFrequency: 6.2
+  maxRollAngle: 6
+  maxPitchAngle: 4
+  visualSmoothing: 10
 --- !u!114 &1753409461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3681,12 +3738,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSounds
   ambientSource: {fileID: 1127077390}
   actionSource: {fileID: 1057066600}
+  footstepSource: {fileID: 1057066600}
   idleGrowls:
   - {fileID: 8300000, guid: 39f85d3596b6e224fb63b8de4cb8b7b2, type: 3}
   minGrowlInterval: 4
   maxGrowlInterval: 10
   growlDistance: 20
+  walkFootsteps:
+  - {fileID: 8300000, guid: 424c3b93e072bea45a97bb5e83a3c0cc, type: 3}
+  chaseFootsteps:
+  - {fileID: 8300000, guid: 8fae84ef9d417b0459ca607160be9ccf, type: 3}
+  walkStepInterval: 0.72
+  chaseStepInterval: 0.42
+  movementThreshold: 0.18
+  runSpeedThreshold: 4.8
   growlVolume: 0.72
+  footstepVolume: 0.68
 --- !u!1 &1756699274
 GameObject:
   m_ObjectHideFlags: 0
@@ -4711,3 +4778,4 @@ SceneRoots:
   - {fileID: 493627271}
   - {fileID: 1694061210}
   - {fileID: 2138538795}
+  - {fileID: 900000101}

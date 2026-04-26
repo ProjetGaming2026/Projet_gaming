@@ -21,12 +21,15 @@ public class PlayerSounds : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float footstepVolume = 0.6f;
 
     private CharacterController controller;
+    private BasicFirstPersonController playerController;
     private float stepTimer;
     private bool wasGrounded;
+    private bool wasSprinting;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        playerController = GetComponent<BasicFirstPersonController>();
     }
 
     private void Update()
@@ -37,19 +40,17 @@ public class PlayerSounds : MonoBehaviour
 
     private void HandleFootsteps()
     {
-        // Vérifie si le joueur est au sol
         if (!controller.isGrounded)
         {
             stepTimer = 0f;
             return;
         }
 
-        // Vérifie si le joueur bouge vraiment
-        float inputX = Input.GetAxisRaw("Horizontal");
-        float inputZ = Input.GetAxisRaw("Vertical");
-        bool isMoving = Mathf.Abs(inputX) > 0.1f || Mathf.Abs(inputZ) > 0.1f;
+        float planarSpeed = playerController != null
+            ? playerController.CurrentPlanarSpeed
+            : new Vector3(controller.velocity.x, 0f, controller.velocity.z).magnitude;
+        bool isMoving = planarSpeed > 0.1f;
 
-        // Si le joueur s'arrête -> stop immédiatement les sons
         if (!isMoving)
         {
             stepTimer = 0f;
@@ -57,12 +58,28 @@ public class PlayerSounds : MonoBehaviour
             {
                 footstepSource.Stop();
             }
+
+            wasSprinting = false;
             return;
         }
 
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+        bool isSprinting = playerController != null
+            ? playerController.IsSprinting
+            : Input.GetKey(KeyCode.LeftShift);
+
+        if (isSprinting != wasSprinting)
+        {
+            stepTimer = 0f;
+            if (footstepSource != null && footstepSource.isPlaying)
+            {
+                footstepSource.Stop();
+            }
+        }
+
         float interval = isSprinting ? sprintStepInterval : walkStepInterval;
-        AudioClip[] clips = isSprinting ? sprintFootsteps : walkFootsteps;
+        AudioClip[] clips = isSprinting && sprintFootsteps != null && sprintFootsteps.Length > 0
+            ? sprintFootsteps
+            : walkFootsteps;
 
         stepTimer -= Time.deltaTime;
         if (stepTimer <= 0f)
@@ -70,6 +87,8 @@ public class PlayerSounds : MonoBehaviour
             PlayRandomClip(footstepSource, clips, footstepVolume);
             stepTimer = interval;
         }
+
+        wasSprinting = isSprinting;
     }
 
     private void HandleLanding()
@@ -99,6 +118,12 @@ public class PlayerSounds : MonoBehaviour
     private void PlayClip(AudioSource source, AudioClip clip, float volume)
     {
         if (source == null || clip == null) return;
+
+        if (source.isPlaying)
+        {
+            return;
+        }
+
         source.PlayOneShot(clip, volume);
     }
 }
