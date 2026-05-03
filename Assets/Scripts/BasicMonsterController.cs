@@ -4,6 +4,15 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class BasicMonsterController : MonoBehaviour
 {
+    private enum MonsterState
+    {
+        Dormant,
+        Roaming,
+        Investigating,
+        Hunting,
+        GuardingExit
+    }
+
     [Header("References")]
     [SerializeField] private Transform playerTarget;
     [SerializeField] private PrototypeGameManager gameManager;
@@ -18,6 +27,7 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float movementNoiseThreshold = 4f;
     [SerializeField] private float memoryDuration = 6f;
     [SerializeField] private float forcedSearchDuration = 4f;
+    [SerializeField] private float huntPersistenceDuration = 0.65f;
     [SerializeField] private LayerMask sightBlockerMask = Physics.DefaultRaycastLayers;
     [SerializeField] private string hardSceneName = "demoScene_Difficile";
     [SerializeField] private float taskProgressDetectionBonus = 4f;
@@ -30,15 +40,23 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float investigationMoveSpeed = 2.8f;
     [SerializeField] private float taskProgressChaseSpeedBonus = 2f;
     [SerializeField] private float acceleration = 10f;
+    [SerializeField] private float deceleration = 13f;
     [SerializeField] private float gravity = -20f;
     [SerializeField] private float stoppingDistance = 1.5f;
     [SerializeField] private float patrolMoveSpeed = 1.8f;
     [SerializeField] private float patrolStoppingDistance = 0.75f;
     [SerializeField] private float patrolWaitTime = 0.4f;
+    [SerializeField] private float roamRadius = 2.5f;
+    [SerializeField] private float roamRetargetInterval = 2.2f;
+    [SerializeField, Range(0f, 1f)] private float localWanderChance = 0.4f;
+    [SerializeField] private float roamPauseMin = 0.15f;
+    [SerializeField] private float roamPauseMax = 0.7f;
     [SerializeField] private float obstacleCheckDistance = 1.25f;
     [SerializeField] private float obstacleCheckRadius = 0.35f;
     [SerializeField] private float obstacleAvoidanceStrength = 0.9f;
     [SerializeField] private float obstacleSideCheckAngle = 35f;
+    [SerializeField] private float wallSlideStrength = 0.75f;
+    [SerializeField] private float avoidanceLockDuration = 0.45f;
     [SerializeField] private LayerMask obstacleMask = Physics.DefaultRaycastLayers;
 
     [Header("Rotation")]
@@ -58,6 +76,10 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float exitGuardDistance = 3.5f;
     [SerializeField] private float exitGuardRetargetInterval = 1f;
 
+    [Header("Recovery")]
+    [SerializeField] private float stuckRetargetDelay = 0.95f;
+    [SerializeField] private float corridorRecoveryDistance = 1.9f;
+
     [Header("Visual Motion")]
     [SerializeField] private Transform animatedVisual;
     [SerializeField] private float walkBobAmplitude = 0.02f;
@@ -70,6 +92,10 @@ public class BasicMonsterController : MonoBehaviour
 
     public bool IsSlowed => slowTimer > 0f;
     public float SlowTimeRemaining => Mathf.Max(0f, slowTimer);
+    public bool IsHuntingState => currentState == MonsterState.Hunting;
+    public bool IsInvestigatingState => currentState == MonsterState.Investigating;
+    public bool IsGuardingExitState => currentState == MonsterState.GuardingExit;
+    public bool IsRoamingState => currentState == MonsterState.Roaming;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -78,20 +104,29 @@ public class BasicMonsterController : MonoBehaviour
     private float slowTimer;
     private float memoryTimer;
     private float searchRetargetTimer;
-    private int patrolPointIndex;
     private float patrolWaitTimer;
+    private float roamRetargetTimer;
+    private float roamPauseTimer;
     private float stuckTimer;
+    private float huntPersistenceTimer;
+    private float avoidanceLockTimer;
+    private int patrolPointIndex;
     private int searchPointIndex;
     private int lastAvoidanceSign = 1;
+    private int guardOrbitSign = 1;
+    private MonsterState currentState = MonsterState.Dormant;
     private Vector3 visualBaseLocalPosition;
     private Quaternion visualBaseLocalRotation;
     private float visualCycle;
     private Vector3 lastPosition;
     private Vector3 lastKnownPlayerPosition;
     private Vector3 investigationTarget;
+    private Vector3 roamTarget;
     private Vector3 guardTarget;
+    private Vector3 avoidanceLockDirection;
     private bool hardIntelligenceEnabled;
     private bool hasInvestigationTarget;
+    private bool hasRoamTarget;
 
     private void Awake()
     {
@@ -138,31 +173,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private void Update()
     {
-        if (forcedRevealTimer > 0f)
-        {
-            forcedRevealTimer -= Time.deltaTime;
-        }
-
-        if (slowTimer > 0f)
-        {
-            slowTimer -= Time.deltaTime;
-        }
-
-        if (memoryTimer > 0f)
-        {
-            memoryTimer -= Time.deltaTime;
-
-            if (memoryTimer <= 0f)
-            {
-                hasInvestigationTarget = false;
-            }
-        }
-
-        if (searchRetargetTimer > 0f)
-        {
-            searchRetargetTimer -= Time.deltaTime;
-        }
-
+        TickTimers();
         HandleMovement();
     }
 
@@ -183,10 +194,88 @@ public class BasicMonsterController : MonoBehaviour
         Debug.Log("L'Entite est ralentie pendant " + duration + " secondes.");
     }
 
+    public void ApplyMovementTuning(
+        float newMoveSpeed,
+        float newSlowedMoveSpeed,
+        float newPatrolMoveSpeed,
+        float newInvestigationMoveSpeed,
+        float newHardPatrolSpeedMultiplier
+    )
+    {
+        moveSpeed = Mathf.Max(0.1f, newMoveSpeed);
+        slowedMoveSpeed = Mathf.Clamp(newSlowedMoveSpeed, 0.1f, moveSpeed);
+        patrolMoveSpeed = Mathf.Clamp(newPatrolMoveSpeed, 0.1f, moveSpeed);
+        investigationMoveSpeed = Mathf.Clamp(newInvestigationMoveSpeed, patrolMoveSpeed, moveSpeed);
+        hardPatrolSpeedMultiplier = Mathf.Max(0.5f, newHardPatrolSpeedMultiplier);
+    }
+
+    public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
+    {
+        if (!hardIntelligenceEnabled)
+        {
+            return;
+        }
+
+        float effectiveDuration = highPriority ? Mathf.Max(duration, forcedSearchDuration) : duration;
+        RememberPlayerPosition(worldPosition, effectiveDuration);
+        investigationTarget = worldPosition;
+        hasInvestigationTarget = true;
+        searchRetargetTimer = highPriority ? 0f : searchRetargetInterval * 0.6f;
+        roamPauseTimer = 0f;
+        patrolWaitTimer = 0f;
+        stuckTimer = 0f;
+    }
+
+    private void TickTimers()
+    {
+        if (forcedRevealTimer > 0f)
+        {
+            forcedRevealTimer -= Time.deltaTime;
+        }
+
+        if (slowTimer > 0f)
+        {
+            slowTimer -= Time.deltaTime;
+        }
+
+        if (memoryTimer > 0f)
+        {
+            memoryTimer -= Time.deltaTime;
+            if (memoryTimer <= 0f)
+            {
+                hasInvestigationTarget = false;
+            }
+        }
+
+        if (searchRetargetTimer > 0f)
+        {
+            searchRetargetTimer -= Time.deltaTime;
+        }
+
+        if (roamRetargetTimer > 0f)
+        {
+            roamRetargetTimer -= Time.deltaTime;
+        }
+
+        if (roamPauseTimer > 0f)
+        {
+            roamPauseTimer -= Time.deltaTime;
+        }
+
+        if (huntPersistenceTimer > 0f)
+        {
+            huntPersistenceTimer -= Time.deltaTime;
+        }
+
+        if (avoidanceLockTimer > 0f)
+        {
+            avoidanceLockTimer -= Time.deltaTime;
+        }
+    }
+
     private void HandleMovement()
     {
         bool isGrounded = controller.isGrounded;
-
         if (isGrounded && verticalVelocity < 0f)
         {
             verticalVelocity = -2f;
@@ -197,64 +286,10 @@ public class BasicMonsterController : MonoBehaviour
             (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Chase ||
              gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Escape);
 
-        Vector3 targetVelocity = Vector3.zero;
-        bool isChasing = false;
-        bool isInvestigating = false;
+        MonsterState nextState = ResolveState(canMove, out Vector3 rawVelocity, out bool isChasing, out bool isInvestigating);
+        currentState = nextState;
 
-        if (canMove && playerTarget != null)
-        {
-            Vector3 offsetToPlayer = playerTarget.position - transform.position;
-            Vector3 flatOffset = new Vector3(offsetToPlayer.x, 0f, offsetToPlayer.z);
-            float distanceToPlayer = flatOffset.magnitude;
-
-            bool playerHidden = playerController != null && playerController.IsHiddenActive;
-            bool hasForcedReveal = forcedRevealTimer > 0f;
-            bool canSeePlayer = !playerHidden && CanSeePlayer(distanceToPlayer);
-            bool canHearPlayer = hardIntelligenceEnabled && !playerHidden && CanHearPlayer(distanceToPlayer);
-
-            if (hasForcedReveal || canSeePlayer)
-            {
-                RememberPlayerPosition(
-                    hardIntelligenceEnabled ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
-                    hasForcedReveal ? forcedSearchDuration : GetCurrentMemoryDuration()
-                );
-
-                if (distanceToPlayer > stoppingDistance)
-                {
-                    float currentMoveSpeed = GetCurrentChaseSpeed();
-                    Vector3 chaseTarget = hardIntelligenceEnabled ? lastKnownPlayerPosition : playerTarget.position;
-                    Vector3 chaseDirection = GetFlatDirectionTo(chaseTarget);
-                    targetVelocity = chaseDirection * currentMoveSpeed;
-                }
-
-                isChasing = true;
-            }
-            else if (canHearPlayer)
-            {
-                RememberPlayerPosition(GetPredictedPlayerPosition(distanceToPlayer), GetCurrentMemoryDuration() * 0.8f);
-            }
-        }
-
-        if (canMove && !isChasing)
-        {
-            if (hardIntelligenceEnabled && TryGetInvestigationVelocity(out targetVelocity))
-            {
-                isInvestigating = true;
-            }
-            else if (hardIntelligenceEnabled && TryGetExitGuardVelocity(out targetVelocity))
-            {
-                isInvestigating = true;
-            }
-            else
-            {
-                targetVelocity = GetPatrolVelocity();
-            }
-        }
-
-        if (canMove)
-        {
-            targetVelocity = ApplyObstacleAvoidance(targetVelocity);
-        }
+        Vector3 targetVelocity = canMove ? ApplyObstacleAvoidance(rawVelocity, isChasing) : Vector3.zero;
 
         if (targetVelocity.sqrMagnitude > 0.001f)
         {
@@ -266,14 +301,485 @@ public class BasicMonsterController : MonoBehaviour
             );
         }
 
-        horizontalVelocity = Vector3.Lerp(horizontalVelocity, targetVelocity, acceleration * Time.deltaTime);
+        float currentAcceleration = targetVelocity.sqrMagnitude > horizontalVelocity.sqrMagnitude
+            ? acceleration
+            : deceleration;
+        horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetVelocity, currentAcceleration * Time.deltaTime);
+
         verticalVelocity += gravity * Time.deltaTime;
 
         Vector3 finalVelocity = horizontalVelocity;
         finalVelocity.y = verticalVelocity;
-
         controller.Move(finalVelocity * Time.deltaTime);
+
         UpdateNavigationRecovery(targetVelocity, isChasing, isInvestigating);
+    }
+
+    private MonsterState ResolveState(bool canMove, out Vector3 velocity, out bool isChasing, out bool isInvestigating)
+    {
+        velocity = Vector3.zero;
+        isChasing = false;
+        isInvestigating = false;
+
+        if (!canMove || playerTarget == null)
+        {
+            return MonsterState.Dormant;
+        }
+
+        Vector3 offsetToPlayer = playerTarget.position - transform.position;
+        Vector3 flatOffset = new Vector3(offsetToPlayer.x, 0f, offsetToPlayer.z);
+        float distanceToPlayer = flatOffset.magnitude;
+        bool playerHidden = playerController != null && playerController.IsHiddenActive;
+        bool hasForcedReveal = forcedRevealTimer > 0f;
+        bool canSeePlayer = !playerHidden && CanSeePlayer(distanceToPlayer);
+        bool canHearPlayer = hardIntelligenceEnabled && !playerHidden && CanHearPlayer(distanceToPlayer);
+
+        // Priorite: chasse si le joueur est vu, enquete si un indice recent existe,
+        // puis garde de sortie ou errance selon la phase et la difficulte.
+        if (hasForcedReveal || canSeePlayer)
+        {
+            huntPersistenceTimer = huntPersistenceDuration;
+            RememberPlayerPosition(
+                hardIntelligenceEnabled ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
+                hasForcedReveal ? forcedSearchDuration : GetCurrentMemoryDuration()
+            );
+
+            velocity = GetChaseVelocity(distanceToPlayer);
+            isChasing = true;
+            return MonsterState.Hunting;
+        }
+
+        if (canHearPlayer)
+        {
+            RememberPlayerPosition(GetPredictedPlayerPosition(distanceToPlayer), GetCurrentMemoryDuration() * 0.85f);
+            velocity = GetInvestigationVelocity();
+            isInvestigating = velocity.sqrMagnitude > 0.001f;
+            return MonsterState.Investigating;
+        }
+
+        if (huntPersistenceTimer > 0f && memoryTimer > 0f)
+        {
+            velocity = GetChaseVelocity(distanceToPlayer);
+            isChasing = true;
+            return MonsterState.Hunting;
+        }
+
+        if (hardIntelligenceEnabled && memoryTimer > 0f)
+        {
+            velocity = GetInvestigationVelocity();
+            isInvestigating = velocity.sqrMagnitude > 0.001f;
+            return MonsterState.Investigating;
+        }
+
+        if (hardIntelligenceEnabled && TryGetExitGuardVelocity(out velocity))
+        {
+            isInvestigating = true;
+            return MonsterState.GuardingExit;
+        }
+
+        velocity = GetRoamingVelocity();
+        return MonsterState.Roaming;
+    }
+
+    private Vector3 GetChaseVelocity(float distanceToPlayer)
+    {
+        if (distanceToPlayer <= stoppingDistance)
+        {
+            return Vector3.zero;
+        }
+
+        Vector3 chaseTarget = hardIntelligenceEnabled ? lastKnownPlayerPosition : playerTarget.position;
+        Vector3 chaseDirection = GetFlatDirectionTo(chaseTarget);
+        return chaseDirection * GetCurrentChaseSpeed();
+    }
+
+    private Vector3 GetInvestigationVelocity()
+    {
+        if (memoryTimer <= 0f)
+        {
+            hasInvestigationTarget = false;
+            return Vector3.zero;
+        }
+
+        Vector3 anchor = lastKnownPlayerPosition;
+        float distanceToAnchor = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(anchor));
+        if (distanceToAnchor > patrolStoppingDistance + 0.35f)
+        {
+            hasInvestigationTarget = false;
+            return GetFlatDirectionTo(anchor) * GetCurrentInvestigationSpeed();
+        }
+
+        if (!hasInvestigationTarget ||
+            searchRetargetTimer <= 0f ||
+            Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(investigationTarget)) <= patrolStoppingDistance)
+        {
+            PickNextSearchTarget();
+        }
+
+        if (!hasInvestigationTarget)
+        {
+            return Vector3.zero;
+        }
+
+        return GetFlatDirectionTo(investigationTarget) * GetCurrentInvestigationSpeed();
+    }
+
+    private Vector3 GetRoamingVelocity()
+    {
+        if (roamPauseTimer > 0f)
+        {
+            return Vector3.zero;
+        }
+
+        if (!hasRoamTarget || roamRetargetTimer <= 0f)
+        {
+            PickNextRoamTarget();
+        }
+
+        if (!hasRoamTarget)
+        {
+            return Vector3.zero;
+        }
+
+        float distanceToRoamTarget = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(roamTarget));
+        if (distanceToRoamTarget <= patrolStoppingDistance)
+        {
+            hasRoamTarget = false;
+            roamPauseTimer = Random.Range(roamPauseMin, roamPauseMax);
+            return Vector3.zero;
+        }
+
+        return GetFlatDirectionTo(roamTarget) * GetCurrentRoamSpeed();
+    }
+
+    private void PickNextRoamTarget()
+    {
+        Transform patrolAnchor = GetCurrentPatrolAnchor();
+        Vector3 anchorPosition = patrolAnchor != null ? patrolAnchor.position : transform.position;
+        Vector3 planarPosition = GetPlanarPosition(transform.position);
+        Vector3 planarAnchor = GetPlanarPosition(anchorPosition);
+
+        if (patrolAnchor != null && Vector3.Distance(planarPosition, planarAnchor) <= patrolStoppingDistance)
+        {
+            patrolWaitTimer += Time.deltaTime;
+            float effectiveWaitTime = hardIntelligenceEnabled ? patrolWaitTime * 0.35f : patrolWaitTime;
+            if (patrolWaitTimer >= effectiveWaitTime)
+            {
+                patrolWaitTimer = 0f;
+                AdvancePatrolPoint();
+                patrolAnchor = GetCurrentPatrolAnchor();
+                anchorPosition = patrolAnchor != null ? patrolAnchor.position : transform.position;
+                planarAnchor = GetPlanarPosition(anchorPosition);
+            }
+        }
+        else
+        {
+            patrolWaitTimer = 0f;
+        }
+
+        bool wanderNearAnchor = hardIntelligenceEnabled && Random.value < localWanderChance;
+        Vector2 jitter2D = wanderNearAnchor ? Random.insideUnitCircle * roamRadius : Vector2.zero;
+        roamTarget = new Vector3(planarAnchor.x + jitter2D.x, transform.position.y, planarAnchor.z + jitter2D.y);
+        hasRoamTarget = true;
+        roamRetargetTimer = roamRetargetInterval * Random.Range(0.85f, 1.2f);
+        searchRetargetTimer = 0f;
+    }
+
+    private Transform GetCurrentPatrolAnchor()
+    {
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            return null;
+        }
+
+        if (patrolPoints[patrolPointIndex] == null)
+        {
+            AdvancePatrolPoint();
+            if (patrolPoints == null || patrolPoints.Length == 0)
+            {
+                return null;
+            }
+        }
+
+        return patrolPoints[patrolPointIndex];
+    }
+
+    private bool TryGetExitGuardVelocity(out Vector3 velocity)
+    {
+        velocity = Vector3.zero;
+
+        if (gameManager == null ||
+            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Escape ||
+            gameManager.ActiveExitZone == null ||
+            gameManager.ActiveExitZone.transform == null)
+        {
+            return false;
+        }
+
+        Vector3 exitPosition = gameManager.ActiveExitZone.transform.position;
+        Vector3 planarExit = GetPlanarPosition(exitPosition);
+        float distanceToExit = Vector3.Distance(GetPlanarPosition(transform.position), planarExit);
+
+        if (searchRetargetTimer <= 0f || guardTarget == Vector3.zero)
+        {
+            Vector3 toExit = planarExit - GetPlanarPosition(transform.position);
+            Vector3 tangent = toExit.sqrMagnitude > 0.001f
+                ? Vector3.Cross(Vector3.up, toExit.normalized) * guardOrbitSign
+                : Vector3.right * guardOrbitSign;
+
+            float orbitRadius = Random.Range(exitGuardDistance * 0.6f, exitGuardDistance * 1.1f);
+            guardOrbitSign *= -1;
+            guardTarget = exitPosition + tangent * orbitRadius;
+            guardTarget.y = transform.position.y;
+            searchRetargetTimer = exitGuardRetargetInterval * Random.Range(0.8f, 1.2f);
+        }
+
+        if (distanceToExit > exitGuardDistance * 1.1f)
+        {
+            velocity = GetFlatDirectionTo(exitPosition) * GetCurrentInvestigationSpeed();
+            return velocity.sqrMagnitude > 0.001f;
+        }
+
+        velocity = GetFlatDirectionTo(guardTarget) * GetCurrentInvestigationSpeed();
+        return velocity.sqrMagnitude > 0.001f;
+    }
+
+    private Vector3 ApplyObstacleAvoidance(Vector3 desiredVelocity, bool urgent)
+    {
+        if (desiredVelocity.sqrMagnitude <= 0.001f)
+        {
+            avoidanceLockTimer = 0f;
+            return desiredVelocity;
+        }
+
+        Vector3 desiredDirection = desiredVelocity.normalized;
+        float desiredSpeed = desiredVelocity.magnitude;
+        Vector3 origin = GetNavigationProbeOrigin();
+
+        if (avoidanceLockTimer > 0f &&
+            avoidanceLockDirection.sqrMagnitude > 0.001f &&
+            GetDirectionClearance(origin, avoidanceLockDirection.normalized) > obstacleCheckDistance * 0.45f)
+        {
+            Vector3 lockedDirection = Vector3.Slerp(
+                desiredDirection,
+                avoidanceLockDirection.normalized,
+                Mathf.Clamp01(obstacleAvoidanceStrength)
+            ).normalized;
+            return lockedDirection * desiredSpeed;
+        }
+
+        float forwardClearance = GetDirectionClearance(origin, desiredDirection);
+        if (forwardClearance >= obstacleCheckDistance * 0.92f)
+        {
+            return desiredVelocity;
+        }
+
+        // On evalue plusieurs angles plutot que de pivoter brutalement,
+        // ce qui stabilise la navigation dans les couloirs, coins et escaliers.
+        float[] probeAngles =
+        {
+            0f,
+            -obstacleSideCheckAngle,
+            obstacleSideCheckAngle,
+            -obstacleSideCheckAngle * 1.8f,
+            obstacleSideCheckAngle * 1.8f,
+            -75f,
+            75f,
+            -110f,
+            110f
+        };
+
+        Vector3 bestDirection = desiredDirection;
+        float bestScore = float.NegativeInfinity;
+
+        for (int i = 0; i < probeAngles.Length; i++)
+        {
+            Vector3 probeDirection = Quaternion.Euler(0f, probeAngles[i], 0f) * desiredDirection;
+            float clearance = GetDirectionClearance(origin, probeDirection);
+            float alignment = Vector3.Dot(desiredDirection, probeDirection);
+            float urgencyBias = urgent ? Mathf.Max(0f, alignment) * 0.4f : 0f;
+            float score = clearance * 1.3f + alignment + urgencyBias;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestDirection = probeDirection;
+            }
+        }
+
+        if (bestScore > forwardClearance + 0.05f)
+        {
+            if (Vector3.Dot(bestDirection, transform.right) >= 0f)
+            {
+                lastAvoidanceSign = 1;
+            }
+            else
+            {
+                lastAvoidanceSign = -1;
+            }
+
+            avoidanceLockDirection = bestDirection;
+            avoidanceLockTimer = avoidanceLockDuration;
+
+            Vector3 steeredDirection = Vector3.Slerp(
+                desiredDirection,
+                bestDirection,
+                Mathf.Clamp01(obstacleAvoidanceStrength)
+            ).normalized;
+            return steeredDirection * desiredSpeed;
+        }
+
+        if (Physics.SphereCast(
+            origin,
+            obstacleCheckRadius,
+            desiredDirection,
+            out RaycastHit hit,
+            obstacleCheckDistance,
+            obstacleMask,
+            QueryTriggerInteraction.Ignore) &&
+            IsBlockingHit(hit))
+        {
+            Vector3 slideDirection = Vector3.ProjectOnPlane(desiredDirection, hit.normal).normalized;
+            if (slideDirection.sqrMagnitude > 0.001f)
+            {
+                avoidanceLockDirection = slideDirection;
+                avoidanceLockTimer = avoidanceLockDuration * 0.85f;
+                return Vector3.Slerp(desiredDirection, slideDirection, wallSlideStrength).normalized * desiredSpeed;
+            }
+        }
+
+        return desiredDirection * desiredSpeed * 0.35f;
+    }
+
+    private float GetDirectionClearance(Vector3 origin, Vector3 direction)
+    {
+        float totalClearance = 0f;
+        int validSamples = 0;
+
+        float[] heightOffsets =
+        {
+            Mathf.Max(controller.height * 0.32f, 0.65f),
+            Mathf.Max(controller.height * 0.62f, 1.15f)
+        };
+
+        for (int i = 0; i < heightOffsets.Length; i++)
+        {
+            Vector3 sampleOrigin = transform.position + Vector3.up * heightOffsets[i];
+            if (Physics.SphereCast(
+                sampleOrigin,
+                obstacleCheckRadius,
+                direction,
+                out RaycastHit hit,
+                obstacleCheckDistance,
+                obstacleMask,
+                QueryTriggerInteraction.Ignore))
+            {
+                if (IsBlockingHit(hit))
+                {
+                    totalClearance += Mathf.Max(0f, hit.distance);
+                    validSamples++;
+                }
+                else
+                {
+                    totalClearance += obstacleCheckDistance;
+                    validSamples++;
+                }
+            }
+            else
+            {
+                totalClearance += obstacleCheckDistance;
+                validSamples++;
+            }
+        }
+
+        return validSamples > 0 ? totalClearance / validSamples : 0f;
+    }
+
+    private bool IsBlockingHit(RaycastHit hit)
+    {
+        if (hit.transform == null)
+        {
+            return false;
+        }
+
+        if (hit.transform.IsChildOf(transform))
+        {
+            return false;
+        }
+
+        if (playerTarget != null && hit.transform.IsChildOf(playerTarget))
+        {
+            return false;
+        }
+
+        if (hit.normal.y > 0.45f)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void UpdateNavigationRecovery(Vector3 targetVelocity, bool isChasing, bool isInvestigating)
+    {
+        Vector3 planarDelta = transform.position - lastPosition;
+        planarDelta.y = 0f;
+        lastPosition = transform.position;
+
+        if (targetVelocity.sqrMagnitude <= 0.04f)
+        {
+            stuckTimer = 0f;
+            return;
+        }
+
+        if (planarDelta.sqrMagnitude >= 0.0004f)
+        {
+            stuckTimer = 0f;
+            return;
+        }
+
+        stuckTimer += Time.deltaTime;
+        float effectiveStuckDelay = isChasing ? stuckRetargetDelay * 0.8f : stuckRetargetDelay;
+
+        if (stuckTimer < effectiveStuckDelay)
+        {
+            return;
+        }
+
+        stuckTimer = 0f;
+        Vector3 fallbackDirection = Vector3.Cross(Vector3.up, targetVelocity.normalized) * lastAvoidanceSign;
+        if (fallbackDirection.sqrMagnitude < 0.001f)
+        {
+            fallbackDirection = transform.right * lastAvoidanceSign;
+        }
+
+        lastAvoidanceSign *= -1;
+        avoidanceLockDirection = fallbackDirection.normalized;
+        avoidanceLockTimer = avoidanceLockDuration * 1.5f;
+
+        if (isChasing)
+        {
+            investigationTarget = transform.position + fallbackDirection.normalized * corridorRecoveryDistance;
+            investigationTarget.y = transform.position.y;
+            hasInvestigationTarget = true;
+            searchRetargetTimer = 0.3f;
+            return;
+        }
+
+        if (isInvestigating && hardIntelligenceEnabled)
+        {
+            PickNextSearchTarget();
+            return;
+        }
+
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            AdvancePatrolPoint();
+        }
+        else
+        {
+            hasRoamTarget = false;
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -318,89 +824,6 @@ public class BasicMonsterController : MonoBehaviour
         return points;
     }
 
-    private Vector3 GetPatrolVelocity()
-    {
-        if (patrolPoints == null || patrolPoints.Length == 0)
-        {
-            return Vector3.zero;
-        }
-
-        Transform currentPatrolPoint = patrolPoints[patrolPointIndex];
-        if (currentPatrolPoint == null)
-        {
-            AdvancePatrolPoint();
-            return Vector3.zero;
-        }
-
-        Vector3 offsetToPatrolPoint = currentPatrolPoint.position - transform.position;
-        Vector3 flatOffset = new Vector3(offsetToPatrolPoint.x, 0f, offsetToPatrolPoint.z);
-        float distanceToPatrolPoint = flatOffset.magnitude;
-
-        if (distanceToPatrolPoint <= patrolStoppingDistance)
-        {
-            patrolWaitTimer += Time.deltaTime;
-            float effectiveWaitTime = hardIntelligenceEnabled ? patrolWaitTime * 0.35f : patrolWaitTime;
-            if (patrolWaitTimer >= effectiveWaitTime)
-            {
-                patrolWaitTimer = 0f;
-                AdvancePatrolPoint();
-            }
-
-            return Vector3.zero;
-        }
-
-        patrolWaitTimer = 0f;
-        float patrolSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
-        float currentPatrolSpeed = IsSlowed ? Mathf.Min(slowedMoveSpeed, patrolSpeed) : patrolSpeed;
-        Vector3 patrolDirection = flatOffset.normalized;
-
-        return patrolDirection * currentPatrolSpeed;
-    }
-
-    private bool TryGetInvestigationVelocity(out Vector3 velocity)
-    {
-        velocity = Vector3.zero;
-
-        if (memoryTimer <= 0f)
-        {
-            hasInvestigationTarget = false;
-            return false;
-        }
-
-        Vector3 searchAnchor = lastKnownPlayerPosition;
-        float distanceToAnchor = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(searchAnchor));
-        if (distanceToAnchor > patrolStoppingDistance + 0.35f)
-        {
-            velocity = GetFlatDirectionTo(searchAnchor) * GetCurrentInvestigationSpeed();
-            hasInvestigationTarget = false;
-            return true;
-        }
-
-        if (!hasInvestigationTarget || searchRetargetTimer <= 0f ||
-            Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(investigationTarget)) <= patrolStoppingDistance)
-        {
-            PickNextSearchTarget();
-        }
-
-        if (!hasInvestigationTarget)
-        {
-            return false;
-        }
-
-        velocity = GetFlatDirectionTo(investigationTarget) * GetCurrentInvestigationSpeed();
-        return velocity.sqrMagnitude > 0.001f;
-    }
-
-    private bool IsObstacleAhead(Vector3 origin, Vector3 direction)
-    {
-        if (Physics.SphereCast(origin, obstacleCheckRadius, direction, out RaycastHit hit, obstacleCheckDistance, obstacleMask, QueryTriggerInteraction.Ignore))
-        {
-            return hit.transform != null && !hit.transform.IsChildOf(transform);
-        }
-
-        return false;
-    }
-
     private void AdvancePatrolPoint()
     {
         if (patrolPoints == null || patrolPoints.Length == 0)
@@ -410,40 +833,8 @@ public class BasicMonsterController : MonoBehaviour
 
         patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
         patrolWaitTimer = 0f;
-        stuckTimer = 0f;
-    }
-
-    private void UpdateNavigationRecovery(Vector3 targetVelocity, bool isChasing, bool isInvestigating)
-    {
-        Vector3 planarDelta = transform.position - lastPosition;
-        planarDelta.y = 0f;
-        lastPosition = transform.position;
-
-        if (isChasing)
-        {
-            stuckTimer = 0f;
-            return;
-        }
-
-        if (targetVelocity.sqrMagnitude > 0.04f && planarDelta.sqrMagnitude < 0.0004f)
-        {
-            stuckTimer += Time.deltaTime;
-            if (stuckTimer >= (hardIntelligenceEnabled ? 0.9f : 1.5f))
-            {
-                if (isInvestigating && hardIntelligenceEnabled)
-                {
-                    PickNextSearchTarget();
-                }
-                else if (patrolPoints != null && patrolPoints.Length > 0)
-                {
-                    AdvancePatrolPoint();
-                }
-            }
-        }
-        else
-        {
-            stuckTimer = 0f;
-        }
+        roamRetargetTimer = 0f;
+        hasRoamTarget = false;
     }
 
     private void UpdateVisualMotion()
@@ -586,26 +977,11 @@ public class BasicMonsterController : MonoBehaviour
         searchRetargetTimer = 0f;
     }
 
-    public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
-    {
-        if (!hardIntelligenceEnabled)
-        {
-            return;
-        }
-
-        float effectiveDuration = highPriority ? Mathf.Max(duration, forcedSearchDuration) : duration;
-        RememberPlayerPosition(worldPosition, effectiveDuration);
-        investigationTarget = worldPosition;
-        hasInvestigationTarget = true;
-        searchRetargetTimer = highPriority ? 0f : searchRetargetInterval * 0.6f;
-        stuckTimer = 0f;
-    }
-
     private void PickNextSearchTarget()
     {
         Vector3 anchor = GetPlanarPosition(lastKnownPlayerPosition);
         float stepAngle = 360f / Mathf.Max(1, searchPointCount);
-        float angle = stepAngle * searchPointIndex + Random.Range(-18f, 18f);
+        float angle = stepAngle * searchPointIndex + Random.Range(-20f, 20f);
         float radius = Random.Range(searchRadius * 0.45f, searchRadius);
         Vector3 offset = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * radius;
 
@@ -614,7 +990,6 @@ public class BasicMonsterController : MonoBehaviour
         investigationTarget.y = transform.position.y;
         hasInvestigationTarget = true;
         searchRetargetTimer = searchRetargetInterval;
-        stuckTimer = 0f;
     }
 
     private Vector3 GetFlatDirectionTo(Vector3 worldPosition)
@@ -628,6 +1003,11 @@ public class BasicMonsterController : MonoBehaviour
         return new Vector3(worldPosition.x, 0f, worldPosition.z);
     }
 
+    private Vector3 GetNavigationProbeOrigin()
+    {
+        return transform.position + Vector3.up * Mathf.Max(controller.height * 0.45f, 0.95f);
+    }
+
     private float GetCurrentChaseSpeed()
     {
         float chaseSpeed = moveSpeed + GetTaskProgress01() * taskProgressChaseSpeedBonus;
@@ -636,9 +1016,15 @@ public class BasicMonsterController : MonoBehaviour
 
     private float GetCurrentInvestigationSpeed()
     {
-        float patrolSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
-        float targetSpeed = Mathf.Max(investigationMoveSpeed, patrolSpeed);
+        float roamSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
+        float targetSpeed = Mathf.Max(investigationMoveSpeed, roamSpeed);
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, targetSpeed) : targetSpeed;
+    }
+
+    private float GetCurrentRoamSpeed()
+    {
+        float roamSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
+        return IsSlowed ? Mathf.Min(slowedMoveSpeed, roamSpeed) : roamSpeed;
     }
 
     private float GetCurrentTurnSpeed()
@@ -694,83 +1080,5 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         return Mathf.Clamp01((float)gameManager.CompletedTasks / gameManager.RequiredTasks);
-    }
-
-    private bool TryGetExitGuardVelocity(out Vector3 velocity)
-    {
-        velocity = Vector3.zero;
-
-        if (gameManager == null ||
-            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Escape ||
-            gameManager.ActiveExitZone == null ||
-            gameManager.ActiveExitZone.transform == null)
-        {
-            return false;
-        }
-
-        if (searchRetargetTimer <= 0f || guardTarget == Vector3.zero)
-        {
-            Vector3 exitPosition = gameManager.ActiveExitZone.transform.position;
-            Vector3 toExit = GetPlanarPosition(exitPosition) - GetPlanarPosition(transform.position);
-            Vector3 sideOffset = toExit.sqrMagnitude > 0.001f
-                ? Vector3.Cross(Vector3.up, toExit.normalized) * Random.Range(-exitGuardDistance, exitGuardDistance)
-                : Vector3.right * Random.Range(-exitGuardDistance, exitGuardDistance);
-
-            guardTarget = exitPosition + sideOffset;
-            guardTarget.y = transform.position.y;
-            searchRetargetTimer = exitGuardRetargetInterval;
-        }
-
-        Vector3 anchor = GetPlanarPosition(gameManager.ActiveExitZone.transform.position);
-        if (Vector3.Distance(GetPlanarPosition(transform.position), anchor) <= exitGuardDistance * 0.55f)
-        {
-            velocity = GetFlatDirectionTo(guardTarget) * GetCurrentInvestigationSpeed();
-            return velocity.sqrMagnitude > 0.001f;
-        }
-
-        velocity = GetFlatDirectionTo(gameManager.ActiveExitZone.transform.position) * GetCurrentInvestigationSpeed();
-        return velocity.sqrMagnitude > 0.001f;
-    }
-
-    private Vector3 ApplyObstacleAvoidance(Vector3 desiredVelocity)
-    {
-        if (desiredVelocity.sqrMagnitude <= 0.001f)
-        {
-            return desiredVelocity;
-        }
-
-        Vector3 desiredDirection = desiredVelocity.normalized;
-        Vector3 origin = transform.position + Vector3.up * Mathf.Max(controller.height * 0.4f, 0.8f);
-
-        if (!IsObstacleAhead(origin, desiredDirection))
-        {
-            return desiredVelocity;
-        }
-
-        Vector3 leftDirection = Quaternion.Euler(0f, -obstacleSideCheckAngle, 0f) * desiredDirection;
-        Vector3 rightDirection = Quaternion.Euler(0f, obstacleSideCheckAngle, 0f) * desiredDirection;
-
-        bool leftBlocked = IsObstacleAhead(origin, leftDirection);
-        bool rightBlocked = IsObstacleAhead(origin, rightDirection);
-
-        Vector3 avoidanceDirection;
-        if (leftBlocked && !rightBlocked)
-        {
-            avoidanceDirection = transform.right;
-            lastAvoidanceSign = 1;
-        }
-        else if (!leftBlocked && rightBlocked)
-        {
-            avoidanceDirection = -transform.right;
-            lastAvoidanceSign = -1;
-        }
-        else
-        {
-            avoidanceDirection = transform.right * lastAvoidanceSign;
-            lastAvoidanceSign *= -1;
-        }
-
-        Vector3 steeredDirection = (desiredDirection + avoidanceDirection * obstacleAvoidanceStrength).normalized;
-        return steeredDirection * desiredVelocity.magnitude;
     }
 }

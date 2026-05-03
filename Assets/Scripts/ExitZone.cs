@@ -10,6 +10,8 @@ public class ExitZone : MonoBehaviour
     public bool PlayerInside => playerInside;
     public float EscapeProgress => escapeDuration <= 0f ? 0f : escapeTimer / escapeDuration;
     public float EscapeTimeRemaining => Mathf.Max(0f, escapeDuration - escapeTimer);
+    public GameObject VisualRoot => visualRoot;
+    public Collider TriggerZone => triggerZone;
 
     private PrototypeGameManager gameManager;
     private float escapeTimer;
@@ -18,7 +20,7 @@ public class ExitZone : MonoBehaviour
 
     private void Awake()
     {
-        gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        RefreshRuntimeReferences();
         SetActiveState(false);
     }
 
@@ -65,6 +67,45 @@ public class ExitZone : MonoBehaviour
         logTimer = 0f;
         playerInside = false;
         SetActiveState(false);
+    }
+
+    public void RefreshRuntimeReferences()
+    {
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        }
+
+        if (visualRoot == null)
+        {
+            visualRoot = gameObject;
+        }
+
+        if (triggerZone == null)
+        {
+            triggerZone = GetComponent<Collider>();
+
+            if (triggerZone == null)
+            {
+                triggerZone = GetComponentInChildren<Collider>(true);
+            }
+        }
+    }
+
+    public void AssignVisualRoot(GameObject newVisualRoot)
+    {
+        if (newVisualRoot != null)
+        {
+            visualRoot = newVisualRoot;
+        }
+    }
+
+    public void AssignTriggerZone(Collider newTriggerZone)
+    {
+        if (newTriggerZone != null)
+        {
+            triggerZone = newTriggerZone;
+        }
     }
 
     private void SetActiveState(bool activeState)

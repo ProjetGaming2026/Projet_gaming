@@ -21,22 +21,42 @@ public class TaskTerminal : MonoBehaviour, IInteractable
     private BasicFirstPersonController playerController;
     private bool completed;
 
+    public bool IsCompleted => completed;
+
     private void Awake()
     {
-        gameManager = FindFirstObjectByType<PrototypeGameManager>();
-        monsterController = FindFirstObjectByType<BasicMonsterController>();
-        playerController = FindFirstObjectByType<BasicFirstPersonController>();
+        RefreshRuntimeReferences();
+    }
+
+    public void RefreshRuntimeReferences()
+    {
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        }
+
+        if (monsterController == null)
+        {
+            monsterController = FindFirstObjectByType<BasicMonsterController>();
+        }
+
+        if (playerController == null)
+        {
+            playerController = FindFirstObjectByType<BasicFirstPersonController>();
+        }
     }
 
     public void Interact()
     {
         if (completed)
         {
+            PrototypeHUD.ShowFeedback("Ce terminal est deja termine.", PrototypeHUD.FeedbackTone.Info, 2.1f);
             return;
         }
 
         if (gameManager == null || gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Chase)
         {
+            PrototypeHUD.ShowFeedback("Le terminal n'est pas disponible pour l'instant.", PrototypeHUD.FeedbackTone.Warning, 2.2f);
             Debug.Log("Le terminal ne peut etre utilise qu'en phase CHASE.");
             return;
         }
@@ -60,9 +80,14 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 
             onSuccess.Invoke();
             Debug.Log("Terminal reussi. Glitch aleatoire obtenu.");
+            string successMessage = playerController != null
+                ? "Tache reussie. Glitch obtenu : " + playerController.LastReceivedGlitch
+                : "Tache reussie.";
+            PrototypeHUD.ShowFeedback(successMessage, PrototypeHUD.FeedbackTone.Success, 2.8f);
 
             if (disableAfterSuccess)
             {
+                DisableInteractionColliders();
                 enabled = false;
             }
         }
@@ -77,6 +102,16 @@ public class TaskTerminal : MonoBehaviour, IInteractable
             }
 
             Debug.Log("Terminal echoue. Position revelee temporairement.");
+            PrototypeHUD.ShowFeedback("Echec du terminal. L'entite a ete alertee.", PrototypeHUD.FeedbackTone.Failure, 2.8f);
+        }
+    }
+
+    private void DisableInteractionColliders()
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = false;
         }
     }
 }
