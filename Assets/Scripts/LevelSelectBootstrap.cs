@@ -11,10 +11,13 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private bool showMenu = true;
     private bool hasChosenLevel;
-    private Vector2 windowSize = new Vector2(720f, 520f);
+    private Vector2 windowSize = new Vector2(860f, 620f);
     private GUIStyle titleStyle;
     private GUIStyle subtitleStyle;
-    private GUIStyle buttonStyle;
+    private GUIStyle cardTitleStyle;
+    private GUIStyle cardDescriptionStyle;
+    private GUIStyle tagStyle;
+    private GUIStyle hintStyle;
 
     public static bool IsMenuOpen => instance != null && instance.showMenu;
 
@@ -72,30 +75,37 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         Rect overlay = new Rect(0f, 0f, Screen.width, Screen.height);
         Color previousColor = GUI.color;
-        GUI.color = new Color(0f, 0f, 0f, 0.72f);
+        GUI.color = new Color(0.02f, 0.04f, 0.06f, 0.86f);
         GUI.Box(overlay, GUIContent.none);
         GUI.color = previousColor;
 
+        Vector2 effectiveWindowSize = new Vector2(
+            Mathf.Min(windowSize.x, Screen.width - 80f),
+            Mathf.Min(windowSize.y, Screen.height - 80f)
+        );
+
         Rect windowRect = new Rect(
-            (Screen.width - windowSize.x) * 0.5f,
-            (Screen.height - windowSize.y) * 0.5f,
-            windowSize.x,
-            windowSize.y
+            (Screen.width - effectiveWindowSize.x) * 0.5f,
+            (Screen.height - effectiveWindowSize.y) * 0.5f,
+            effectiveWindowSize.x,
+            effectiveWindowSize.y
         );
 
         GUILayout.BeginArea(windowRect, GUI.skin.window);
-        GUILayout.Space(24f);
+        GUILayout.Space(26f);
         GUILayout.Label("Choix Du Niveau", titleStyle);
-        GUILayout.Space(14f);
-        GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital.", subtitleStyle);
+        GUILayout.Space(12f);
+        GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital. Le curseur reste libre tant que tu n'as pas choisi.", subtitleStyle);
         GUILayout.Space(24f);
 
-        DrawLevelButton("Facile", "Incubation plus longue, moins de taches, monstre plus indulgent.", EasyScene);
-        GUILayout.Space(16f);
-        DrawLevelButton("Moyen", "Experience equilibree du prototype.", MediumScene);
-        GUILayout.Space(16f);
-        DrawLevelButton("Difficile", "Moins de temps, plus de taches, monstre plus agressif.", HardScene);
-        GUILayout.Space(16f);
+        DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScene, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
+        GUILayout.Space(14f);
+        DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScene, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
+        GUILayout.Space(14f);
+        DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "8 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScene, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
+        GUILayout.Space(18f);
+        GUILayout.Label("Clique sur une carte pour commencer la partie.", hintStyle);
+        GUILayout.Space(8f);
 
         GUILayout.EndArea();
     }
@@ -111,15 +121,26 @@ public class LevelSelectBootstrap : MonoBehaviour
         Cursor.visible = true;
     }
 
-    private void DrawLevelButton(string label, string description, string sceneName)
+    private void DrawLevelCard(string label, string tagline, string description, string sceneName, Color cardColor, float width)
     {
-        if (GUILayout.Button(label, buttonStyle, GUILayout.Height(62f)))
+        Rect cardRect = GUILayoutUtility.GetRect(width, 118f, GUILayout.ExpandWidth(true));
+        bool hovered = cardRect.Contains(Event.current.mousePosition);
+        Color previousColor = GUI.color;
+
+        GUI.color = hovered
+            ? new Color(cardColor.r + 0.08f, cardColor.g + 0.08f, cardColor.b + 0.08f, 0.98f)
+            : cardColor;
+        GUI.Box(cardRect, GUIContent.none);
+        GUI.color = previousColor;
+
+        GUI.Label(new Rect(cardRect.x + 18f, cardRect.y + 14f, cardRect.width - 36f, 30f), label, cardTitleStyle);
+        GUI.Label(new Rect(cardRect.x + 18f, cardRect.y + 48f, cardRect.width - 36f, 22f), tagline, tagStyle);
+        GUI.Label(new Rect(cardRect.x + 18f, cardRect.y + 74f, cardRect.width - 36f, 34f), description, cardDescriptionStyle);
+
+        if (GUI.Button(cardRect, GUIContent.none, GUIStyle.none))
         {
             ChooseLevel(sceneName);
         }
-
-        GUILayout.Space(6f);
-        GUILayout.Label(description, subtitleStyle);
     }
 
     private void ChooseLevel(string sceneName)
@@ -156,7 +177,7 @@ public class LevelSelectBootstrap : MonoBehaviour
             titleStyle = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = 34,
+                fontSize = 38,
                 fontStyle = FontStyle.Bold
             };
         }
@@ -166,18 +187,49 @@ public class LevelSelectBootstrap : MonoBehaviour
             subtitleStyle = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = 18,
+                fontSize = 19,
                 wordWrap = true
             };
         }
 
-        if (buttonStyle == null)
+        if (cardTitleStyle == null)
         {
-            buttonStyle = new GUIStyle(GUI.skin.button)
+            cardTitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 24,
+                fontSize = 28,
                 fontStyle = FontStyle.Bold
             };
+            cardTitleStyle.normal.textColor = Color.white;
+        }
+
+        if (cardDescriptionStyle == null)
+        {
+            cardDescriptionStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 18,
+                wordWrap = true
+            };
+            cardDescriptionStyle.normal.textColor = new Color(0.93f, 0.95f, 0.98f);
+        }
+
+        if (tagStyle == null)
+        {
+            tagStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 17,
+                fontStyle = FontStyle.Italic
+            };
+            tagStyle.normal.textColor = new Color(0.95f, 0.9f, 0.6f);
+        }
+
+        if (hintStyle == null)
+        {
+            hintStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 16
+            };
+            hintStyle.normal.textColor = new Color(0.86f, 0.9f, 0.95f);
         }
     }
 }

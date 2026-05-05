@@ -162,6 +162,13 @@ public class BasicFirstPersonController : MonoBehaviour
         Debug.Log("Piege statique recu. Total : " + staticTrapCharges);
     }
 
+    public void ApplyMovementTuning(float newWalkSpeed, float newSprintSpeed, float newOverclockSpeed)
+    {
+        walkSpeed = Mathf.Max(0.1f, newWalkSpeed);
+        sprintSpeed = Mathf.Max(walkSpeed, newSprintSpeed);
+        overclockSpeed = Mathf.Max(sprintSpeed, newOverclockSpeed);
+    }
+
     public bool ConsumePhaseCharge()
     {
         if (phaseCharges <= 0)

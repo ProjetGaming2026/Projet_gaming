@@ -7,15 +7,15 @@ using UnityEngine.SceneManagement;
 
 public static class EntityVisualTools
 {
-    private const string DesktopModelPath = @"C:\Users\pc\Desktop\CI 1\S2\Projet gaming\ghostly_woman.glb";
-    private const string ProjectModelPath = "Assets/Characters/ghostly_woman.glb";
+    private const string DesktopGlbPath = @"C:\Users\pc\Desktop\CI 1\S2\Projet gaming\ghostly_woman.glb";
+    private const string ProjectGlbPath = "Assets/Characters/ghostly_woman.glb";
     private static readonly string[] SupportedModelPaths =
     {
         "Assets/Characters/Womann/Womann.obj",
         "Assets/Characters/Womann/Womann.fbx",
         "Assets/Characters/ghostly_woman.fbx",
         "Assets/Characters/ghostly_woman.obj",
-        ProjectModelPath,
+        ProjectGlbPath,
     };
     private const string VisualRootName = "EntityVisualModel";
     private const float TargetWorldHeight = 1.8f;
@@ -23,16 +23,16 @@ public static class EntityVisualTools
     [MenuItem("Tools/Gameplay/Import Ghostly Woman GLB")]
     public static void ImportGhostlyWomanGlb()
     {
-        if (!File.Exists(DesktopModelPath))
+        if (!File.Exists(DesktopGlbPath))
         {
             EditorUtility.DisplayDialog(
                 "Ghostly Woman",
-                "Le fichier source est introuvable sur le bureau.\n\n" + DesktopModelPath,
+                "Le fichier source est introuvable sur le bureau.\n\n" + DesktopGlbPath,
                 "OK");
             return;
         }
 
-        var projectDirectory = Path.GetDirectoryName(ProjectModelPath);
+        var projectDirectory = Path.GetDirectoryName(ProjectGlbPath);
         if (string.IsNullOrEmpty(projectDirectory))
         {
             EditorUtility.DisplayDialog(
@@ -43,7 +43,7 @@ public static class EntityVisualTools
         }
 
         Directory.CreateDirectory(projectDirectory);
-        File.Copy(DesktopModelPath, ProjectModelPath, overwrite: true);
+        File.Copy(DesktopGlbPath, ProjectGlbPath, overwrite: true);
         AssetDatabase.Refresh();
 
         EditorUtility.DisplayDialog(
@@ -55,11 +55,16 @@ public static class EntityVisualTools
     [MenuItem("Tools/Gameplay/Replace Entity Visual With Ghostly Woman")]
     public static void ReplaceEntityVisualWithGhostlyWoman()
     {
+        ReplaceEntityVisual("Ghostly Woman");
+    }
+
+    private static void ReplaceEntityVisual(string displayName)
+    {
         var entity = FindEntityInLoadedScenes();
         if (entity == null)
         {
             EditorUtility.DisplayDialog(
-                "Ghostly Woman",
+                displayName,
                 "Impossible de trouver l'objet 'Entity' dans les scenes ouvertes.",
                 "OK");
             return;
@@ -70,8 +75,8 @@ public static class EntityVisualTools
         if (modelPrefab == null)
         {
             EditorUtility.DisplayDialog(
-                "Ghostly Woman",
-                "Unity n'a trouve aucun modele utilisable pour 'Ghostly Woman'.\n\n" +
+                displayName,
+                "Unity n'a trouve aucun modele utilisable pour ce monstre.\n\n" +
                 "Place un fichier importe comme modele dans l'un de ces chemins:\n" +
                 "- Assets/Characters/ghostly_woman.fbx\n" +
                 "- Assets/Characters/ghostly_woman.obj\n" +
@@ -130,7 +135,7 @@ public static class EntityVisualTools
         Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 
         EditorUtility.DisplayDialog(
-            "Ghostly Woman",
+            displayName,
             "Le visuel de 'Entity' a ete remplace et sa taille a ete ajustee automatiquement.",
             "OK");
     }

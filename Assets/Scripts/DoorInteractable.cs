@@ -20,33 +20,19 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     private Quaternion closedLocalRotation;
     private Quaternion targetLocalRotation;
     private bool isOpen;
+    private bool isInitialized;
+
+    public bool IsOpen => isOpen;
 
     private void Awake()
     {
-        if (hinge == null)
-        {
-            hinge = transform;
-        }
-
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-        }
-
-        closedLocalRotation = hinge.localRotation;
-        isOpen = startsOpen;
-        targetLocalRotation = startsOpen
-            ? closedLocalRotation * Quaternion.Euler(0f, ResolveOpenDirection() * openAngle, 0f)
-            : closedLocalRotation;
-
-        if (startsOpen)
-        {
-            hinge.localRotation = targetLocalRotation;
-        }
+        InitializeIfNeeded();
     }
 
     private void Update()
     {
+        InitializeIfNeeded();
+
         if (hinge == null)
         {
             return;
@@ -61,11 +47,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (hinge == null)
-        {
-            hinge = transform;
-            closedLocalRotation = hinge.localRotation;
-        }
+        InitializeIfNeeded();
 
         if (isOpen)
         {
@@ -79,6 +61,19 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
         isOpen = true;
         PlaySound(openSound);
+    }
+
+    public void AssignAudioClips(AudioClip newOpenSound, AudioClip newCloseSound)
+    {
+        if (newOpenSound != null)
+        {
+            openSound = newOpenSound;
+        }
+
+        if (newCloseSound != null)
+        {
+            closeSound = newCloseSound;
+        }
     }
 
     private int ResolveOpenDirection()
@@ -116,11 +111,44 @@ public class DoorInteractable : MonoBehaviour, IInteractable
 
     private void PlaySound(AudioClip clip)
     {
+        InitializeIfNeeded();
+
         if (audioSource == null || clip == null)
         {
             return;
         }
 
         audioSource.PlayOneShot(clip, soundVolume);
+    }
+
+    private void InitializeIfNeeded()
+    {
+        if (hinge == null)
+        {
+            hinge = transform;
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        if (isInitialized || hinge == null)
+        {
+            return;
+        }
+
+        closedLocalRotation = hinge.localRotation;
+        isOpen = startsOpen;
+        targetLocalRotation = startsOpen
+            ? closedLocalRotation * Quaternion.Euler(0f, ResolveOpenDirection() * openAngle, 0f)
+            : closedLocalRotation;
+
+        if (startsOpen)
+        {
+            hinge.localRotation = targetLocalRotation;
+        }
+
+        isInitialized = true;
     }
 }
