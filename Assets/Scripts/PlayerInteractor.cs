@@ -19,6 +19,11 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(interactKey))
         {
             TryInteract();

@@ -99,6 +99,12 @@ public class BasicFirstPersonController : MonoBehaviour
             return;
         }
 
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            IsSprinting = false;
+            return;
+        }
+
         ApplyCursorState();
         UpdateTimers();
         HandleGlitchInput();
