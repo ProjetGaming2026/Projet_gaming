@@ -163,40 +163,65 @@ public class CipherTerminal : MonoBehaviour, IInteractable
 
     private void Reset()
     {
+        if (!IsSceneInstance())
+        {
+            return;
+        }
+
         EnsureScreenText();
     }
 
     private void OnValidate()
     {
+        if (!IsSceneInstance())
+        {
+            return;
+        }
+
         EnsureScreenText();
     }
 
     private void EnsureScreenText()
     {
+        bool createdScreenText = false;
+
         if (screenText == null)
         {
             Transform child = transform.Find("ScreenText");
             if (child == null)
             {
+                if (!IsSceneInstance())
+                {
+                    return;
+                }
+
                 GameObject screenObject = new GameObject("ScreenText");
                 child = screenObject.transform;
                 child.SetParent(transform, false);
+                createdScreenText = true;
             }
 
             screenText = child.GetComponent<TextMesh>();
             if (screenText == null)
             {
                 screenText = child.gameObject.AddComponent<TextMesh>();
+                createdScreenText = true;
             }
         }
 
         Transform screenTransform = screenText.transform;
-        screenTransform.SetParent(transform, false);
-        screenTransform.localScale = Vector3.one;
+        if (screenTransform.parent != transform && IsSceneInstance())
+        {
+            screenTransform.SetParent(transform, true);
+        }
 
-        screenTransform.localPosition = screenLocalPosition;
-        screenTransform.localRotation = Quaternion.Euler(screenLocalEulerAngles);
-        screenText.characterSize = screenCharacterSize;
+        if (createdScreenText)
+        {
+            screenTransform.localScale = Vector3.one;
+            screenTransform.localPosition = screenLocalPosition;
+            screenTransform.localRotation = Quaternion.Euler(screenLocalEulerAngles);
+            screenText.characterSize = screenCharacterSize;
+        }
 
         screenText.anchor = TextAnchor.MiddleCenter;
         screenText.alignment = TextAlignment.Center;
@@ -299,5 +324,10 @@ public class CipherTerminal : MonoBehaviour, IInteractable
 
         float shrinkRatio = maxScreenWidth / bounds.size.x;
         screenText.characterSize *= Mathf.Clamp(shrinkRatio, 0.5f, 1f);
+    }
+
+    private bool IsSceneInstance()
+    {
+        return gameObject.scene.IsValid() && gameObject.scene.isLoaded;
     }
 }

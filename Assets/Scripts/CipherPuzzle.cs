@@ -40,13 +40,25 @@ public class CipherPuzzle : MonoBehaviour
             terminal = FindFirstObjectByType<CipherTerminal>();
         }
 
-        if (autoCreateWallAnchor)
+        if (cipherWall == null)
+        {
+            cipherWall = FindPlacedCipherWall();
+        }
+
+        if (cipherWall == null && autoCreateWallAnchor)
         {
             cipherWall = CreateAutoWallAnchor();
         }
-        else if (cipherWall == null)
+
+        if (cipherWall == null)
         {
             cipherWall = FindFirstObjectByType<CipherWall>();
+        }
+
+        if (cipherWall == null)
+        {
+            cipherWall = CreateAutoWallAnchor();
+            Debug.Log("CipherPuzzle: aucun mur configure, creation automatique de AutoCipherWall.");
         }
     }
 
@@ -146,6 +158,27 @@ public class CipherPuzzle : MonoBehaviour
             {
                 return wall;
             }
+        }
+
+        return null;
+    }
+
+    private CipherWall FindPlacedCipherWall()
+    {
+        CipherWall[] walls = FindObjectsByType<CipherWall>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (CipherWall wall in walls)
+        {
+            if (wall == null)
+            {
+                continue;
+            }
+
+            if (wall.name == "AutoCipherWall")
+            {
+                continue;
+            }
+
+            return wall;
         }
 
         return null;
