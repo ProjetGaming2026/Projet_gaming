@@ -25,20 +25,15 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
-private void Update()
-{
-    if (CipherTerminal.IsAnyTerminalOpen)
-    {
-        return;
-    }
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            currentInteractable = null;
+            currentInteractableCollider = null;
+            currentPromptText = string.Empty;
+            return;
+        }
 
-    UpdateCurrentInteractable();
-
-    if (Input.GetKeyDown(interactKey))
-    {
-        TryInteract();
-    }
-}
+        UpdateCurrentInteractable();
 
         if (Input.GetKeyDown(interactKey))
         {
