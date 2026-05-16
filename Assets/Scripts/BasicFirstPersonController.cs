@@ -99,6 +99,12 @@ public class BasicFirstPersonController : MonoBehaviour
             return;
         }
 
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            IsSprinting = false;
+            return;
+        }
+
         ApplyCursorState();
         UpdateTimers();
         HandleGlitchInput();
@@ -160,6 +166,13 @@ public class BasicFirstPersonController : MonoBehaviour
     {
         staticTrapCharges += amount;
         Debug.Log("Piege statique recu. Total : " + staticTrapCharges);
+    }
+
+    public void ApplyMovementTuning(float newWalkSpeed, float newSprintSpeed, float newOverclockSpeed)
+    {
+        walkSpeed = Mathf.Max(0.1f, newWalkSpeed);
+        sprintSpeed = Mathf.Max(walkSpeed, newSprintSpeed);
+        overclockSpeed = Mathf.Max(sprintSpeed, newOverclockSpeed);
     }
 
     public bool ConsumePhaseCharge()

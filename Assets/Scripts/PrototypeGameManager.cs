@@ -14,6 +14,9 @@ public class PrototypeGameManager : MonoBehaviour
     [Header("Phase Settings")]
     [SerializeField] private float incubationDuration = 60f;
 
+    [Header("Session")]
+    [SerializeField] private float totalLevelDuration = 0f;
+
     [Header("Objectives")]
     [SerializeField] private int requiredTasks = 5;
     [SerializeField] private ExitZone[] exitZones;
@@ -22,17 +25,25 @@ public class PrototypeGameManager : MonoBehaviour
     public int CompletedTasks { get; private set; }
     public int RequiredTasks => requiredTasks;
     public ExitZone ActiveExitZone { get; private set; }
+    public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
+    public bool HasTimeLimit => totalLevelDuration > 0f;
+    public float TimeRemaining => Mathf.Max(0f, levelTimer);
+    public bool HasConfiguredExitZones => exitZones != null && exitZones.Length > 0;
 
     private float phaseTimer;
+    private float levelTimer;
 
     private void Start()
     {
+        levelTimer = totalLevelDuration;
         DisableAllExits();
         SetPhase(GamePhase.Incubation);
     }
 
     private void Update()
     {
+        UpdateLevelTimer();
+
         if (CurrentPhase == GamePhase.Incubation)
         {
             phaseTimer -= Time.deltaTime;
@@ -42,6 +53,17 @@ public class PrototypeGameManager : MonoBehaviour
                 SetPhase(GamePhase.Chase);
             }
         }
+    }
+
+    public void ApplyLevelTimeLimit(float duration)
+    {
+        totalLevelDuration = Mathf.Max(0f, duration);
+        levelTimer = totalLevelDuration;
+    }
+
+    public void AssignExitZones(ExitZone[] newExitZones)
+    {
+        exitZones = newExitZones;
     }
 
     public void RegisterTaskSuccess()
@@ -98,6 +120,25 @@ public class PrototypeGameManager : MonoBehaviour
                 Debug.Log("Phase actuelle : LOSE");
                 break;
         }
+    }
+
+    private void UpdateLevelTimer()
+    {
+        if (!HasTimeLimit || CurrentPhase == GamePhase.Win || CurrentPhase == GamePhase.Lose)
+        {
+            return;
+        }
+
+        levelTimer -= Time.deltaTime;
+        if (levelTimer > 0f)
+        {
+            return;
+        }
+
+        levelTimer = 0f;
+        Debug.Log("Temps ecoule. Partie perdue.");
+        PrototypeHUD.ShowFeedback("Temps ecoule. L'entite te rattrape.", PrototypeHUD.FeedbackTone.Failure, 3f);
+        TriggerLoss();
     }
 
     private void ActivateRandomExit()

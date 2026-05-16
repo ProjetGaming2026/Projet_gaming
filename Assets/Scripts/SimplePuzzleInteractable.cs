@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[AddComponentMenu("Legacy/Old Simple Puzzle Interactable")]
 public class SimplePuzzleInteractable : MonoBehaviour, IInteractable
 {
     [Header("Puzzle")]
