@@ -58,7 +58,7 @@ public class WorldTextOcclusion : MonoBehaviour
             }
         }
 
-        Vector3 targetPosition = visibilityTarget.position;
+        Vector3 targetPosition = visibilityTarget != null ? visibilityTarget.position : transform.position;
         Vector3 cameraPosition = mainCamera.transform.position;
         Vector3 direction = targetPosition - cameraPosition;
         float distance = direction.magnitude;
@@ -75,11 +75,13 @@ public class WorldTextOcclusion : MonoBehaviour
         if (Physics.Raycast(rayOrigin, direction, out RaycastHit hit, distance, occlusionLayers, QueryTriggerInteraction.Ignore))
         {
             Transform hitTransform = hit.collider.transform;
-            bool visible = hitTransform == transform ||
-                           hitTransform == visibilityTarget ||
-                           hitTransform.IsChildOf(transform) ||
-                           transform.IsChildOf(hitTransform) ||
-                           (visibilityTarget != null && (hitTransform.IsChildOf(visibilityTarget) || visibilityTarget.IsChildOf(hitTransform)));
+            bool visible =
+                hitTransform == transform ||
+                hitTransform == visibilityTarget ||
+                hitTransform.IsChildOf(transform) ||
+                transform.IsChildOf(hitTransform) ||
+                (visibilityTarget != null &&
+                 (hitTransform.IsChildOf(visibilityTarget) || visibilityTarget.IsChildOf(hitTransform)));
 
             cachedRenderer.enabled = visible;
             return;
