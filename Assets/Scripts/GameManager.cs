@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[AddComponentMenu("Legacy/Old GameManager")]
 public class GameManager : MonoBehaviour
 {
     public enum GamePhase
