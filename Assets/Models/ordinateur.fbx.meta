@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 108c6935338d67a46a9ddcad1ec7743d
+guid: 1a3d92abb4ef28b4ea86f4f054c834c1
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: retro_computer_setup_Mat
+    second: {fileID: 2100000, guid: 471230fd95031f149b003d37091f5808, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
