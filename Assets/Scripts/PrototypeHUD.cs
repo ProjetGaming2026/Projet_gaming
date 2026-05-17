@@ -24,11 +24,15 @@ public class PrototypeHUD : MonoBehaviour
     private GUIStyle glitchStyle;
     private GUIStyle dangerStyle;
     private GUIStyle endStyle;
+    private GUIStyle statusStyle;
     private GUIStyle objectiveTitleStyle;
     private GUIStyle objectiveBodyStyle;
     private GUIStyle promptStyle;
     private GUIStyle feedbackStyle;
 
+    private string temporaryStatusMessage;
+    private Color temporaryStatusColor = Color.white;
+    private float temporaryStatusUntil;
     private string feedbackMessage;
     private FeedbackTone feedbackTone;
     private float feedbackUntilTime;
@@ -152,6 +156,7 @@ public class PrototypeHUD : MonoBehaviour
             GUI.Label(new Rect(Screen.width / 2 - 180, 40, 360, 50), lastGlitchText, glitchStyle);
         }
 
+        DrawTemporaryStatus();
         DrawInteractionPrompt();
         DrawFeedbackMessage();
         DrawDangerWarning();
@@ -190,6 +195,14 @@ public class PrototypeHUD : MonoBehaviour
             endStyle.alignment = TextAnchor.MiddleCenter;
         }
 
+        if (statusStyle == null)
+        {
+            statusStyle = new GUIStyle(GUI.skin.label);
+            statusStyle.fontSize = 34;
+            statusStyle.fontStyle = FontStyle.Bold;
+            statusStyle.alignment = TextAnchor.MiddleCenter;
+        }
+
         if (objectiveTitleStyle == null)
         {
             objectiveTitleStyle = new GUIStyle(GUI.skin.label);
@@ -222,6 +235,28 @@ public class PrototypeHUD : MonoBehaviour
             feedbackStyle.fontStyle = FontStyle.Bold;
             feedbackStyle.alignment = TextAnchor.MiddleCenter;
         }
+    }
+
+    public void ShowTemporaryStatus(string message, Color color, float duration)
+    {
+        temporaryStatusMessage = message;
+        temporaryStatusColor = color;
+        temporaryStatusUntil = Time.time + Mathf.Max(0.1f, duration);
+    }
+
+    private void DrawTemporaryStatus()
+    {
+        if (string.IsNullOrEmpty(temporaryStatusMessage) || Time.time > temporaryStatusUntil)
+        {
+            return;
+        }
+
+        statusStyle.normal.textColor = temporaryStatusColor;
+        GUI.Label(
+            new Rect(Screen.width / 2 - 240, 90, 480, 50),
+            temporaryStatusMessage,
+            statusStyle
+        );
     }
 
     private void DrawDangerWarning()

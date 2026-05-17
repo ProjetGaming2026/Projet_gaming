@@ -25,6 +25,14 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            currentInteractable = null;
+            currentInteractableCollider = null;
+            currentPromptText = string.Empty;
+            return;
+        }
+
         UpdateCurrentInteractable();
 
         if (currentInteractable is ExitDoorCodeLock)
