@@ -28,11 +28,17 @@ public static class MonsterPatrolSetupTool
         CreatePoint(routeRoot.transform, "Patrol_01_Room", new Vector3(-7.55f, 1f, 20f));
         CreatePoint(routeRoot.transform, "Patrol_02_WestHall", new Vector3(-10f, 1f, 8f));
         CreatePoint(routeRoot.transform, "Patrol_03_Morgue", new Vector3(-5.1f, 1f, 0f));
-        CreatePoint(routeRoot.transform, "Patrol_04_Corridor", new Vector3(18.2f, 1f, -5f));
-        CreatePoint(routeRoot.transform, "Patrol_05_BathRoom", new Vector3(18.15f, 1f, -15f));
-        CreatePoint(routeRoot.transform, "Patrol_06_Center", new Vector3(20f, 1f, -2f));
-        CreatePoint(routeRoot.transform, "Patrol_07_Stairs", new Vector3(23.7f, 1f, 0.9f));
-        CreatePoint(routeRoot.transform, "Patrol_08_Room2", new Vector3(18.2f, 1f, 5.1f));
+        CreatePoint(routeRoot.transform, "Patrol_04_WestConnector", new Vector3(-2.2f, 1f, 4.2f));
+        CreatePoint(routeRoot.transform, "Patrol_05_Center", new Vector3(20f, 1f, -2f));
+        CreatePoint(routeRoot.transform, "Patrol_06_Corridor", new Vector3(18.2f, 1f, -5f));
+        CreatePoint(routeRoot.transform, "Patrol_07_BathRoom", new Vector3(18.15f, 1f, -15f));
+        CreatePoint(routeRoot.transform, "Patrol_08_Stairs", new Vector3(23.7f, 1f, 0.9f));
+        CreatePoint(routeRoot.transform, "Patrol_09_Room2", new Vector3(18.2f, 1f, 5.1f));
+        CreatePoint(routeRoot.transform, "Patrol_10_EastHall", new Vector3(12.6f, 1f, 10.8f));
+        CreatePoint(routeRoot.transform, "Patrol_11_CenterWard", new Vector3(8.8f, 1f, 1.8f));
+        CreatePoint(routeRoot.transform, "Patrol_12_SouthHall", new Vector3(8.7f, 1f, -9.2f));
+        CreatePoint(routeRoot.transform, "Patrol_13_NorthConnector", new Vector3(3.4f, 1f, 13.4f));
+        CreatePoint(routeRoot.transform, "Patrol_14_SouthConnector", new Vector3(3.2f, 1f, -11.6f));
 
         EditorSceneManager.MarkSceneDirty(activeScene);
         EditorUtility.DisplayDialog(

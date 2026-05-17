@@ -11,6 +11,13 @@ public class PrototypeGameManager : MonoBehaviour
         Lose
     }
 
+    public enum LossReason
+    {
+        None,
+        Timeout,
+        Captured
+    }
+
     [Header("Phase Settings")]
     [SerializeField] private float incubationDuration = 60f;
 
@@ -22,8 +29,11 @@ public class PrototypeGameManager : MonoBehaviour
     [SerializeField] private ExitZone[] exitZones;
 
     public GamePhase CurrentPhase { get; private set; }
+    public LossReason CurrentLossReason { get; private set; }
     public int CompletedTasks { get; private set; }
     public int RequiredTasks => requiredTasks;
+    public int RemainingTasks => Mathf.Max(0, requiredTasks - CompletedTasks);
+    public bool ObjectivesComplete => CompletedTasks >= requiredTasks;
     public ExitZone ActiveExitZone { get; private set; }
     public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
     public bool HasTimeLimit => totalLevelDuration > 0f;
@@ -32,10 +42,10 @@ public class PrototypeGameManager : MonoBehaviour
 
     private float phaseTimer;
     private float levelTimer;
-
     private void Start()
     {
         levelTimer = totalLevelDuration;
+        CurrentLossReason = LossReason.None;
         DisableAllExits();
         SetPhase(GamePhase.Incubation);
     }
@@ -61,6 +71,12 @@ public class PrototypeGameManager : MonoBehaviour
         levelTimer = totalLevelDuration;
     }
 
+    public void ApplyRequiredTasks(int taskCount)
+    {
+        requiredTasks = Mathf.Max(1, taskCount);
+        CompletedTasks = Mathf.Clamp(CompletedTasks, 0, requiredTasks);
+    }
+
     public void AssignExitZones(ExitZone[] newExitZones)
     {
         exitZones = newExitZones;
@@ -73,10 +89,10 @@ public class PrototypeGameManager : MonoBehaviour
             return;
         }
 
-        CompletedTasks++;
+        CompletedTasks = Mathf.Min(requiredTasks, CompletedTasks + 1);
         Debug.Log("Tâches réussies : " + CompletedTasks + " / " + requiredTasks);
 
-        if (CompletedTasks >= requiredTasks)
+        if (ObjectivesComplete)
         {
             ActivateRandomExit();
             SetPhase(GamePhase.Escape);
@@ -85,11 +101,18 @@ public class PrototypeGameManager : MonoBehaviour
 
     public void TriggerLoss()
     {
+        TriggerLoss(LossReason.None);
+    }
+
+    public void TriggerLoss(LossReason reason)
+    {
+        CurrentLossReason = reason;
         SetPhase(GamePhase.Lose);
     }
 
     public void TriggerWin()
     {
+        CurrentLossReason = LossReason.None;
         SetPhase(GamePhase.Win);
     }
 
@@ -100,6 +123,7 @@ public class PrototypeGameManager : MonoBehaviour
         switch (CurrentPhase)
         {
             case GamePhase.Incubation:
+                CurrentLossReason = LossReason.None;
                 phaseTimer = incubationDuration;
                 Debug.Log("Phase actuelle : INCUBATION");
                 break;
@@ -138,7 +162,7 @@ public class PrototypeGameManager : MonoBehaviour
         levelTimer = 0f;
         Debug.Log("Temps ecoule. Partie perdue.");
         PrototypeHUD.ShowFeedback("Temps ecoule. L'entite te rattrape.", PrototypeHUD.FeedbackTone.Failure, 3f);
-        TriggerLoss();
+        TriggerLoss(LossReason.Timeout);
     }
 
     private void ActivateRandomExit()

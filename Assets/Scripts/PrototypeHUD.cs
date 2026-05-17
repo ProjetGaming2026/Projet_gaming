@@ -2,6 +2,17 @@ using UnityEngine;
 
 public class PrototypeHUD : MonoBehaviour
 {
+    private struct BloodDrip
+    {
+        public float normalizedX;
+        public float stemWidth;
+        public float baseLength;
+        public float speed;
+        public float phaseOffset;
+        public float swayAmount;
+        public float alpha;
+    }
+
     public enum FeedbackTone
     {
         Info,
@@ -28,10 +39,15 @@ public class PrototypeHUD : MonoBehaviour
     private GUIStyle objectiveBodyStyle;
     private GUIStyle promptStyle;
     private GUIStyle feedbackStyle;
+    private GUIStyle horrorEndStyle;
+    private GUIStyle horrorSubStyle;
 
     private string feedbackMessage;
     private FeedbackTone feedbackTone;
     private float feedbackUntilTime;
+    private float loseOverlayStartTime = -1f;
+    private Texture2D cachedWhiteTexture;
+    private BloodDrip[] bloodDrips;
 
     private void Awake()
     {
@@ -85,6 +101,7 @@ public class PrototypeHUD : MonoBehaviour
         }
 
         InitializeStyles();
+        UpdateLoseOverlayState();
 
         string hudText =
             "Phase : " + gameManager.CurrentPhase + "\n" +
@@ -222,6 +239,34 @@ public class PrototypeHUD : MonoBehaviour
             feedbackStyle.fontStyle = FontStyle.Bold;
             feedbackStyle.alignment = TextAnchor.MiddleCenter;
         }
+
+        if (horrorEndStyle == null)
+        {
+            horrorEndStyle = new GUIStyle(GUI.skin.label);
+            horrorEndStyle.fontSize = 70;
+            horrorEndStyle.fontStyle = FontStyle.Bold;
+            horrorEndStyle.alignment = TextAnchor.MiddleCenter;
+            horrorEndStyle.wordWrap = true;
+        }
+
+        if (horrorSubStyle == null)
+        {
+            horrorSubStyle = new GUIStyle(GUI.skin.label);
+            horrorSubStyle.fontSize = 24;
+            horrorSubStyle.fontStyle = FontStyle.BoldAndItalic;
+            horrorSubStyle.alignment = TextAnchor.MiddleCenter;
+            horrorSubStyle.wordWrap = true;
+        }
+
+        if (cachedWhiteTexture == null)
+        {
+            cachedWhiteTexture = Texture2D.whiteTexture;
+        }
+
+        if (bloodDrips == null || bloodDrips.Length == 0)
+        {
+            bloodDrips = CreateBloodDrips();
+        }
     }
 
     private void DrawDangerWarning()
@@ -349,6 +394,13 @@ public class PrototypeHUD : MonoBehaviour
 
     private void DrawEndMessage()
     {
+        if (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Lose &&
+            gameManager.CurrentLossReason == PrototypeGameManager.LossReason.Captured)
+        {
+            DrawCapturedLossScreen();
+            return;
+        }
+
         if (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Win)
         {
             endStyle.normal.textColor = Color.green;
@@ -367,5 +419,155 @@ public class PrototypeHUD : MonoBehaviour
                 endStyle
             );
         }
+    }
+
+    private void UpdateLoseOverlayState()
+    {
+        if (gameManager == null)
+        {
+            return;
+        }
+
+        if (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Lose)
+        {
+            if (loseOverlayStartTime < 0f)
+            {
+                loseOverlayStartTime = Time.unscaledTime;
+            }
+        }
+        else
+        {
+            loseOverlayStartTime = -1f;
+        }
+    }
+
+    private void DrawCapturedLossScreen()
+    {
+        float elapsed = loseOverlayStartTime >= 0f ? Time.unscaledTime - loseOverlayStartTime : 0f;
+        float overlayT = Mathf.Clamp01(elapsed / 0.85f);
+        float pulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 9f);
+        float jitterX = Mathf.Sin(Time.unscaledTime * 23f) * 2.5f;
+        float jitterY = Mathf.Cos(Time.unscaledTime * 19f) * 1.6f;
+
+        DrawTintedRect(new Rect(0f, 0f, Screen.width, Screen.height), new Color(0.08f, 0f, 0f, Mathf.Lerp(0.25f, 0.72f, overlayT)));
+        DrawBloodEdges(overlayT, pulse);
+
+        string title = "L'ENTITE T'A PRISE";
+        string subtitle = "Ton souffle s'arrete.\nIl n'y a plus de sortie.";
+
+        Color shadowColor = new Color(0.12f, 0f, 0f, 0.95f);
+        Color mainColor = new Color(1f, 0.78f, 0.78f, 1f);
+        Color accentColor = new Color(0.78f, 0f, 0f, 0.9f + pulse * 0.1f);
+
+        horrorEndStyle.normal.textColor = mainColor;
+        horrorSubStyle.normal.textColor = new Color(1f, 0.86f, 0.86f, 0.94f);
+
+        Rect titleRect = new Rect(Screen.width * 0.5f - 420f, Screen.height * 0.5f - 125f, 840f, 120f);
+        Rect subRect = new Rect(Screen.width * 0.5f - 300f, Screen.height * 0.5f + 6f, 600f, 90f);
+
+        DrawGlitchLabel(titleRect, title, horrorEndStyle, shadowColor, accentColor, jitterX, jitterY);
+        DrawGlitchLabel(subRect, subtitle, horrorSubStyle, shadowColor, accentColor * 0.85f, jitterX * 0.45f, jitterY * 0.45f);
+    }
+
+    private void DrawBloodEdges(float overlayT, float pulse)
+    {
+        float topHeight = Mathf.Lerp(24f, 130f, overlayT);
+        float sideWidth = Mathf.Lerp(18f, 82f, overlayT);
+        float bottomHeight = Mathf.Lerp(14f, 72f, overlayT);
+
+        Color deepBlood = new Color(0.35f, 0f, 0f, 0.92f);
+        Color darkBlood = new Color(0.2f, 0f, 0f, 0.78f + pulse * 0.08f);
+        Color smearBlood = new Color(0.55f, 0.02f, 0.02f, 0.2f + overlayT * 0.18f);
+
+        DrawTintedRect(new Rect(0f, 0f, Screen.width, topHeight), deepBlood);
+        DrawTintedRect(new Rect(0f, Screen.height - bottomHeight, Screen.width, bottomHeight), darkBlood);
+        DrawTintedRect(new Rect(0f, 0f, sideWidth, Screen.height), darkBlood);
+        DrawTintedRect(new Rect(Screen.width - sideWidth, 0f, sideWidth, Screen.height), darkBlood);
+
+        for (int i = 0; i < 8; i++)
+        {
+            float x = (Screen.width / 7f) * i + Mathf.Sin(i * 1.7f) * 16f;
+            float dripWidth = 18f + (i % 3) * 8f;
+            float dripHeight = topHeight + 60f + Mathf.Abs(Mathf.Sin(Time.unscaledTime * (1.3f + i * 0.07f))) * 34f;
+            DrawTintedRect(new Rect(x, 0f, dripWidth, dripHeight), smearBlood);
+        }
+
+        DrawAnimatedBloodDrips(overlayT, pulse);
+    }
+
+    private void DrawGlitchLabel(Rect rect, string text, GUIStyle style, Color shadowColor, Color accentColor, float jitterX, float jitterY)
+    {
+        Color previousColor = GUI.color;
+
+        style.normal.textColor = shadowColor;
+        GUI.Label(new Rect(rect.x + 6f, rect.y + 6f, rect.width, rect.height), text, style);
+
+        style.normal.textColor = accentColor;
+        GUI.Label(new Rect(rect.x - 3f + jitterX, rect.y + jitterY, rect.width, rect.height), text, style);
+
+        style.normal.textColor = new Color(0.92f, 0.92f, 0.92f, 1f);
+        GUI.Label(new Rect(rect.x + 1.5f, rect.y - 1f, rect.width, rect.height), text, style);
+
+        GUI.color = previousColor;
+    }
+
+    private void DrawTintedRect(Rect rect, Color color)
+    {
+        if (Event.current.type != EventType.Repaint || cachedWhiteTexture == null)
+        {
+            return;
+        }
+
+        Color previousColor = GUI.color;
+        GUI.color = color;
+        GUI.DrawTexture(rect, cachedWhiteTexture, ScaleMode.StretchToFill);
+        GUI.color = previousColor;
+    }
+
+    private void DrawAnimatedBloodDrips(float overlayT, float pulse)
+    {
+        if (bloodDrips == null || bloodDrips.Length == 0)
+        {
+            return;
+        }
+
+        float elapsed = Mathf.Max(0f, Time.unscaledTime - Mathf.Max(0f, loseOverlayStartTime));
+        float verticalLimit = Screen.height * 0.58f;
+
+        for (int i = 0; i < bloodDrips.Length; i++)
+        {
+            BloodDrip drip = bloodDrips[i];
+            float travel = Mathf.Repeat(elapsed * drip.speed + drip.phaseOffset, 1f);
+            float easedTravel = travel * travel * (2.35f - travel);
+            float stemLength = (drip.baseLength + verticalLimit * easedTravel) * overlayT;
+            float x = Screen.width * drip.normalizedX + Mathf.Sin(elapsed * (1.1f + drip.phaseOffset * 2.4f)) * drip.swayAmount;
+            float width = drip.stemWidth * Mathf.Lerp(0.82f, 1.16f, pulse);
+
+            Color stemColor = new Color(0.42f, 0f, 0f, drip.alpha * Mathf.Lerp(0.42f, 0.9f, overlayT));
+            Color bulbColor = new Color(0.62f, 0.03f, 0.03f, Mathf.Min(1f, stemColor.a + 0.08f));
+
+            Rect stemRect = new Rect(x, 0f, width, stemLength);
+            DrawTintedRect(stemRect, stemColor);
+
+            float bulbSize = width * 1.85f;
+            float bulbY = stemLength - bulbSize * 0.38f;
+            DrawTintedRect(new Rect(x - bulbSize * 0.18f, bulbY, bulbSize, bulbSize), bulbColor);
+            DrawTintedRect(new Rect(x + bulbSize * 0.16f, bulbY + bulbSize * 0.24f, bulbSize * 0.52f, bulbSize * 0.52f), bulbColor);
+        }
+    }
+
+    private static BloodDrip[] CreateBloodDrips()
+    {
+        return new[]
+        {
+            new BloodDrip { normalizedX = 0.08f, stemWidth = 12f, baseLength = 85f, speed = 0.14f, phaseOffset = 0.05f, swayAmount = 2f, alpha = 0.84f },
+            new BloodDrip { normalizedX = 0.16f, stemWidth = 9f, baseLength = 70f, speed = 0.1f, phaseOffset = 0.33f, swayAmount = 3f, alpha = 0.72f },
+            new BloodDrip { normalizedX = 0.27f, stemWidth = 14f, baseLength = 92f, speed = 0.17f, phaseOffset = 0.61f, swayAmount = 2.4f, alpha = 0.9f },
+            new BloodDrip { normalizedX = 0.39f, stemWidth = 10f, baseLength = 64f, speed = 0.12f, phaseOffset = 0.18f, swayAmount = 2.8f, alpha = 0.76f },
+            new BloodDrip { normalizedX = 0.53f, stemWidth = 13f, baseLength = 88f, speed = 0.16f, phaseOffset = 0.47f, swayAmount = 1.7f, alpha = 0.88f },
+            new BloodDrip { normalizedX = 0.67f, stemWidth = 11f, baseLength = 76f, speed = 0.11f, phaseOffset = 0.74f, swayAmount = 2.1f, alpha = 0.78f },
+            new BloodDrip { normalizedX = 0.81f, stemWidth = 15f, baseLength = 96f, speed = 0.18f, phaseOffset = 0.27f, swayAmount = 2.6f, alpha = 0.92f },
+            new BloodDrip { normalizedX = 0.91f, stemWidth = 10f, baseLength = 72f, speed = 0.13f, phaseOffset = 0.89f, swayAmount = 1.9f, alpha = 0.74f },
+        };
     }
 }

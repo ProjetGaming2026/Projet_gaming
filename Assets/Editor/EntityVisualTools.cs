@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,8 +10,23 @@ public static class EntityVisualTools
 {
     private const string DesktopGlbPath = @"C:\Users\pc\Desktop\CI 1\S2\Projet gaming\ghostly_woman.glb";
     private const string ProjectGlbPath = "Assets/Characters/ghostly_woman.glb";
+    private const string FuseFemaleZombieModelPath = "Assets/Characters/FuseFemaleZombie/zombie-1-Walking.fbx";
+    private const string MixamoAvatarModelPath = "Assets/Characters/Mixamo/Idle_with_skin.fbx";
+    private const string MixamoWalkPath = "Assets/Characters/Mixamo/Zombie Walk.fbx";
+    private const string MixamoRunPath = "Assets/Characters/Mixamo/Zombie Running.fbx";
+    private const string MixamoTurnPath = "Assets/Characters/Mixamo/Zombie Turn.fbx";
+    private const string MixamoAttackPath = "Assets/Characters/Mixamo/Zombie Attack.fbx";
+    private const string MonsterAnimatorControllerPath = "Assets/Characters/Mixamo/MonsterMixamo.controller";
+    private static readonly string[] DemoScenePaths =
+    {
+        "Assets/Hospital/scenes/demoScene_Facile.unity",
+        "Assets/Hospital/scenes/demoScene_Moyen.unity",
+        "Assets/Hospital/scenes/demoScene_Difficile.unity",
+    };
     private static readonly string[] SupportedModelPaths =
     {
+        MixamoAvatarModelPath,
+        FuseFemaleZombieModelPath,
         "Assets/Characters/Womann/Womann.obj",
         "Assets/Characters/Womann/Womann.fbx",
         "Assets/Characters/ghostly_woman.fbx",
@@ -55,10 +71,52 @@ public static class EntityVisualTools
     [MenuItem("Tools/Gameplay/Replace Entity Visual With Ghostly Woman")]
     public static void ReplaceEntityVisualWithGhostlyWoman()
     {
-        ReplaceEntityVisual("Ghostly Woman");
+        ReplaceEntityVisual("Ghostly Woman", ResolveAvailableModelPath());
     }
 
-    private static void ReplaceEntityVisual(string displayName)
+    [MenuItem("Tools/Gameplay/Replace Entity Visual With Female Zombie")]
+    public static void ReplaceEntityVisualWithFemaleZombie()
+    {
+        ReplaceEntityVisual("Female Zombie", MixamoAvatarModelPath);
+    }
+
+    [MenuItem("Tools/Gameplay/Apply Female Zombie To Demo Scenes")]
+    public static void ApplyFemaleZombieToDemoScenes()
+    {
+        var originalScene = SceneManager.GetActiveScene();
+        bool appliedAtLeastOnce = false;
+
+        foreach (var scenePath in DemoScenePaths)
+        {
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            var entity = FindEntityInLoadedScenes();
+            if (entity == null)
+            {
+                continue;
+            }
+
+            if (ReplaceEntityVisualOnRoot(entity, "Female Zombie", MixamoAvatarModelPath))
+            {
+                EditorSceneManager.MarkSceneDirty(scene);
+                EditorSceneManager.SaveScene(scene);
+                appliedAtLeastOnce = true;
+            }
+        }
+
+        if (originalScene.IsValid() && !string.IsNullOrEmpty(originalScene.path))
+        {
+            EditorSceneManager.OpenScene(originalScene.path, OpenSceneMode.Single);
+        }
+
+        EditorUtility.DisplayDialog(
+            "Female Zombie",
+            appliedAtLeastOnce
+                ? "La zombie a ete appliquee aux scenes Facile, Moyen et Difficile."
+                : "Aucune scene n'a pu etre mise a jour. Verifie l'import du modele puis relance l'outil.",
+            "OK");
+    }
+
+    private static void ReplaceEntityVisual(string displayName, string preferredAssetPath)
     {
         var entity = FindEntityInLoadedScenes();
         if (entity == null)
@@ -70,30 +128,41 @@ public static class EntityVisualTools
             return;
         }
 
-        var chosenAssetPath = ResolveAvailableModelPath();
+        if (!ReplaceEntityVisualOnRoot(entity, displayName, preferredAssetPath))
+        {
+            return;
+        }
+
+        EditorSceneManager.MarkSceneDirty(entity.scene);
+        EditorUtility.DisplayDialog(
+            displayName,
+            "Le visuel de 'Entity' a ete remplace et sa taille a ete ajustee automatiquement.",
+            "OK");
+    }
+
+    private static bool ReplaceEntityVisualOnRoot(GameObject entity, string displayName, string preferredAssetPath)
+    {
+        var chosenAssetPath = ResolveModelPath(preferredAssetPath);
         var modelPrefab = chosenAssetPath == null ? null : LoadModelPrefab(chosenAssetPath);
         if (modelPrefab == null)
         {
             EditorUtility.DisplayDialog(
                 displayName,
                 "Unity n'a trouve aucun modele utilisable pour ce monstre.\n\n" +
-                "Place un fichier importe comme modele dans l'un de ces chemins:\n" +
+                "- " + MixamoAvatarModelPath + "\n" +
+                "- " + FuseFemaleZombieModelPath + "\n" +
                 "- Assets/Characters/ghostly_woman.fbx\n" +
                 "- Assets/Characters/ghostly_woman.obj\n" +
                 "- Assets/Characters/ghostly_woman.glb (si un importeur glTF est installe)\n\n" +
                 "Puis relance l'outil.",
                 "OK");
-            return;
+            return false;
         }
 
         Undo.IncrementCurrentGroup();
         Undo.SetCurrentGroupName("Replace Entity Visual");
 
-        var previousVisual = entity.transform.Find(VisualRootName);
-        if (previousVisual != null)
-        {
-            Undo.DestroyObjectImmediate(previousVisual.gameObject);
-        }
+        RemoveExistingEntityVisuals(entity);
 
         GameObject visualInstance;
         var prefabSourceType = PrefabUtility.GetPrefabAssetType(modelPrefab);
@@ -117,6 +186,7 @@ public static class EntityVisualTools
         ApplyEntityLayer(visualInstance, entity.layer);
         DisableVisualColliders(visualInstance);
         DisableEntityPlaceholderRenderer(entity);
+        ConfigureWalkAnimation(entity, visualInstance, chosenAssetPath);
 
         if (TryGetCombinedRendererBounds(visualInstance, out var bounds) && bounds.size.y > 0.0001f)
         {
@@ -131,13 +201,28 @@ public static class EntityVisualTools
             }
         }
 
-        EditorSceneManager.MarkSceneDirty(entity.scene);
         Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
+        return true;
+    }
 
-        EditorUtility.DisplayDialog(
-            displayName,
-            "Le visuel de 'Entity' a ete remplace et sa taille a ete ajustee automatiquement.",
-            "OK");
+    private static void RemoveExistingEntityVisuals(GameObject entity)
+    {
+        var directChildrenToRemove = entity.transform
+            .Cast<Transform>()
+            .Where(child =>
+                child != null &&
+                child.name != "EntityPrisonVisual" &&
+                (
+                    child.name == VisualRootName ||
+                    child.GetComponentInChildren<Animator>(true) != null ||
+                    child.GetComponentInChildren<SkinnedMeshRenderer>(true) != null
+                ))
+            .ToArray();
+
+        foreach (var child in directChildrenToRemove)
+        {
+            Undo.DestroyObjectImmediate(child.gameObject);
+        }
     }
 
     private static GameObject FindEntityInLoadedScenes()
@@ -191,6 +276,24 @@ public static class EntityVisualTools
         return null;
     }
 
+    private static string ResolveModelPath(string preferredAssetPath)
+    {
+        if (!string.IsNullOrWhiteSpace(preferredAssetPath))
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(preferredAssetPath) != null)
+            {
+                return preferredAssetPath;
+            }
+
+            if (AssetDatabase.LoadAllAssetsAtPath(preferredAssetPath).OfType<GameObject>().Any())
+            {
+                return preferredAssetPath;
+            }
+        }
+
+        return ResolveAvailableModelPath();
+    }
+
     private static void DisableEntityPlaceholderRenderer(GameObject entity)
     {
         var renderer = entity.GetComponent<MeshRenderer>();
@@ -207,13 +310,6 @@ public static class EntityVisualTools
         {
             Undo.RecordObject(collider, "Disable Visual Colliders");
             collider.enabled = false;
-        }
-
-        var animator = root.GetComponentInChildren<Animator>(true);
-        if (animator != null)
-        {
-            Undo.RecordObject(animator, "Disable Imported Animator");
-            animator.enabled = false;
         }
     }
 
@@ -245,5 +341,153 @@ public static class EntityVisualTools
         }
 
         return true;
+    }
+
+    private static void ConfigureWalkAnimation(GameObject entity, GameObject visualRoot, string assetPath)
+    {
+        var idleClip = LoadIdleClip(assetPath);
+        var walkClip = LoadClipFromAssetPath(MixamoWalkPath);
+        var runClip = LoadClipFromAssetPath(MixamoRunPath);
+        var turnClip = LoadClipFromAssetPath(MixamoTurnPath);
+        var attackClip = LoadClipFromAssetPath(MixamoAttackPath);
+        var animator = visualRoot.GetComponentInChildren<Animator>(true);
+
+        var driver = entity.GetComponent<MonsterWalkAnimationDriver>();
+        if (driver == null)
+        {
+            driver = Undo.AddComponent<MonsterWalkAnimationDriver>(entity);
+        }
+
+        if (animator != null)
+        {
+            Undo.RecordObject(animator, "Configure Monster Animator");
+            animator.enabled = true;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            animator.runtimeAnimatorController = EnsureMonsterAnimatorController(idleClip, walkClip, runClip, attackClip);
+        }
+
+        driver.ConfigureInEditor(
+            entity.GetComponent<BasicMonsterController>(),
+            entity.GetComponent<CharacterController>(),
+            animator,
+            walkClip,
+            idleClip,
+            walkClip,
+            runClip,
+            turnClip,
+            attackClip);
+        EditorUtility.SetDirty(driver);
+    }
+
+    private static AnimationClip LoadIdleClip(string assetPath)
+    {
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            return null;
+        }
+
+        var clips = AssetDatabase.LoadAllAssetsAtPath(assetPath)
+            .OfType<AnimationClip>()
+            .Where(clip =>
+                clip != null &&
+                !clip.name.StartsWith("__preview__", System.StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        var idleClip = clips.FirstOrDefault(clip =>
+                clip != null &&
+                clip.name.IndexOf("idle", System.StringComparison.OrdinalIgnoreCase) >= 0);
+
+        if (idleClip != null)
+        {
+            return idleClip;
+        }
+
+        var defaultNamedClip = clips.FirstOrDefault(clip =>
+                clip != null &&
+                clip.name.Equals("mixamo.com", System.StringComparison.OrdinalIgnoreCase));
+
+        return defaultNamedClip ?? clips.FirstOrDefault();
+    }
+
+    private static AnimationClip LoadClipFromAssetPath(string assetPath)
+    {
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            return null;
+        }
+
+        var clips = AssetDatabase.LoadAllAssetsAtPath(assetPath)
+            .OfType<AnimationClip>()
+            .Where(clip =>
+                clip != null &&
+                !clip.name.StartsWith("__preview__", System.StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        return clips.FirstOrDefault();
+    }
+
+    private static RuntimeAnimatorController EnsureMonsterAnimatorController(
+        AnimationClip idleClip,
+        AnimationClip walkClip,
+        AnimationClip runClip,
+        AnimationClip attackClip)
+    {
+        if (idleClip == null || walkClip == null || runClip == null)
+        {
+            return null;
+        }
+
+        if (AssetDatabase.LoadAssetAtPath<AnimatorController>(MonsterAnimatorControllerPath) != null)
+        {
+            AssetDatabase.DeleteAsset(MonsterAnimatorControllerPath);
+        }
+
+        AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(MonsterAnimatorControllerPath);
+        controller.AddParameter("LocomotionSpeed", AnimatorControllerParameterType.Float);
+        controller.AddParameter("Attack", AnimatorControllerParameterType.Trigger);
+
+        AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
+        stateMachine.anyStateTransitions
+            .ToList()
+            .ForEach(transition => stateMachine.RemoveAnyStateTransition(transition));
+
+        BlendTree locomotionTree = new BlendTree
+        {
+            name = "LocomotionTree",
+            blendType = BlendTreeType.Simple1D,
+            blendParameter = "LocomotionSpeed",
+            useAutomaticThresholds = false
+        };
+        AssetDatabase.AddObjectToAsset(locomotionTree, controller);
+        locomotionTree.AddChild(idleClip, 0f);
+        locomotionTree.AddChild(walkClip, 1f);
+        locomotionTree.AddChild(runClip, 2f);
+
+        AnimatorState locomotionState = stateMachine.AddState("Locomotion");
+        locomotionState.motion = locomotionTree;
+        stateMachine.defaultState = locomotionState;
+
+        if (attackClip != null)
+        {
+            AnimatorState attackState = stateMachine.AddState("Attack");
+            attackState.motion = attackClip;
+
+            AnimatorStateTransition anyToAttack = stateMachine.AddAnyStateTransition(attackState);
+            anyToAttack.hasExitTime = false;
+            anyToAttack.hasFixedDuration = true;
+            anyToAttack.duration = 0.05f;
+            anyToAttack.AddCondition(AnimatorConditionMode.If, 0f, "Attack");
+
+            AnimatorStateTransition attackToLocomotion = attackState.AddTransition(locomotionState);
+            attackToLocomotion.hasExitTime = true;
+            attackToLocomotion.exitTime = 0.92f;
+            attackToLocomotion.hasFixedDuration = true;
+            attackToLocomotion.duration = 0.08f;
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.ImportAsset(MonsterAnimatorControllerPath, ImportAssetOptions.ForceUpdate);
+        return controller;
     }
 }

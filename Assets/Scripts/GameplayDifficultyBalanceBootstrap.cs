@@ -61,6 +61,7 @@ public static class GameplayDifficultyBalanceBootstrap
         if (gameManager != null)
         {
             gameManager.ApplyLevelTimeLimit(profile.levelDuration);
+            gameManager.ApplyRequiredTasks(profile.requiredTasks);
         }
     }
 
@@ -78,7 +79,8 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.45f,
                     monsterInvestigationSpeed: 2.1f,
                     hardPatrolSpeedMultiplier: 1f,
-                    levelDuration: 780f
+                    levelDuration: 780f,
+                    requiredTasks: 5
                 );
                 return true;
 
@@ -93,7 +95,8 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.65f,
                     monsterInvestigationSpeed: 2.45f,
                     hardPatrolSpeedMultiplier: 1.02f,
-                    levelDuration: 600f
+                    levelDuration: 600f,
+                    requiredTasks: 7
                 );
                 return true;
 
@@ -107,7 +110,8 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.9f,
                     monsterInvestigationSpeed: 3f,
                     hardPatrolSpeedMultiplier: 1.1f,
-                    levelDuration: 480f
+                    levelDuration: 480f,
+                    requiredTasks: 9
                 );
                 return true;
 
@@ -128,6 +132,7 @@ public static class GameplayDifficultyBalanceBootstrap
         public readonly float monsterInvestigationSpeed;
         public readonly float hardPatrolSpeedMultiplier;
         public readonly float levelDuration;
+        public readonly int requiredTasks;
 
         public BalanceProfile(
             float playerWalkSpeed,
@@ -138,7 +143,8 @@ public static class GameplayDifficultyBalanceBootstrap
             float monsterPatrolSpeed,
             float monsterInvestigationSpeed,
             float hardPatrolSpeedMultiplier,
-            float levelDuration)
+            float levelDuration,
+            int requiredTasks)
         {
             this.playerWalkSpeed = playerWalkSpeed;
             this.playerSprintSpeed = playerSprintSpeed;
@@ -149,6 +155,7 @@ public static class GameplayDifficultyBalanceBootstrap
             this.monsterInvestigationSpeed = monsterInvestigationSpeed;
             this.hardPatrolSpeedMultiplier = hardPatrolSpeedMultiplier;
             this.levelDuration = levelDuration;
+            this.requiredTasks = requiredTasks;
         }
     }
 }

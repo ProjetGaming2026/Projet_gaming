@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 public class BasicMonsterController : MonoBehaviour
@@ -66,6 +67,12 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private Transform[] patrolPoints;
     [SerializeField] private float hardPatrolSpeedMultiplier = 1.05f;
     [SerializeField] private float hardTurnSpeedMultiplier = 1.35f;
+    [SerializeField, Range(1, 5)] private int roomExploreBurstsMin = 1;
+    [SerializeField, Range(1, 6)] private int roomExploreBurstsMax = 3;
+    [SerializeField, Range(1, 6)] private int patrolRecentMemory = 3;
+    [SerializeField] private float revisitPenaltyMultiplier = 0.12f;
+    [SerializeField] private float samePointPenaltyMultiplier = 0.05f;
+    [SerializeField] private float farPointWeightBoost = 1.4f;
 
     [Header("Search")]
     [SerializeField] private float maxPredictionTime = 1.1f;
@@ -96,6 +103,8 @@ public class BasicMonsterController : MonoBehaviour
     public bool IsInvestigatingState => currentState == MonsterState.Investigating;
     public bool IsGuardingExitState => currentState == MonsterState.GuardingExit;
     public bool IsRoamingState => currentState == MonsterState.Roaming;
+    public float CurrentPlanarSpeed => new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z).magnitude;
+    public bool HasMovementIntent => currentState != MonsterState.Dormant && CurrentPlanarSpeed > 0.02f;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -114,6 +123,7 @@ public class BasicMonsterController : MonoBehaviour
     private int searchPointIndex;
     private int lastAvoidanceSign = 1;
     private int guardOrbitSign = 1;
+    private int remainingRoomExploreBursts = -1;
     private MonsterState currentState = MonsterState.Dormant;
     private Vector3 visualBaseLocalPosition;
     private Quaternion visualBaseLocalRotation;
@@ -124,9 +134,11 @@ public class BasicMonsterController : MonoBehaviour
     private Vector3 roamTarget;
     private Vector3 guardTarget;
     private Vector3 avoidanceLockDirection;
+    private MonsterWalkAnimationDriver walkAnimationDriver;
     private bool hardIntelligenceEnabled;
     private bool hasInvestigationTarget;
     private bool hasRoamTarget;
+    private readonly Queue<int> recentPatrolIndices = new Queue<int>();
 
     private void Awake()
     {
@@ -152,6 +164,8 @@ public class BasicMonsterController : MonoBehaviour
             gameManager = FindFirstObjectByType<PrototypeGameManager>();
         }
 
+        walkAnimationDriver = GetComponent<MonsterWalkAnimationDriver>();
+
         if (animatedVisual == null)
         {
             animatedVisual = FindAnimatedVisual();
@@ -167,6 +181,9 @@ public class BasicMonsterController : MonoBehaviour
         {
             patrolPoints = FindPatrolPointsInScene();
         }
+
+        ResetRoomExploreBudget();
+        RegisterRecentPatrolIndex(patrolPointIndex);
 
         lastPosition = transform.position;
     }
@@ -466,6 +483,15 @@ public class BasicMonsterController : MonoBehaviour
             if (patrolWaitTimer >= effectiveWaitTime)
             {
                 patrolWaitTimer = 0f;
+                if (ConsumeRoomExploreBurst())
+                {
+                    roamTarget = BuildExplorationTarget(planarAnchor);
+                    hasRoamTarget = true;
+                    roamRetargetTimer = roamRetargetInterval * Random.Range(0.8f, 1.15f);
+                    searchRetargetTimer = 0f;
+                    return;
+                }
+
                 AdvancePatrolPoint();
                 patrolAnchor = GetCurrentPatrolAnchor();
                 anchorPosition = patrolAnchor != null ? patrolAnchor.position : transform.position;
@@ -831,10 +857,108 @@ public class BasicMonsterController : MonoBehaviour
             return;
         }
 
-        patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
+        patrolPointIndex = SelectNextPatrolPointIndex();
+        RegisterRecentPatrolIndex(patrolPointIndex);
+        ResetRoomExploreBudget();
         patrolWaitTimer = 0f;
         roamRetargetTimer = 0f;
         hasRoamTarget = false;
+    }
+
+    private int SelectNextPatrolPointIndex()
+    {
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            return patrolPointIndex;
+        }
+
+        Vector3 currentPlanar = GetPlanarPosition(transform.position);
+        float totalWeight = 0f;
+        float[] weights = new float[patrolPoints.Length];
+
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            Transform point = patrolPoints[i];
+            if (point == null)
+            {
+                weights[i] = 0f;
+                continue;
+            }
+
+            float distance = Vector3.Distance(currentPlanar, GetPlanarPosition(point.position));
+            float distanceWeight = Mathf.Lerp(0.85f, farPointWeightBoost, Mathf.InverseLerp(0f, 24f, distance));
+            float weight = distanceWeight;
+
+            if (i == patrolPointIndex)
+            {
+                weight *= samePointPenaltyMultiplier;
+            }
+
+            if (recentPatrolIndices.Contains(i))
+            {
+                weight *= revisitPenaltyMultiplier;
+            }
+
+            weights[i] = Mathf.Max(0.001f, weight);
+            totalWeight += weights[i];
+        }
+
+        if (totalWeight <= 0.001f)
+        {
+            return (patrolPointIndex + 1) % patrolPoints.Length;
+        }
+
+        float pick = Random.Range(0f, totalWeight);
+        float cumulative = 0f;
+        for (int i = 0; i < weights.Length; i++)
+        {
+            cumulative += weights[i];
+            if (pick <= cumulative)
+            {
+                return i;
+            }
+        }
+
+        return patrolPointIndex;
+    }
+
+    private void RegisterRecentPatrolIndex(int index)
+    {
+        if (index < 0)
+        {
+            return;
+        }
+
+        recentPatrolIndices.Enqueue(index);
+        while (recentPatrolIndices.Count > Mathf.Max(1, patrolRecentMemory))
+        {
+            recentPatrolIndices.Dequeue();
+        }
+    }
+
+    private void ResetRoomExploreBudget()
+    {
+        int minBursts = Mathf.Max(1, roomExploreBurstsMin);
+        int maxBursts = Mathf.Max(minBursts, roomExploreBurstsMax);
+        remainingRoomExploreBursts = Random.Range(minBursts, maxBursts + 1);
+    }
+
+    private bool ConsumeRoomExploreBurst()
+    {
+        if (remainingRoomExploreBursts <= 0)
+        {
+            return false;
+        }
+
+        remainingRoomExploreBursts--;
+        return true;
+    }
+
+    private Vector3 BuildExplorationTarget(Vector3 planarAnchor)
+    {
+        float explorationRadius = roamRadius * Random.Range(0.8f, 1.35f);
+        Vector2 jitter2D = Random.insideUnitCircle * explorationRadius;
+        return new Vector3(planarAnchor.x + jitter2D.x, transform.position.y, planarAnchor.z + jitter2D.y);
     }
 
     private void UpdateVisualMotion()
@@ -849,6 +973,26 @@ public class BasicMonsterController : MonoBehaviour
 
             visualBaseLocalPosition = animatedVisual.localPosition;
             visualBaseLocalRotation = animatedVisual.localRotation;
+        }
+
+        if (walkAnimationDriver == null)
+        {
+            walkAnimationDriver = GetComponent<MonsterWalkAnimationDriver>();
+        }
+
+        if (walkAnimationDriver != null && walkAnimationDriver.IsUsingWalkAnimation)
+        {
+            animatedVisual.localPosition = Vector3.Lerp(
+                animatedVisual.localPosition,
+                visualBaseLocalPosition,
+                Time.deltaTime * visualSmoothing
+            );
+            animatedVisual.localRotation = Quaternion.Slerp(
+                animatedVisual.localRotation,
+                visualBaseLocalRotation,
+                Time.deltaTime * visualSmoothing
+            );
+            return;
         }
 
         Vector3 planarVelocity = controller.velocity;

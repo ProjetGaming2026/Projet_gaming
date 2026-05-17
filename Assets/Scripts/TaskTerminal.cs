@@ -6,6 +6,8 @@ public class TaskTerminal : MonoBehaviour, IInteractable
     [Header("Task")]
     [SerializeField, Range(0f, 1f)] private float successChance = 0.6f;
     [SerializeField] private bool disableAfterSuccess = true;
+    [SerializeField] private bool allowRepeatSuccessWhileTasksRemain = true;
+    [SerializeField] private float reuseCooldown = 4f;
     [SerializeField] private float revealDurationOnFailure = 3f;
     [SerializeField] private float overclockDurationOnSuccess = 5f;
     [SerializeField] private float hiddenDurationOnSuccess = 5f;
@@ -20,6 +22,7 @@ public class TaskTerminal : MonoBehaviour, IInteractable
     private BasicMonsterController monsterController;
     private BasicFirstPersonController playerController;
     private bool completed;
+    private float cooldownUntilTime;
 
     public bool IsCompleted => completed;
 
@@ -48,6 +51,13 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        if (Time.time < cooldownUntilTime)
+        {
+            float remainingCooldown = cooldownUntilTime - Time.time;
+            PrototypeHUD.ShowFeedback("Terminal en recharge : " + remainingCooldown.ToString("F1") + "s", PrototypeHUD.FeedbackTone.Warning, 1.4f);
+            return;
+        }
+
         if (completed)
         {
             PrototypeHUD.ShowFeedback("Ce terminal est deja termine.", PrototypeHUD.FeedbackTone.Info, 2.1f);
@@ -65,7 +75,6 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 
         if (success)
         {
-            completed = true;
             gameManager.RegisterTaskSuccess();
 
             if (playerController != null)
@@ -85,10 +94,17 @@ public class TaskTerminal : MonoBehaviour, IInteractable
                 : "Tache reussie.";
             PrototypeHUD.ShowFeedback(successMessage, PrototypeHUD.FeedbackTone.Success, 2.8f);
 
-            if (disableAfterSuccess)
+            bool shouldLockTerminal = !allowRepeatSuccessWhileTasksRemain || gameManager.ObjectivesComplete;
+            completed = shouldLockTerminal;
+
+            if (completed && disableAfterSuccess)
             {
                 DisableInteractionColliders();
                 enabled = false;
+            }
+            else
+            {
+                cooldownUntilTime = Time.time + Mathf.Max(0.5f, reuseCooldown);
             }
         }
         else
@@ -103,6 +119,7 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 
             Debug.Log("Terminal echoue. Position revelee temporairement.");
             PrototypeHUD.ShowFeedback("Echec du terminal. L'entite a ete alertee.", PrototypeHUD.FeedbackTone.Failure, 2.8f);
+            cooldownUntilTime = Time.time + Mathf.Max(0.5f, reuseCooldown * 0.65f);
         }
     }
 

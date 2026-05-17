@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EntityCapture : MonoBehaviour
 {
@@ -6,10 +7,14 @@ public class EntityCapture : MonoBehaviour
     [SerializeField] private float captureDistance = 1.5f;
 
     private PrototypeGameManager gameManager;
+    private MonsterWalkAnimationDriver animationDriver;
+    private BasicMonsterController monsterController;
 
     private void Awake()
     {
         gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        animationDriver = GetComponent<MonsterWalkAnimationDriver>();
+        monsterController = GetComponent<BasicMonsterController>();
 
         if (playerTarget == null)
         {
@@ -39,8 +44,33 @@ public class EntityCapture : MonoBehaviour
         if (distance <= captureDistance)
         {
             Debug.Log("Le joueur a ete capture par le monster.");
-            gameManager.TriggerLoss();
             enabled = false;
+            StartCoroutine(HandleCaptureSequence());
+        }
+    }
+
+    private IEnumerator HandleCaptureSequence()
+    {
+        if (monsterController != null)
+        {
+            monsterController.enabled = false;
+        }
+
+        float delay = 0f;
+        if (animationDriver != null)
+        {
+            animationDriver.PlayCaptureAttack();
+            delay = animationDriver.GetRecommendedAttackLeadTime();
+        }
+
+        if (delay > 0f)
+        {
+            yield return new WaitForSeconds(delay);
+        }
+
+        if (gameManager != null)
+        {
+            gameManager.TriggerLoss(PrototypeGameManager.LossReason.Captured);
         }
     }
 }
