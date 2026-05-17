@@ -1,0 +1,11 @@
+Model Information:
+* title:	Old Paper
+* source:	https://sketchfab.com/3d-models/old-paper-0a7cf9d5bf7742b3a711d39eed36332f
+* author:	tukuru_kunn (https://sketchfab.com/tukuru_kunn)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Old Paper" (https://sketchfab.com/3d-models/old-paper-0a7cf9d5bf7742b3a711d39eed36332f) by tukuru_kunn (https://sketchfab.com/tukuru_kunn) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

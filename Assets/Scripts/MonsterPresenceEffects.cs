@@ -85,7 +85,9 @@ public class MonsterPresenceEffects : MonoBehaviour
         int validCount = 0;
         for (int i = 0; i < allLights.Length; i++)
         {
-            if (allLights[i] != null && allLights[i].type != LightType.Directional)
+            if (allLights[i] != null 
+                && allLights[i].type != LightType.Directional
+                && !allLights[i].CompareTag("PuzzleLight")) // ← ignorer les lampes puzzle
             {
                 validCount++;
             }
@@ -98,7 +100,9 @@ public class MonsterPresenceEffects : MonoBehaviour
         int writeIndex = 0;
         for (int i = 0; i < allLights.Length; i++)
         {
-            if (allLights[i] == null || allLights[i].type == LightType.Directional)
+            if (allLights[i] == null 
+                || allLights[i].type == LightType.Directional
+                || allLights[i].CompareTag("PuzzleLight")) // ← ignorer les lampes puzzle
             {
                 continue;
             }
