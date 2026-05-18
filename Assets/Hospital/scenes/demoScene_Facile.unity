@@ -17031,8 +17031,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0025291764, y: 0.003981442, z: 0.0011877909}
-  m_Center: {x: -0.0018461173, y: 0.0040166564, z: 0.0039950064}
+  m_Size: {x: 0.0025291764, y: 0.003981442, z: 0.0019117394}
+  m_Center: {x: -0.0018461174, y: 0.0040166564, z: 0.0036330312}
 --- !u!4 &217802608 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
@@ -22653,7 +22653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.295
+      value: 1.18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -22845,15 +22845,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 773a1011690b83944b6332c0be69e625, type: 2}
     - target: {fileID: 3316992658331686828, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.47899914
+      value: -0.2269821
       objectReference: {fileID: 0}
     - target: {fileID: 3316992658331686828, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.429
+      value: 0.1009886
       objectReference: {fileID: 0}
     - target: {fileID: 3316992658331686828, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.043999672
+      value: -0.04015163
       objectReference: {fileID: 0}
     - target: {fileID: 3316992658331686828, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22921,15 +22921,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666261585234168772, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.47899914
+      value: -0.2269821
       objectReference: {fileID: 0}
     - target: {fileID: 5666261585234168772, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.429
+      value: 0.06329632
       objectReference: {fileID: 0}
     - target: {fileID: 5666261585234168772, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.043999672
+      value: 0.007038087
       objectReference: {fileID: 0}
     - target: {fileID: 6426448320267853852, guid: 801546f7b1339534bac554bd67b31e1b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -117544,16 +117544,6 @@ MonoBehaviour:
   successMessage: Task valid
   failureMessage: Sequence invalide
   statusDuration: 2
-  showInstructionText: 1
-  instructionText: Press the symbols in the correct order.
-  instructionLocalPosition: {x: 0, y: 1.6, z: 0}
-  instructionLocalEulerAngles: {x: 0, y: 90, z: 0}
-  instructionFontSize: 48
-  instructionCharacterSize: 0.05
-  instructionColor: {r: 1, g: 1, b: 1, a: 1}
-  instructionMaxVisibleDistance: 12
-  instructionVisibleFromFrontOnly: 1
-  instructionMinFacingDot: 0.05
   onSolved:
     m_PersistentCalls:
       m_Calls: []
@@ -138382,8 +138372,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0022011017, y: 0.003981442, z: 0.0013424814}
-  m_Center: {x: -0.00168208, y: -0.0035302013, z: 0.003917661}
+  m_Size: {x: 0.0022011017, y: 0.003981442, z: 0.002019844}
+  m_Center: {x: -0.00168208, y: -0.0035302013, z: 0.0035789774}
 --- !u!4 &1678952443 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400010, guid: ca08762d202c14f67b400549c6a715e8, type: 3}
@@ -153731,16 +153721,6 @@ MonoBehaviour:
   successMessage: Task valid
   failureMessage: Sequence invalide
   statusDuration: 2
-  showInstructionText: 1
-  instructionText: Press the symbols in the correct order.
-  instructionLocalPosition: {x: 0, y: 1.6, z: 0}
-  instructionLocalEulerAngles: {x: 0, y: 90, z: 0}
-  instructionFontSize: 48
-  instructionCharacterSize: 0.05
-  instructionColor: {r: 1, g: 1, b: 1, a: 1}
-  instructionMaxVisibleDistance: 12
-  instructionVisibleFromFrontOnly: 1
-  instructionMinFacingDot: 0.05
   onSolved:
     m_PersistentCalls:
       m_Calls: []
