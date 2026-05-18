@@ -24,9 +24,8 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
     private bool isSolved;
     private int selectedDial;
     private bool isZooming;
-    private bool isReturning; // camera qui revient
+    private bool isReturning;
 
-    // Sauvegarde LOCAL (par rapport au parent = Player)
     private Vector3 originalCamLocalPos;
     private Quaternion originalCamLocalRot;
 
@@ -53,7 +52,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
             isZooming = true;
             isReturning = false;
 
-            // Sauvegarder position LOCALE par rapport au Player
+            // Sauvegarder position locale
             originalCamLocalPos = playerCamera.localPosition;
             originalCamLocalRot = playerCamera.localRotation;
 
@@ -65,9 +64,9 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
 
     private void Update()
     {
+        // Retour smooth seulement après unlock (code correct)
         if (isSolved && isReturning)
         {
-            // Camera revient à sa position originale
             playerCamera.localPosition = Vector3.Lerp(
                 playerCamera.localPosition,
                 originalCamLocalPos,
@@ -80,20 +79,19 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
                 Time.deltaTime * zoomSpeed
             );
 
-            // Stop quand assez proche
             if (Vector3.Distance(playerCamera.localPosition, originalCamLocalPos) < 0.01f)
             {
                 playerCamera.localPosition = originalCamLocalPos;
                 playerCamera.localRotation = originalCamLocalRot;
                 isReturning = false;
-                Debug.Log("Camera revenue à sa position!");
+                Debug.Log("Camera revenue!");
             }
             return;
         }
 
         if (!isInFocus || isSolved) return;
 
-        // Zoom vers le padlock
+        // Zoom vers padlock
         if (isZooming)
         {
             playerCamera.position = Vector3.Lerp(
@@ -109,44 +107,39 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
             );
         }
 
+        // Escape = retour instantané
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ExitFocus();
             return;
         }
 
-        // Q = roulette gauche, E = roulette droite
+        // Q/E pour changer de roulette
         if (Input.GetKeyDown(KeyCode.Q))
         {
             selectedDial = Mathf.Max(0, selectedDial - 1);
-            Debug.Log("Roulette sélectionnée: " + selectedDial);
+            Debug.Log("Roulette: " + selectedDial);
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
             selectedDial = Mathf.Min(dials.Length - 1, selectedDial + 1);
-            Debug.Log("Roulette sélectionnée: " + selectedDial);
+            Debug.Log("Roulette: " + selectedDial);
         }
 
-        // Molette souris
+        // Molette pour tourner
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (scroll > 0f)
+        if (scroll > 0f && HasSelectedDial())
         {
-            if (HasSelectedDial())
-            {
-                dials[selectedDial].ScrollUp();
-                PlayDialSound();
-            }
+            dials[selectedDial].ScrollUp();
+            PlayDialSound();
         }
 
-        if (scroll < 0f)
+        if (scroll < 0f && HasSelectedDial())
         {
-            if (HasSelectedDial())
-            {
-                dials[selectedDial].ScrollDown();
-                PlayDialSound();
-            }
+            dials[selectedDial].ScrollDown();
+            PlayDialSound();
         }
     }
 
@@ -154,7 +147,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
     {
         if (dials == null || dials.Length < correctCode.Length)
         {
-            Debug.LogWarning("PadlockPuzzle: dials are not configured.");
+            Debug.LogWarning("PadlockPuzzle: dials not configured.");
             return;
         }
 
@@ -167,7 +160,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
             expected += correctCode[i];
         }
 
-        Debug.Log("PadlockPuzzle: checking " + entered + " expected " + expected);
+        Debug.Log("Checking: " + entered + " expected: " + expected);
 
         for (int i = 0; i < correctCode.Length; i++)
         {
@@ -183,7 +176,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         isSolved = true;
         isInFocus = false;
         isZooming = false;
-        isReturning = true; // ← camera revient!
+        isReturning = true; // retour smooth
 
         if (audioSource != null && unlockSound != null)
             audioSource.PlayOneShot(unlockSound);
@@ -197,7 +190,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         Invoke(nameof(HidePadlock), 1f);
         Invoke(nameof(OpenChest), 1.2f);
 
-        Debug.Log("PadlockPuzzle: unlocked! Camera returning...");
+        Debug.Log("Unlocked! Camera returning smoothly...");
     }
 
     private void HidePadlock()
@@ -211,18 +204,22 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         if (chest != null)
             chest.OpenFromPadlock();
         else
-            Debug.LogWarning("PadlockPuzzle: chest is missing.");
+            Debug.LogWarning("PadlockPuzzle: chest missing.");
     }
 
     private void ExitFocus()
     {
         isInFocus = false;
         isZooming = false;
-        isReturning = true; // ← camera revient aussi quand Escape
+        isReturning = false;
+
+        // Retour INSTANTANÉ quand Escape
+        playerCamera.localPosition = originalCamLocalPos;
+        playerCamera.localRotation = originalCamLocalRot;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        Debug.Log("PadlockPuzzle: focus disabled. Camera returning...");
+        Debug.Log("Exit focus - camera reset instantané.");
     }
 
     private void ResolveReferences()
