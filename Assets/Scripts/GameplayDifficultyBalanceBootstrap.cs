@@ -42,7 +42,7 @@ public static class GameplayDifficultyBalanceBootstrap
         BasicFirstPersonController player = Object.FindFirstObjectByType<BasicFirstPersonController>();
         if (player != null)
         {
-            player.ApplyMovementTuning(profile.playerWalkSpeed, profile.playerSprintSpeed, profile.playerOverclockSpeed);
+            player.ApplyMovementTuning(profile.playerWalkSpeed, profile.playerSprintSpeed);
         }
 
         BasicMonsterController monster = Object.FindFirstObjectByType<BasicMonsterController>();
@@ -60,6 +60,7 @@ public static class GameplayDifficultyBalanceBootstrap
         PrototypeGameManager gameManager = Object.FindFirstObjectByType<PrototypeGameManager>();
         if (gameManager != null)
         {
+            gameManager.ApplyRequiredTasks(profile.requiredTasks);
             gameManager.ApplyLevelTimeLimit(profile.levelDuration);
         }
     }
@@ -72,12 +73,12 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 5.4f,
                     playerSprintSpeed: 8.8f,
-                    playerOverclockSpeed: 13.2f,
                     monsterChaseSpeed: 4.6f,
                     monsterSlowedSpeed: 2.4f,
                     monsterPatrolSpeed: 1.45f,
                     monsterInvestigationSpeed: 2.1f,
                     hardPatrolSpeedMultiplier: 1f,
+                    requiredTasks: 5,
                     levelDuration: 780f
                 );
                 return true;
@@ -87,12 +88,12 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 5f,
                     playerSprintSpeed: 8f,
-                    playerOverclockSpeed: 12f,
                     monsterChaseSpeed: 5.4f,
                     monsterSlowedSpeed: 2.8f,
                     monsterPatrolSpeed: 1.65f,
                     monsterInvestigationSpeed: 2.45f,
                     hardPatrolSpeedMultiplier: 1.02f,
+                    requiredTasks: 7,
                     levelDuration: 600f
                 );
                 return true;
@@ -101,12 +102,12 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 4.8f,
                     playerSprintSpeed: 7.5f,
-                    playerOverclockSpeed: 11.5f,
                     monsterChaseSpeed: 6.9f,
                     monsterSlowedSpeed: 3.3f,
                     monsterPatrolSpeed: 1.9f,
                     monsterInvestigationSpeed: 3f,
                     hardPatrolSpeedMultiplier: 1.1f,
+                    requiredTasks: 9,
                     levelDuration: 480f
                 );
                 return true;
@@ -121,33 +122,33 @@ public static class GameplayDifficultyBalanceBootstrap
     {
         public readonly float playerWalkSpeed;
         public readonly float playerSprintSpeed;
-        public readonly float playerOverclockSpeed;
         public readonly float monsterChaseSpeed;
         public readonly float monsterSlowedSpeed;
         public readonly float monsterPatrolSpeed;
         public readonly float monsterInvestigationSpeed;
         public readonly float hardPatrolSpeedMultiplier;
+        public readonly int requiredTasks;
         public readonly float levelDuration;
 
         public BalanceProfile(
             float playerWalkSpeed,
             float playerSprintSpeed,
-            float playerOverclockSpeed,
             float monsterChaseSpeed,
             float monsterSlowedSpeed,
             float monsterPatrolSpeed,
             float monsterInvestigationSpeed,
             float hardPatrolSpeedMultiplier,
+            int requiredTasks,
             float levelDuration)
         {
             this.playerWalkSpeed = playerWalkSpeed;
             this.playerSprintSpeed = playerSprintSpeed;
-            this.playerOverclockSpeed = playerOverclockSpeed;
             this.monsterChaseSpeed = monsterChaseSpeed;
             this.monsterSlowedSpeed = monsterSlowedSpeed;
             this.monsterPatrolSpeed = monsterPatrolSpeed;
             this.monsterInvestigationSpeed = monsterInvestigationSpeed;
             this.hardPatrolSpeedMultiplier = hardPatrolSpeedMultiplier;
+            this.requiredTasks = requiredTasks;
             this.levelDuration = levelDuration;
         }
     }

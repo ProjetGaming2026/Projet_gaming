@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CipherPuzzle : MonoBehaviour
 {
@@ -71,13 +72,18 @@ public class CipherPuzzle : MonoBehaviour
     {
         CorrectPhrase = possiblePhrases[Random.Range(0, possiblePhrases.Length)];
         ShiftValue = Random.Range(2, 6);
+        bool useClearWriting = IsEasyScene() || wallShowsClearPhrase;
 
         string encryptedPhrase = Encrypt(CorrectPhrase, ShiftValue);
-        ExpectedAnswer = wallShowsClearPhrase ? encryptedPhrase : CorrectPhrase;
+        ExpectedAnswer = useClearWriting ? CorrectPhrase : encryptedPhrase;
 
         if (cipherWall != null)
         {
-            cipherWall.DisplayText(wallShowsClearPhrase ? CorrectPhrase : encryptedPhrase, ShiftValue);
+            cipherWall.DisplayText(
+                useClearWriting ? CorrectPhrase : encryptedPhrase,
+                ShiftValue,
+                showShift: !useClearWriting
+            );
         }
         else
         {
@@ -182,5 +188,10 @@ public class CipherPuzzle : MonoBehaviour
         }
 
         return null;
+    }
+
+    private static bool IsEasyScene()
+    {
+        return SceneManager.GetActiveScene().name == "demoScene_Facile";
     }
 }

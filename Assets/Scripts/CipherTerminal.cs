@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CipherTerminal : MonoBehaviour, IInteractable
 {
@@ -27,11 +28,14 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     private string currentInput = "";
     private bool isOpen;
     private bool isSolved;
+    private BasicMonsterController monsterController;
 
     private void Awake()
     {
+        ApplyEasySceneMessaging();
         EnsureScreenText();
         EnsurePuzzleReference();
+        monsterController = FindFirstObjectByType<BasicMonsterController>();
 
         if (GetComponent<Collider>() == null)
         {
@@ -143,8 +147,22 @@ public class CipherTerminal : MonoBehaviour, IInteractable
                 screenText.text = wrongMessage;
             }
 
+            AlertMonsterOnFailure();
             currentInput = "";
             Invoke(nameof(ResetDisplay), 1.5f);
+        }
+    }
+
+    private void AlertMonsterOnFailure()
+    {
+        if (monsterController == null)
+        {
+            monsterController = FindFirstObjectByType<BasicMonsterController>();
+        }
+
+        if (monsterController != null)
+        {
+            monsterController.AlertToPlayerPosition(8f, true);
         }
     }
 
@@ -329,5 +347,17 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     private bool IsSceneInstance()
     {
         return gameObject.scene.IsValid() && gameObject.scene.isLoaded;
+    }
+
+    private void ApplyEasySceneMessaging()
+    {
+        if (SceneManager.GetActiveScene().name != "demoScene_Facile")
+        {
+            return;
+        }
+
+        promptMessage = "ENTRE LA PHRASE AFFICHEE :";
+        successMessage = "PHRASE VALIDEE";
+        wrongMessage = "PHRASE INCORRECTE.\nREESSAYE.";
     }
 }

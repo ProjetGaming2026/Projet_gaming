@@ -48,6 +48,7 @@ public class PadlockController : MonoBehaviour, IInteractable
     private TMP_Text codeText;
     private Transform displayRoot;
     private Transform displayPlate;
+    private BasicMonsterController monsterController;
 
     public bool IsActive()
     {
@@ -64,6 +65,7 @@ public class PadlockController : MonoBehaviour, IInteractable
 
         SetupScreen();
         SetupButtons();
+        monsterController = FindFirstObjectByType<BasicMonsterController>();
     }
 
     public void Interact()
@@ -394,6 +396,7 @@ public class PadlockController : MonoBehaviour, IInteractable
 
         UpdateScreenText("ACCESS DENIED", "INVALID CODE", deniedTextColor);
         PlaySound(errorSound);
+        AlertMonsterOnFailure();
         Debug.Log("PadlockController: wrong code entered.");
 
         if (resetRoutine != null)
@@ -402,6 +405,19 @@ public class PadlockController : MonoBehaviour, IInteractable
         }
 
         resetRoutine = StartCoroutine(ResetAfterWrongCode());
+    }
+
+    private void AlertMonsterOnFailure()
+    {
+        if (monsterController == null)
+        {
+            monsterController = FindFirstObjectByType<BasicMonsterController>();
+        }
+
+        if (monsterController != null)
+        {
+            monsterController.AlertToPlayerPosition(8f, true);
+        }
     }
 
     private IEnumerator ResetAfterWrongCode()

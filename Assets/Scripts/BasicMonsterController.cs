@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
@@ -10,8 +12,28 @@ public class BasicMonsterController : MonoBehaviour
         Roaming,
         Investigating,
         Hunting,
-        GuardingExit
+        GuardingExit,
+        Capturing
     }
+
+    private enum IntelligenceLevel
+    {
+        Easy,
+        Medium,
+        Hard
+    }
+
+    private static readonly Vector3[] DefaultHospitalRoute =
+    {
+        new Vector3(-7.55f, 1f, 20f),
+        new Vector3(-10f, 1f, 8f),
+        new Vector3(-5.1f, 1f, 0f),
+        new Vector3(18.2f, 1f, -5f),
+        new Vector3(18.15f, 1f, -15f),
+        new Vector3(20f, 1f, -2f),
+        new Vector3(23.7f, 1f, 0.9f),
+        new Vector3(18.2f, 1f, 5.1f)
+    };
 
     [Header("References")]
     [SerializeField] private Transform playerTarget;
@@ -30,6 +52,8 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float huntPersistenceDuration = 0.65f;
     [SerializeField] private LayerMask sightBlockerMask = Physics.DefaultRaycastLayers;
     [SerializeField] private string hardSceneName = "demoScene_Difficile";
+    [SerializeField] private string mediumSceneName = "demoScene_Moyen";
+    [SerializeField] private string easySceneName = "demoScene_Facile";
     [SerializeField] private float taskProgressDetectionBonus = 4f;
     [SerializeField] private float taskProgressHearingBonus = 5f;
     [SerializeField] private float taskProgressMemoryBonus = 3f;
@@ -79,9 +103,22 @@ public class BasicMonsterController : MonoBehaviour
     [Header("Recovery")]
     [SerializeField] private float stuckRetargetDelay = 0.95f;
     [SerializeField] private float corridorRecoveryDistance = 1.9f;
+    [SerializeField] private float stuckEscapeProbeDistance = 3.2f;
+    [SerializeField] private float stuckEscapeDuration = 1.25f;
+
+    [Header("Intelligence")]
+    [SerializeField] private float routeWaypointReachDistance = 1.05f;
+    [SerializeField] private float routeLineOfSightHeight = 0.9f;
+    [SerializeField] private float routeLineOfSightRadius = 0.28f;
+    [SerializeField] private float easyBlockedRouteDistance = 5f;
+    [SerializeField] private float stairStepOffset = 0.45f;
+    [SerializeField] private float stairSlopeLimit = 52f;
 
     [Header("Visual Motion")]
     [SerializeField] private Transform animatedVisual;
+    [SerializeField] private bool alignVisualToGround = true;
+    [SerializeField] private float visualGroundOffset = 0f;
+    [SerializeField] private float visualGroundingSmoothing = 24f;
     [SerializeField] private float walkBobAmplitude = 0.02f;
     [SerializeField] private float runBobAmplitude = 0.075f;
     [SerializeField] private float walkBobFrequency = 2.3f;
@@ -90,12 +127,28 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float maxPitchAngle = 4f;
     [SerializeField] private float visualSmoothing = 10f;
 
+    [Header("Capture")]
+    [SerializeField] private float captureTurnSpeedMultiplier = 1.8f;
+
+    [Header("Mixamo Animation")]
+    [SerializeField] private string mixamoResourcesFolder = "Mixamo";
+    [SerializeField] private string idleClipResourceName = "Idle_with_skin";
+    [SerializeField] private string walkClipResourceName = "Zombie Walk";
+    [SerializeField] private string runClipResourceName = "Zombie Running";
+    [SerializeField] private string turnClipResourceName = "Zombie Turn";
+    [SerializeField] private string attackClipResourceName = "Zombie Attack";
+    [SerializeField] private float animationBlendDuration = 0.18f;
+    [SerializeField] private float animationMoveThreshold = 0.12f;
+    [SerializeField] private float turnAnimationAngularSpeedThreshold = 80f;
+    [SerializeField] private float turnAnimationMaxMoveSpeed = 0.2f;
+
     public bool IsSlowed => slowTimer > 0f;
     public float SlowTimeRemaining => Mathf.Max(0f, slowTimer);
     public bool IsHuntingState => currentState == MonsterState.Hunting;
     public bool IsInvestigatingState => currentState == MonsterState.Investigating;
     public bool IsGuardingExitState => currentState == MonsterState.GuardingExit;
     public bool IsRoamingState => currentState == MonsterState.Roaming;
+    public bool IsCaptureInProgress => captureTarget != null;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -114,6 +167,7 @@ public class BasicMonsterController : MonoBehaviour
     private int searchPointIndex;
     private int lastAvoidanceSign = 1;
     private int guardOrbitSign = 1;
+    private IntelligenceLevel intelligenceLevel = IntelligenceLevel.Medium;
     private MonsterState currentState = MonsterState.Dormant;
     private Vector3 visualBaseLocalPosition;
     private Quaternion visualBaseLocalRotation;
@@ -124,14 +178,36 @@ public class BasicMonsterController : MonoBehaviour
     private Vector3 roamTarget;
     private Vector3 guardTarget;
     private Vector3 avoidanceLockDirection;
-    private bool hardIntelligenceEnabled;
+    private Vector3 stuckEscapeTarget;
+    private Transform captureTarget;
+    private Vector3[] navigationRoute;
     private bool hasInvestigationTarget;
     private bool hasRoamTarget;
+    private float stuckEscapeTimer;
+    private Animator visualAnimator;
+    private PlayableGraph animationGraph;
+    private AnimationMixerPlayable animationMixer;
+    private AnimationClipPlayable activeAnimationPlayable;
+    private AnimationClipPlayable transitionAnimationPlayable;
+    private AnimationClip activeAnimationClip;
+    private AnimationClip transitionAnimationClip;
+    private bool activeAnimationLoops;
+    private bool transitionAnimationLoops;
+    private bool animationSystemReady;
+    private bool animationTransitionActive;
+    private float animationBlendTimer;
+    private float lastYaw;
+    private AnimationClip idleAnimationClip;
+    private AnimationClip walkAnimationClip;
+    private AnimationClip runAnimationClip;
+    private AnimationClip turnAnimationClip;
+    private AnimationClip attackAnimationClip;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        hardIntelligenceEnabled = SceneManager.GetActiveScene().name == hardSceneName;
+        ConfigureIntelligenceForScene(SceneManager.GetActiveScene().name);
+        ConfigureControllerForStairs();
 
         if (playerTarget == null)
         {
@@ -161,6 +237,7 @@ public class BasicMonsterController : MonoBehaviour
         {
             visualBaseLocalPosition = animatedVisual.localPosition;
             visualBaseLocalRotation = animatedVisual.localRotation;
+            AlignAnimatedVisualToGround(true);
         }
 
         if (patrolPoints == null || patrolPoints.Length == 0)
@@ -168,18 +245,37 @@ public class BasicMonsterController : MonoBehaviour
             patrolPoints = FindPatrolPointsInScene();
         }
 
+        navigationRoute = BuildNavigationRoute();
+
         lastPosition = transform.position;
+        lastYaw = transform.eulerAngles.y;
+        TryInitializeMixamoAnimations();
     }
 
     private void Update()
     {
         TickTimers();
         HandleMovement();
+        UpdateMixamoAnimation();
     }
 
     private void LateUpdate()
     {
+        if (animationSystemReady)
+        {
+            AlignAnimatedVisualToGround(false);
+            return;
+        }
+
         UpdateVisualMotion();
+    }
+
+    private void OnDestroy()
+    {
+        if (animationGraph.IsValid())
+        {
+            animationGraph.Destroy();
+        }
     }
 
     public void RevealPlayerPosition(float duration)
@@ -192,6 +288,52 @@ public class BasicMonsterController : MonoBehaviour
     {
         slowTimer = Mathf.Max(slowTimer, duration);
         Debug.Log("L'Entite est ralentie pendant " + duration + " secondes.");
+    }
+
+    public void AlertToPlayerPosition(float duration, bool immediateChase)
+    {
+        if (playerTarget == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerTarget = player.transform;
+            }
+        }
+
+        if (playerTarget == null)
+        {
+            return;
+        }
+
+        float effectiveDuration = Mathf.Max(duration, forcedSearchDuration);
+        RememberPlayerPosition(playerTarget.position, effectiveDuration);
+        investigationTarget = playerTarget.position;
+        hasInvestigationTarget = true;
+        forcedRevealTimer = Mathf.Max(forcedRevealTimer, effectiveDuration);
+        huntPersistenceTimer = Mathf.Max(huntPersistenceTimer, immediateChase ? effectiveDuration : huntPersistenceDuration);
+        searchRetargetTimer = 0f;
+        roamPauseTimer = 0f;
+        patrolWaitTimer = 0f;
+        stuckTimer = 0f;
+        stuckEscapeTimer = 0f;
+        Debug.Log("L'Entite connait la position du joueur apres un echec de tache.");
+    }
+
+    public void BeginCapture(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        captureTarget = target;
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = Mathf.Min(verticalVelocity, 0f);
+        roamPauseTimer = 0f;
+        patrolWaitTimer = 0f;
+        searchRetargetTimer = 0f;
+        forcedRevealTimer = 0f;
     }
 
     public void ApplyMovementTuning(
@@ -209,14 +351,47 @@ public class BasicMonsterController : MonoBehaviour
         hardPatrolSpeedMultiplier = Mathf.Max(0.5f, newHardPatrolSpeedMultiplier);
     }
 
-    public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
+    private void ConfigureIntelligenceForScene(string sceneName)
     {
-        if (!hardIntelligenceEnabled)
+        if (sceneName == easySceneName)
+        {
+            intelligenceLevel = IntelligenceLevel.Easy;
+        }
+        else if (sceneName == hardSceneName)
+        {
+            intelligenceLevel = IntelligenceLevel.Hard;
+        }
+        else if (sceneName == mediumSceneName || sceneName == "demoScene")
+        {
+            intelligenceLevel = IntelligenceLevel.Medium;
+        }
+        else
+        {
+            intelligenceLevel = IntelligenceLevel.Medium;
+        }
+    }
+
+    private void ConfigureControllerForStairs()
+    {
+        if (controller == null)
         {
             return;
         }
 
-        float effectiveDuration = highPriority ? Mathf.Max(duration, forcedSearchDuration) : duration;
+        controller.stepOffset = Mathf.Max(controller.stepOffset, stairStepOffset);
+        controller.slopeLimit = Mathf.Max(controller.slopeLimit, stairSlopeLimit);
+    }
+
+    public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
+    {
+        if (!CanInvestigateMemory())
+        {
+            return;
+        }
+
+        float effectiveDuration = highPriority && intelligenceLevel == IntelligenceLevel.Hard
+            ? Mathf.Max(duration, forcedSearchDuration)
+            : duration;
         RememberPlayerPosition(worldPosition, effectiveDuration);
         investigationTarget = worldPosition;
         hasInvestigationTarget = true;
@@ -271,6 +446,11 @@ public class BasicMonsterController : MonoBehaviour
         {
             avoidanceLockTimer -= Time.deltaTime;
         }
+
+        if (stuckEscapeTimer > 0f)
+        {
+            stuckEscapeTimer -= Time.deltaTime;
+        }
     }
 
     private void HandleMovement()
@@ -285,6 +465,13 @@ public class BasicMonsterController : MonoBehaviour
             gameManager != null &&
             (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Chase ||
              gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Escape);
+
+        if (captureTarget != null)
+        {
+            currentState = MonsterState.Capturing;
+            HandleCaptureMovement();
+            return;
+        }
 
         MonsterState nextState = ResolveState(canMove, out Vector3 rawVelocity, out bool isChasing, out bool isInvestigating);
         currentState = nextState;
@@ -315,6 +502,30 @@ public class BasicMonsterController : MonoBehaviour
         UpdateNavigationRecovery(targetVelocity, isChasing, isInvestigating);
     }
 
+    private void HandleCaptureMovement()
+    {
+        horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, Vector3.zero, deceleration * Time.deltaTime);
+        verticalVelocity += gravity * Time.deltaTime;
+
+        Vector3 toTarget = captureTarget.position - transform.position;
+        toTarget.y = 0f;
+
+        if (toTarget.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(toTarget.normalized);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                GetCurrentTurnSpeed() * captureTurnSpeedMultiplier * Time.deltaTime
+            );
+        }
+
+        Vector3 finalVelocity = Vector3.zero;
+        finalVelocity.y = verticalVelocity;
+        controller.Move(finalVelocity * Time.deltaTime);
+        lastPosition = transform.position;
+    }
+
     private MonsterState ResolveState(bool canMove, out Vector3 velocity, out bool isChasing, out bool isInvestigating)
     {
         velocity = Vector3.zero;
@@ -329,10 +540,9 @@ public class BasicMonsterController : MonoBehaviour
         Vector3 offsetToPlayer = playerTarget.position - transform.position;
         Vector3 flatOffset = new Vector3(offsetToPlayer.x, 0f, offsetToPlayer.z);
         float distanceToPlayer = flatOffset.magnitude;
-        bool playerHidden = playerController != null && playerController.IsHiddenActive;
         bool hasForcedReveal = forcedRevealTimer > 0f;
-        bool canSeePlayer = !playerHidden && CanSeePlayer(distanceToPlayer);
-        bool canHearPlayer = hardIntelligenceEnabled && !playerHidden && CanHearPlayer(distanceToPlayer);
+        bool canSeePlayer = CanSeePlayer(distanceToPlayer);
+        bool canHearPlayer = CanUseHearing() && CanHearPlayer(distanceToPlayer);
 
         // Priorite: chasse si le joueur est vu, enquete si un indice recent existe,
         // puis garde de sortie ou errance selon la phase et la difficulte.
@@ -340,7 +550,7 @@ public class BasicMonsterController : MonoBehaviour
         {
             huntPersistenceTimer = huntPersistenceDuration;
             RememberPlayerPosition(
-                hardIntelligenceEnabled ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
+                CanPredictPlayerMovement() ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
                 hasForcedReveal ? forcedSearchDuration : GetCurrentMemoryDuration()
             );
 
@@ -351,7 +561,10 @@ public class BasicMonsterController : MonoBehaviour
 
         if (canHearPlayer)
         {
-            RememberPlayerPosition(GetPredictedPlayerPosition(distanceToPlayer), GetCurrentMemoryDuration() * 0.85f);
+            RememberPlayerPosition(
+                CanPredictPlayerMovement() ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
+                GetCurrentMemoryDuration() * 0.85f
+            );
             velocity = GetInvestigationVelocity();
             isInvestigating = velocity.sqrMagnitude > 0.001f;
             return MonsterState.Investigating;
@@ -364,14 +577,14 @@ public class BasicMonsterController : MonoBehaviour
             return MonsterState.Hunting;
         }
 
-        if (hardIntelligenceEnabled && memoryTimer > 0f)
+        if (CanInvestigateMemory() && memoryTimer > 0f)
         {
             velocity = GetInvestigationVelocity();
             isInvestigating = velocity.sqrMagnitude > 0.001f;
             return MonsterState.Investigating;
         }
 
-        if (hardIntelligenceEnabled && TryGetExitGuardVelocity(out velocity))
+        if (CanGuardExit() && TryGetExitGuardVelocity(out velocity))
         {
             isInvestigating = true;
             return MonsterState.GuardingExit;
@@ -388,9 +601,8 @@ public class BasicMonsterController : MonoBehaviour
             return Vector3.zero;
         }
 
-        Vector3 chaseTarget = hardIntelligenceEnabled ? lastKnownPlayerPosition : playerTarget.position;
-        Vector3 chaseDirection = GetFlatDirectionTo(chaseTarget);
-        return chaseDirection * GetCurrentChaseSpeed();
+        Vector3 chaseTarget = CanInvestigateMemory() ? lastKnownPlayerPosition : playerTarget.position;
+        return GetIntelligentVelocityTo(chaseTarget, GetCurrentChaseSpeed(), true, stoppingDistance);
     }
 
     private Vector3 GetInvestigationVelocity()
@@ -406,7 +618,7 @@ public class BasicMonsterController : MonoBehaviour
         if (distanceToAnchor > patrolStoppingDistance + 0.35f)
         {
             hasInvestigationTarget = false;
-            return GetFlatDirectionTo(anchor) * GetCurrentInvestigationSpeed();
+            return GetIntelligentVelocityTo(anchor, GetCurrentInvestigationSpeed(), false, patrolStoppingDistance);
         }
 
         if (!hasInvestigationTarget ||
@@ -421,7 +633,7 @@ public class BasicMonsterController : MonoBehaviour
             return Vector3.zero;
         }
 
-        return GetFlatDirectionTo(investigationTarget) * GetCurrentInvestigationSpeed();
+        return GetIntelligentVelocityTo(investigationTarget, GetCurrentInvestigationSpeed(), false, patrolStoppingDistance);
     }
 
     private Vector3 GetRoamingVelocity()
@@ -449,26 +661,24 @@ public class BasicMonsterController : MonoBehaviour
             return Vector3.zero;
         }
 
-        return GetFlatDirectionTo(roamTarget) * GetCurrentRoamSpeed();
+        return GetIntelligentVelocityTo(roamTarget, GetCurrentRoamSpeed(), false, patrolStoppingDistance);
     }
 
     private void PickNextRoamTarget()
     {
-        Transform patrolAnchor = GetCurrentPatrolAnchor();
-        Vector3 anchorPosition = patrolAnchor != null ? patrolAnchor.position : transform.position;
+        bool hasAnchor = TryGetCurrentPatrolAnchorPosition(out Vector3 anchorPosition);
         Vector3 planarPosition = GetPlanarPosition(transform.position);
         Vector3 planarAnchor = GetPlanarPosition(anchorPosition);
 
-        if (patrolAnchor != null && Vector3.Distance(planarPosition, planarAnchor) <= patrolStoppingDistance)
+        if (hasAnchor && Vector3.Distance(planarPosition, planarAnchor) <= patrolStoppingDistance)
         {
             patrolWaitTimer += Time.deltaTime;
-            float effectiveWaitTime = hardIntelligenceEnabled ? patrolWaitTime * 0.35f : patrolWaitTime;
+            float effectiveWaitTime = GetEffectivePatrolWaitTime();
             if (patrolWaitTimer >= effectiveWaitTime)
             {
                 patrolWaitTimer = 0f;
                 AdvancePatrolPoint();
-                patrolAnchor = GetCurrentPatrolAnchor();
-                anchorPosition = patrolAnchor != null ? patrolAnchor.position : transform.position;
+                hasAnchor = TryGetCurrentPatrolAnchorPosition(out anchorPosition);
                 planarAnchor = GetPlanarPosition(anchorPosition);
             }
         }
@@ -477,12 +687,32 @@ public class BasicMonsterController : MonoBehaviour
             patrolWaitTimer = 0f;
         }
 
-        bool wanderNearAnchor = hardIntelligenceEnabled && Random.value < localWanderChance;
+        bool wanderNearAnchor = CanWanderAroundPatrolAnchors() && Random.value < GetEffectiveWanderChance();
         Vector2 jitter2D = wanderNearAnchor ? Random.insideUnitCircle * roamRadius : Vector2.zero;
         roamTarget = new Vector3(planarAnchor.x + jitter2D.x, transform.position.y, planarAnchor.z + jitter2D.y);
         hasRoamTarget = true;
-        roamRetargetTimer = roamRetargetInterval * Random.Range(0.85f, 1.2f);
+        roamRetargetTimer = GetEffectiveRoamRetargetInterval() * Random.Range(0.85f, 1.2f);
         searchRetargetTimer = 0f;
+    }
+
+    private bool TryGetCurrentPatrolAnchorPosition(out Vector3 anchorPosition)
+    {
+        Transform patrolAnchor = GetCurrentPatrolAnchor();
+        if (patrolAnchor != null)
+        {
+            anchorPosition = patrolAnchor.position;
+            return true;
+        }
+
+        if (navigationRoute != null && navigationRoute.Length > 0)
+        {
+            patrolPointIndex = Mathf.Clamp(patrolPointIndex, 0, navigationRoute.Length - 1);
+            anchorPosition = navigationRoute[patrolPointIndex];
+            return true;
+        }
+
+        anchorPosition = transform.position;
+        return false;
     }
 
     private Transform GetCurrentPatrolAnchor()
@@ -536,11 +766,11 @@ public class BasicMonsterController : MonoBehaviour
 
         if (distanceToExit > exitGuardDistance * 1.1f)
         {
-            velocity = GetFlatDirectionTo(exitPosition) * GetCurrentInvestigationSpeed();
+            velocity = GetIntelligentVelocityTo(exitPosition, GetCurrentInvestigationSpeed(), false, patrolStoppingDistance);
             return velocity.sqrMagnitude > 0.001f;
         }
 
-        velocity = GetFlatDirectionTo(guardTarget) * GetCurrentInvestigationSpeed();
+        velocity = GetIntelligentVelocityTo(guardTarget, GetCurrentInvestigationSpeed(), false, patrolStoppingDistance);
         return velocity.sqrMagnitude > 0.001f;
     }
 
@@ -655,11 +885,12 @@ public class BasicMonsterController : MonoBehaviour
     {
         float totalClearance = 0f;
         int validSamples = 0;
+        float scaleY = Mathf.Max(Mathf.Abs(transform.lossyScale.y), 0.0001f);
 
         float[] heightOffsets =
         {
-            Mathf.Max(controller.height * 0.32f, 0.65f),
-            Mathf.Max(controller.height * 0.62f, 1.15f)
+            Mathf.Max(controller.height * scaleY * 0.32f, 0.65f),
+            Mathf.Max(controller.height * scaleY * 0.62f, 1.15f)
         };
 
         for (int i = 0; i < heightOffsets.Length; i++)
@@ -753,6 +984,13 @@ public class BasicMonsterController : MonoBehaviour
             fallbackDirection = transform.right * lastAvoidanceSign;
         }
 
+        if (TryFindOpenEscapePoint(transform.position + targetVelocity.normalized * stuckEscapeProbeDistance, out Vector3 escapePoint))
+        {
+            stuckEscapeTarget = escapePoint;
+            stuckEscapeTimer = stuckEscapeDuration;
+            fallbackDirection = GetFlatDirectionTo(escapePoint);
+        }
+
         lastAvoidanceSign *= -1;
         avoidanceLockDirection = fallbackDirection.normalized;
         avoidanceLockTimer = avoidanceLockDuration * 1.5f;
@@ -766,7 +1004,7 @@ public class BasicMonsterController : MonoBehaviour
             return;
         }
 
-        if (isInvestigating && hardIntelligenceEnabled)
+        if (isInvestigating && CanInvestigateMemory())
         {
             PickNextSearchTarget();
             return;
@@ -824,14 +1062,311 @@ public class BasicMonsterController : MonoBehaviour
         return points;
     }
 
+    private Vector3[] BuildNavigationRoute()
+    {
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            Vector3[] route = new Vector3[patrolPoints.Length];
+            for (int i = 0; i < patrolPoints.Length; i++)
+            {
+                route[i] = patrolPoints[i] != null ? patrolPoints[i].position : transform.position;
+            }
+
+            return route;
+        }
+
+        Vector3[] fallbackRoute = new Vector3[DefaultHospitalRoute.Length];
+        for (int i = 0; i < DefaultHospitalRoute.Length; i++)
+        {
+            fallbackRoute[i] = DefaultHospitalRoute[i];
+        }
+
+        return fallbackRoute;
+    }
+
+    private Vector3 GetIntelligentVelocityTo(Vector3 worldTarget, float speed, bool urgent, float targetStoppingDistance)
+    {
+        float distanceToTarget = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(worldTarget));
+        if (distanceToTarget <= targetStoppingDistance)
+        {
+            return Vector3.zero;
+        }
+
+        if (stuckEscapeTimer > 0f &&
+            Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(stuckEscapeTarget)) > routeWaypointReachDistance * 0.65f)
+        {
+            return GetFlatDirectionTo(stuckEscapeTarget) * speed;
+        }
+
+        if (!ShouldRouteAroundMap(worldTarget, urgent, distanceToTarget) ||
+            !TryGetRouteWaypoint(worldTarget, out Vector3 waypoint))
+        {
+            if (!HasClearNavigationLine(worldTarget) && TryFindOpenEscapePoint(worldTarget, out Vector3 escapePoint))
+            {
+                return GetFlatDirectionTo(escapePoint) * speed;
+            }
+
+            return GetFlatDirectionTo(worldTarget) * speed;
+        }
+
+        return GetFlatDirectionTo(waypoint) * speed;
+    }
+
+    private bool ShouldRouteAroundMap(Vector3 worldTarget, bool urgent, float distanceToTarget)
+    {
+        if (navigationRoute == null || navigationRoute.Length == 0)
+        {
+            return false;
+        }
+
+        if (HasClearNavigationLine(worldTarget))
+        {
+            return false;
+        }
+
+        if (intelligenceLevel == IntelligenceLevel.Easy)
+        {
+            return urgent || distanceToTarget >= easyBlockedRouteDistance;
+        }
+
+        return true;
+    }
+
+    private bool TryGetRouteWaypoint(Vector3 worldTarget, out Vector3 waypoint)
+    {
+        waypoint = worldTarget;
+
+        if (navigationRoute == null || navigationRoute.Length == 0)
+        {
+            return false;
+        }
+
+        int currentIndex = FindNearestRouteIndex(transform.position);
+        int targetIndex = FindNearestRouteIndex(worldTarget);
+        if (currentIndex < 0 || targetIndex < 0)
+        {
+            return false;
+        }
+
+        float distanceToCurrent = Vector3.Distance(
+            GetPlanarPosition(transform.position),
+            GetPlanarPosition(navigationRoute[currentIndex])
+        );
+
+        if (distanceToCurrent > routeWaypointReachDistance && !HasClearNavigationLine(navigationRoute[currentIndex]))
+        {
+            return TryGetVisibleRouteWaypoint(worldTarget, out waypoint);
+        }
+
+        if (currentIndex == targetIndex)
+        {
+            waypoint = distanceToCurrent > routeWaypointReachDistance
+                ? navigationRoute[currentIndex]
+                : worldTarget;
+            return true;
+        }
+
+        int direction = GetShortestRouteDirection(currentIndex, targetIndex);
+        int waypointIndex = distanceToCurrent <= routeWaypointReachDistance
+            ? WrapRouteIndex(currentIndex + direction)
+            : currentIndex;
+
+        waypoint = navigationRoute[waypointIndex];
+        return true;
+    }
+
+    private bool TryGetVisibleRouteWaypoint(Vector3 worldTarget, out Vector3 waypoint)
+    {
+        waypoint = worldTarget;
+
+        if (navigationRoute == null || navigationRoute.Length == 0)
+        {
+            return false;
+        }
+
+        float bestScore = float.PositiveInfinity;
+        bool foundWaypoint = false;
+        Vector3 planarSelf = GetPlanarPosition(transform.position);
+        Vector3 planarTarget = GetPlanarPosition(worldTarget);
+
+        for (int i = 0; i < navigationRoute.Length; i++)
+        {
+            Vector3 candidate = navigationRoute[i];
+            if (!HasClearNavigationLine(candidate))
+            {
+                continue;
+            }
+
+            float distanceFromSelf = Vector3.Distance(planarSelf, GetPlanarPosition(candidate));
+            float distanceToTarget = Vector3.Distance(GetPlanarPosition(candidate), planarTarget);
+            float targetWeight = intelligenceLevel == IntelligenceLevel.Hard ? 1f : 1.25f;
+            float score = distanceFromSelf * 0.35f + distanceToTarget * targetWeight;
+
+            if (score < bestScore)
+            {
+                bestScore = score;
+                waypoint = candidate;
+                foundWaypoint = true;
+            }
+        }
+
+        return foundWaypoint;
+    }
+
+    private bool TryFindOpenEscapePoint(Vector3 worldTarget, out Vector3 escapePoint)
+    {
+        escapePoint = transform.position;
+        Vector3 desiredDirection = GetFlatDirectionTo(worldTarget);
+        if (desiredDirection.sqrMagnitude <= 0.001f)
+        {
+            desiredDirection = transform.forward;
+        }
+
+        Vector3 origin = GetNavigationProbeOrigin();
+        float[] probeAngles =
+        {
+            0f,
+            -35f,
+            35f,
+            -70f,
+            70f,
+            -110f,
+            110f,
+            160f,
+            -160f
+        };
+
+        float bestScore = float.NegativeInfinity;
+        bool foundPoint = false;
+
+        for (int i = 0; i < probeAngles.Length; i++)
+        {
+            Vector3 direction = Quaternion.Euler(0f, probeAngles[i], 0f) * desiredDirection;
+            float clearance = GetDirectionClearance(origin, direction);
+            if (clearance < obstacleCheckRadius * 2.2f)
+            {
+                continue;
+            }
+
+            Vector3 candidate = transform.position + direction.normalized * Mathf.Min(clearance, stuckEscapeProbeDistance);
+            float targetProgress = Vector3.Dot(desiredDirection.normalized, direction.normalized);
+            float score = clearance + targetProgress * (intelligenceLevel == IntelligenceLevel.Hard ? 1.2f : 0.65f);
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                escapePoint = candidate;
+                foundPoint = true;
+            }
+        }
+
+        return foundPoint;
+    }
+
+    private int FindNearestRouteIndex(Vector3 worldPosition)
+    {
+        if (navigationRoute == null || navigationRoute.Length == 0)
+        {
+            return -1;
+        }
+
+        int bestIndex = 0;
+        float bestScore = float.PositiveInfinity;
+        Vector3 planarPosition = GetPlanarPosition(worldPosition);
+
+        for (int i = 0; i < navigationRoute.Length; i++)
+        {
+            Vector3 planarRoutePoint = GetPlanarPosition(navigationRoute[i]);
+            float score = Vector3.SqrMagnitude(planarRoutePoint - planarPosition);
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    private int GetShortestRouteDirection(int currentIndex, int targetIndex)
+    {
+        int routeLength = navigationRoute != null ? navigationRoute.Length : 0;
+        if (routeLength <= 1)
+        {
+            return 1;
+        }
+
+        int forwardSteps = (targetIndex - currentIndex + routeLength) % routeLength;
+        int backwardSteps = (currentIndex - targetIndex + routeLength) % routeLength;
+        return forwardSteps <= backwardSteps ? 1 : -1;
+    }
+
+    private int WrapRouteIndex(int index)
+    {
+        int routeLength = navigationRoute != null ? navigationRoute.Length : 0;
+        if (routeLength <= 0)
+        {
+            return 0;
+        }
+
+        return (index % routeLength + routeLength) % routeLength;
+    }
+
+    private bool HasClearNavigationLine(Vector3 worldTarget)
+    {
+        Vector3 start = transform.position + Vector3.up * GetNavigationLineCheckHeight();
+        Vector3 end = worldTarget + Vector3.up * GetNavigationLineCheckHeight();
+        Vector3 offset = end - start;
+        float distance = offset.magnitude;
+
+        if (distance <= 0.05f)
+        {
+            return true;
+        }
+
+        Vector3 direction = offset / distance;
+        if (!Physics.SphereCast(
+            start,
+            routeLineOfSightRadius,
+            direction,
+            out RaycastHit hit,
+            distance,
+            obstacleMask,
+            QueryTriggerInteraction.Ignore))
+        {
+            return true;
+        }
+
+        return !IsBlockingHit(hit);
+    }
+
+    private float GetNavigationLineCheckHeight()
+    {
+        if (controller == null)
+        {
+            return routeLineOfSightHeight;
+        }
+
+        float scaleY = Mathf.Max(Mathf.Abs(transform.lossyScale.y), 0.0001f);
+        return Mathf.Max(routeLineOfSightHeight, controller.height * scaleY * 0.45f);
+    }
+
     private void AdvancePatrolPoint()
     {
-        if (patrolPoints == null || patrolPoints.Length == 0)
+        if (patrolPoints != null && patrolPoints.Length > 0)
         {
+            patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
+            patrolWaitTimer = 0f;
+            roamRetargetTimer = 0f;
+            hasRoamTarget = false;
             return;
         }
 
-        patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
+        if (navigationRoute != null && navigationRoute.Length > 0)
+        {
+            patrolPointIndex = (patrolPointIndex + 1) % navigationRoute.Length;
+        }
+
         patrolWaitTimer = 0f;
         roamRetargetTimer = 0f;
         hasRoamTarget = false;
@@ -849,6 +1384,7 @@ public class BasicMonsterController : MonoBehaviour
 
             visualBaseLocalPosition = animatedVisual.localPosition;
             visualBaseLocalRotation = animatedVisual.localRotation;
+            AlignAnimatedVisualToGround(true);
         }
 
         Vector3 planarVelocity = controller.velocity;
@@ -888,6 +1424,441 @@ public class BasicMonsterController : MonoBehaviour
             targetRotation,
             Time.deltaTime * visualSmoothing
         );
+
+        AlignAnimatedVisualToGround(false);
+    }
+
+    private void AlignAnimatedVisualToGround(bool immediate)
+    {
+        if (!alignVisualToGround || animatedVisual == null || !TryGetVisualRendererBounds(out Bounds bounds))
+        {
+            return;
+        }
+
+        float deltaWorldY = GetVisualGroundY() - bounds.min.y;
+        if (Mathf.Abs(deltaWorldY) <= 0.002f)
+        {
+            return;
+        }
+
+        float parentScaleY = 1f;
+        if (animatedVisual.parent != null)
+        {
+            parentScaleY = animatedVisual.parent.lossyScale.y;
+        }
+
+        if (Mathf.Abs(parentScaleY) <= 0.0001f)
+        {
+            parentScaleY = 1f;
+        }
+
+        Vector3 targetBasePosition = visualBaseLocalPosition;
+        targetBasePosition.y += deltaWorldY / parentScaleY;
+
+        visualBaseLocalPosition = immediate
+            ? targetBasePosition
+            : Vector3.Lerp(visualBaseLocalPosition, targetBasePosition, Time.deltaTime * visualGroundingSmoothing);
+
+        if (animationSystemReady || immediate)
+        {
+            animatedVisual.localPosition = visualBaseLocalPosition;
+        }
+    }
+
+    private float GetVisualGroundY()
+    {
+        if (controller == null)
+        {
+            return transform.position.y + visualGroundOffset;
+        }
+
+        float scaleY = Mathf.Abs(transform.lossyScale.y);
+        if (scaleY <= 0.0001f)
+        {
+            scaleY = 1f;
+        }
+
+        return transform.position.y +
+            controller.center.y * scaleY -
+            controller.height * 0.5f * scaleY +
+            visualGroundOffset;
+    }
+
+    private bool TryGetVisualRendererBounds(out Bounds bounds)
+    {
+        if (animatedVisual == null)
+        {
+            bounds = default;
+            return false;
+        }
+
+        Renderer[] renderers = animatedVisual.GetComponentsInChildren<Renderer>(true);
+        bool hasBounds = false;
+        bounds = default;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled || renderer.transform.name == "EntityPrisonVisual")
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private void TryInitializeMixamoAnimations()
+    {
+        if (animatedVisual == null)
+        {
+            animatedVisual = FindAnimatedVisual();
+        }
+
+        if (animatedVisual == null)
+        {
+            return;
+        }
+
+        visualAnimator = animatedVisual.GetComponent<Animator>();
+        if (visualAnimator == null)
+        {
+            visualAnimator = animatedVisual.GetComponentInChildren<Animator>(true);
+        }
+
+        if (visualAnimator == null || visualAnimator.avatar == null || !visualAnimator.avatar.isValid)
+        {
+            Debug.LogWarning("Animator humanoide introuvable sur le visuel du zombie. Verifie que le FBX du monstre est importe en Humanoid.");
+            return;
+        }
+
+        visualAnimator.enabled = true;
+        visualAnimator.applyRootMotion = false;
+        visualAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
+        idleAnimationClip = LoadMixamoClip(idleClipResourceName, "idle");
+        walkAnimationClip = LoadMixamoClip(walkClipResourceName, "walk", "walking");
+        runAnimationClip = LoadMixamoClip(runClipResourceName, "run", "running");
+        turnAnimationClip = LoadMixamoClip(turnClipResourceName, "turn");
+        attackAnimationClip = LoadMixamoClip(attackClipResourceName, "attack");
+
+        if (idleAnimationClip == null || walkAnimationClip == null || runAnimationClip == null)
+        {
+            Debug.LogWarning("Clips Mixamo incomplets. Verifie Assets/Resources/Mixamo et les noms de clips dans BasicMonsterController.");
+            return;
+        }
+
+        animationGraph = PlayableGraph.Create(name + "_MixamoGraph");
+        animationGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        animationMixer = AnimationMixerPlayable.Create(animationGraph, 2, true);
+
+        AnimationPlayableOutput output = AnimationPlayableOutput.Create(animationGraph, "ZombieAnimation", visualAnimator);
+        output.SetSourcePlayable(animationMixer);
+
+        animationGraph.Play();
+        animationSystemReady = true;
+        PlayClipImmediate(idleAnimationClip, true);
+    }
+
+    private AnimationClip LoadMixamoClip(string clipResourceName, params string[] fallbackKeywords)
+    {
+        AnimationClip[] clips = string.IsNullOrWhiteSpace(clipResourceName)
+            ? System.Array.Empty<AnimationClip>()
+            : Resources.LoadAll<AnimationClip>(mixamoResourcesFolder + "/" + clipResourceName);
+
+        AnimationClip clipFromExactResource = FindUsableClip(clips);
+        if (clipFromExactResource != null)
+        {
+            return clipFromExactResource;
+        }
+
+        clips = Resources.LoadAll<AnimationClip>(mixamoResourcesFolder);
+        for (int i = 0; i < clips.Length; i++)
+        {
+            AnimationClip clip = clips[i];
+            if (!IsUsableAnimationClip(clip))
+            {
+                continue;
+            }
+
+            if (NameMatches(clip.name, clipResourceName) || NameMatches(clip.name, fallbackKeywords))
+            {
+                return clip;
+            }
+        }
+
+        return null;
+    }
+
+    private AnimationClip FindUsableClip(AnimationClip[] clips)
+    {
+        if (clips == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < clips.Length; i++)
+        {
+            AnimationClip clip = clips[i];
+            if (IsUsableAnimationClip(clip))
+            {
+                return clip;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsUsableAnimationClip(AnimationClip clip)
+    {
+        return clip != null &&
+            !clip.name.StartsWith("__preview__", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool NameMatches(string clipName, params string[] expectedNames)
+    {
+        if (string.IsNullOrWhiteSpace(clipName) || expectedNames == null)
+        {
+            return false;
+        }
+
+        string normalizedClipName = NormalizeAnimationName(clipName);
+        for (int i = 0; i < expectedNames.Length; i++)
+        {
+            string expectedName = expectedNames[i];
+            if (string.IsNullOrWhiteSpace(expectedName))
+            {
+                continue;
+            }
+
+            string normalizedExpectedName = NormalizeAnimationName(expectedName);
+            if (normalizedClipName == normalizedExpectedName ||
+                normalizedClipName.Contains(normalizedExpectedName))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private string NormalizeAnimationName(string value)
+    {
+        return value
+            .Replace("_", string.Empty)
+            .Replace("-", string.Empty)
+            .Replace(" ", string.Empty)
+            .ToLowerInvariant();
+    }
+
+    private void UpdateMixamoAnimation()
+    {
+        if (!animationSystemReady)
+        {
+            return;
+        }
+
+        AnimationClip desiredClip = GetDesiredAnimationClip(out bool shouldLoop);
+        if (desiredClip != null)
+        {
+            CrossFadeToClip(desiredClip, shouldLoop);
+        }
+
+        UpdateAnimationPlayback(activeAnimationPlayable, activeAnimationClip, activeAnimationLoops);
+        if (animationTransitionActive)
+        {
+            UpdateAnimationPlayback(transitionAnimationPlayable, transitionAnimationClip, transitionAnimationLoops);
+            animationBlendTimer += Time.deltaTime;
+
+            float blend01 = animationBlendDuration <= 0f
+                ? 1f
+                : Mathf.Clamp01(animationBlendTimer / animationBlendDuration);
+            animationMixer.SetInputWeight(0, 1f - blend01);
+            animationMixer.SetInputWeight(1, blend01);
+
+            if (blend01 >= 1f)
+            {
+                CompleteAnimationTransition();
+            }
+        }
+
+        lastYaw = transform.eulerAngles.y;
+    }
+
+    private AnimationClip GetDesiredAnimationClip(out bool shouldLoop)
+    {
+        shouldLoop = true;
+
+        Vector3 planarVelocity = controller != null ? controller.velocity : Vector3.zero;
+        planarVelocity.y = 0f;
+        float planarSpeed = planarVelocity.magnitude;
+        float yawSpeed = Mathf.Abs(Mathf.DeltaAngle(lastYaw, transform.eulerAngles.y)) / Mathf.Max(Time.deltaTime, 0.0001f);
+
+        if (captureTarget != null && attackAnimationClip != null)
+        {
+            shouldLoop = false;
+            return attackAnimationClip;
+        }
+
+        if (gameManager != null && gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Incubation)
+        {
+            return idleAnimationClip;
+        }
+
+        if (planarSpeed <= turnAnimationMaxMoveSpeed &&
+            yawSpeed >= turnAnimationAngularSpeedThreshold &&
+            turnAnimationClip != null &&
+            currentState != MonsterState.Dormant)
+        {
+            return turnAnimationClip;
+        }
+
+        if (currentState == MonsterState.Hunting && planarSpeed > animationMoveThreshold)
+        {
+            return runAnimationClip;
+        }
+
+        if (planarSpeed > animationMoveThreshold)
+        {
+            return walkAnimationClip;
+        }
+
+        return idleAnimationClip;
+    }
+
+    private void PlayClipImmediate(AnimationClip clip, bool loops)
+    {
+        if (clip == null)
+        {
+            return;
+        }
+
+        if (activeAnimationPlayable.IsValid())
+        {
+            animationMixer.DisconnectInput(0);
+            activeAnimationPlayable.Destroy();
+        }
+
+        activeAnimationPlayable = CreatePlayableForClip(clip);
+        activeAnimationClip = clip;
+        activeAnimationLoops = loops;
+        animationMixer.ConnectInput(0, activeAnimationPlayable, 0);
+        animationMixer.SetInputWeight(0, 1f);
+
+        if (transitionAnimationPlayable.IsValid())
+        {
+            animationMixer.DisconnectInput(1);
+            transitionAnimationPlayable.Destroy();
+            transitionAnimationPlayable = default;
+        }
+
+        animationMixer.SetInputWeight(1, 0f);
+        animationTransitionActive = false;
+        animationBlendTimer = 0f;
+    }
+
+    private void CrossFadeToClip(AnimationClip clip, bool loops)
+    {
+        if (clip == null)
+        {
+            return;
+        }
+
+        if (activeAnimationClip == clip && !animationTransitionActive)
+        {
+            return;
+        }
+
+        if (!activeAnimationPlayable.IsValid())
+        {
+            PlayClipImmediate(clip, loops);
+            return;
+        }
+
+        if (animationTransitionActive && transitionAnimationClip == clip)
+        {
+            return;
+        }
+
+        if (transitionAnimationPlayable.IsValid())
+        {
+            animationMixer.DisconnectInput(1);
+            transitionAnimationPlayable.Destroy();
+        }
+
+        transitionAnimationPlayable = CreatePlayableForClip(clip);
+        transitionAnimationClip = clip;
+        transitionAnimationLoops = loops;
+        animationMixer.ConnectInput(1, transitionAnimationPlayable, 0);
+        animationMixer.SetInputWeight(0, 1f);
+        animationMixer.SetInputWeight(1, 0f);
+        animationBlendTimer = 0f;
+        animationTransitionActive = true;
+    }
+
+    private AnimationClipPlayable CreatePlayableForClip(AnimationClip clip)
+    {
+        AnimationClipPlayable playable = AnimationClipPlayable.Create(animationGraph, clip);
+        playable.SetTime(0d);
+        playable.SetSpeed(1d);
+        playable.SetApplyFootIK(true);
+        return playable;
+    }
+
+    private void UpdateAnimationPlayback(AnimationClipPlayable playable, AnimationClip clip, bool loops)
+    {
+        if (!playable.IsValid() || clip == null || !loops || clip.length <= 0f)
+        {
+            return;
+        }
+
+        double clipTime = playable.GetTime();
+        if (clipTime < clip.length)
+        {
+            return;
+        }
+
+        playable.SetTime(clipTime % clip.length);
+    }
+
+    private void CompleteAnimationTransition()
+    {
+        if (!transitionAnimationPlayable.IsValid())
+        {
+            animationTransitionActive = false;
+            return;
+        }
+
+        if (activeAnimationPlayable.IsValid())
+        {
+            animationMixer.DisconnectInput(0);
+            activeAnimationPlayable.Destroy();
+        }
+
+        activeAnimationPlayable = transitionAnimationPlayable;
+        activeAnimationClip = transitionAnimationClip;
+        activeAnimationLoops = transitionAnimationLoops;
+
+        animationMixer.DisconnectInput(1);
+        animationMixer.ConnectInput(0, activeAnimationPlayable, 0);
+        animationMixer.SetInputWeight(0, 1f);
+        animationMixer.SetInputWeight(1, 0f);
+
+        transitionAnimationPlayable = default;
+        transitionAnimationClip = null;
+        transitionAnimationLoops = false;
+        animationTransitionActive = false;
+        animationBlendTimer = 0f;
     }
 
     private bool CanSeePlayer(float distanceToPlayer)
@@ -933,7 +1904,7 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         float playerSpeed = playerController.CurrentPlanarSpeed;
-        bool isLoud = playerController.IsSprinting || playerController.IsOverclockActive;
+        bool isLoud = playerController.IsSprinting;
 
         if (!isLoud && playerSpeed < movementNoiseThreshold)
         {
@@ -1005,7 +1976,8 @@ public class BasicMonsterController : MonoBehaviour
 
     private Vector3 GetNavigationProbeOrigin()
     {
-        return transform.position + Vector3.up * Mathf.Max(controller.height * 0.45f, 0.95f);
+        float scaleY = Mathf.Max(Mathf.Abs(transform.lossyScale.y), 0.0001f);
+        return transform.position + Vector3.up * Mathf.Max(controller.height * scaleY * 0.45f, 0.95f);
     }
 
     private float GetCurrentChaseSpeed()
@@ -1016,69 +1988,152 @@ public class BasicMonsterController : MonoBehaviour
 
     private float GetCurrentInvestigationSpeed()
     {
-        float roamSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
+        float roamSpeed = patrolMoveSpeed * GetPatrolSpeedMultiplier();
         float targetSpeed = Mathf.Max(investigationMoveSpeed, roamSpeed);
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, targetSpeed) : targetSpeed;
     }
 
     private float GetCurrentRoamSpeed()
     {
-        float roamSpeed = patrolMoveSpeed * (hardIntelligenceEnabled ? hardPatrolSpeedMultiplier : 1f);
+        float roamSpeed = patrolMoveSpeed * GetPatrolSpeedMultiplier();
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, roamSpeed) : roamSpeed;
     }
 
     private float GetCurrentTurnSpeed()
     {
-        return turnSpeed * (hardIntelligenceEnabled ? hardTurnSpeedMultiplier : 1f);
+        return turnSpeed * GetTurnSpeedMultiplier();
     }
 
     private float GetCurrentDetectionRadius()
     {
-        if (!hardIntelligenceEnabled)
-        {
-            return detectionRadius;
-        }
-
-        return detectionRadius + GetTaskProgress01() * taskProgressDetectionBonus;
+        return detectionRadius + GetTaskProgress01() * taskProgressDetectionBonus * GetIntelligenceBonusScale();
     }
 
     private float GetCurrentHearingRadius()
     {
-        if (!hardIntelligenceEnabled)
-        {
-            return hearingRadius;
-        }
-
-        return hearingRadius + GetTaskProgress01() * taskProgressHearingBonus;
+        return hearingRadius + GetTaskProgress01() * taskProgressHearingBonus * GetIntelligenceBonusScale();
     }
 
     private float GetCurrentSprintHearingRadius()
     {
-        if (!hardIntelligenceEnabled)
-        {
-            return sprintHearingRadius;
-        }
-
-        return sprintHearingRadius + GetTaskProgress01() * taskProgressHearingBonus;
+        return sprintHearingRadius + GetTaskProgress01() * taskProgressHearingBonus * GetIntelligenceBonusScale();
     }
 
     private float GetCurrentMemoryDuration()
     {
-        if (!hardIntelligenceEnabled)
-        {
-            return memoryDuration;
-        }
-
-        return memoryDuration + GetTaskProgress01() * taskProgressMemoryBonus;
+        return memoryDuration + GetTaskProgress01() * taskProgressMemoryBonus * GetIntelligenceBonusScale();
     }
 
     private float GetTaskProgress01()
     {
-        if (!hardIntelligenceEnabled || gameManager == null || gameManager.RequiredTasks <= 0)
+        if (!CanInvestigateMemory() || gameManager == null || gameManager.RequiredTasks <= 0)
         {
             return 0f;
         }
 
         return Mathf.Clamp01((float)gameManager.CompletedTasks / gameManager.RequiredTasks);
+    }
+
+    private bool CanUseHearing()
+    {
+        return intelligenceLevel != IntelligenceLevel.Easy;
+    }
+
+    private bool CanInvestigateMemory()
+    {
+        return intelligenceLevel != IntelligenceLevel.Easy;
+    }
+
+    private bool CanGuardExit()
+    {
+        return intelligenceLevel == IntelligenceLevel.Hard;
+    }
+
+    private bool CanPredictPlayerMovement()
+    {
+        return intelligenceLevel == IntelligenceLevel.Hard;
+    }
+
+    private bool CanWanderAroundPatrolAnchors()
+    {
+        return intelligenceLevel != IntelligenceLevel.Easy;
+    }
+
+    private float GetIntelligenceBonusScale()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return 1f;
+            case IntelligenceLevel.Medium:
+                return 0.45f;
+            default:
+                return 0f;
+        }
+    }
+
+    private float GetPatrolSpeedMultiplier()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return hardPatrolSpeedMultiplier;
+            case IntelligenceLevel.Medium:
+                return Mathf.Lerp(1f, hardPatrolSpeedMultiplier, 0.35f);
+            default:
+                return 0.92f;
+        }
+    }
+
+    private float GetTurnSpeedMultiplier()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return hardTurnSpeedMultiplier;
+            case IntelligenceLevel.Medium:
+                return Mathf.Lerp(1f, hardTurnSpeedMultiplier, 0.55f);
+            default:
+                return 0.9f;
+        }
+    }
+
+    private float GetEffectivePatrolWaitTime()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return patrolWaitTime * 0.3f;
+            case IntelligenceLevel.Medium:
+                return patrolWaitTime * 0.65f;
+            default:
+                return patrolWaitTime;
+        }
+    }
+
+    private float GetEffectiveWanderChance()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return Mathf.Clamp01(localWanderChance + 0.25f);
+            case IntelligenceLevel.Medium:
+                return localWanderChance;
+            default:
+                return 0f;
+        }
+    }
+
+    private float GetEffectiveRoamRetargetInterval()
+    {
+        switch (intelligenceLevel)
+        {
+            case IntelligenceLevel.Hard:
+                return roamRetargetInterval * 0.75f;
+            case IntelligenceLevel.Medium:
+                return roamRetargetInterval;
+            default:
+                return roamRetargetInterval * 1.25f;
+        }
     }
 }

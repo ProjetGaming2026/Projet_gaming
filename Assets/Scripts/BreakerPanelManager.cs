@@ -6,6 +6,9 @@ public class BreakerPanelManager : MonoBehaviour
 {
     public static BreakerPanelManager Instance;
 
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     [Header("Les 4 switches dans l'ordre du puzzle")]
     public BreakerSwitch redSwitch;
     public BreakerSwitch blueSwitch;
@@ -21,12 +24,12 @@ public class BreakerPanelManager : MonoBehaviour
     [Header("Monstre")]
     public GameObject monster;
 
-    [Header("Lumières de la pièce")]
+    [Header("Lumieres de la piece")]
     public Light roomLight;
     public Light roomLight1;
 
     private BreakerSwitch[] correctOrder;
-    private BreakerSwitch.SwitchDirection[] correctDirections =
+    private readonly BreakerSwitch.SwitchDirection[] correctDirections =
     {
         BreakerSwitch.SwitchDirection.UP,
         BreakerSwitch.SwitchDirection.DOWN,
@@ -34,30 +37,63 @@ public class BreakerPanelManager : MonoBehaviour
         BreakerSwitch.SwitchDirection.DOWN
     };
 
-    private List<int> moveOrder = new List<int>();
-    private bool puzzleSolved = false;
-    private bool isResetting  = false;
-    private bool isChecking   = false;
+    private readonly List<int> moveOrder = new List<int>();
+    private bool puzzleSolved;
+    private bool isResetting;
+    private bool isChecking;
     private BreakerSwitch[] allSwitches;
+    private PrototypeGameManager gameManager;
 
-    void Awake() => Instance = this;
-
-    void Start()
+    private void Awake()
     {
-        allSwitches  = new BreakerSwitch[] { redSwitch, blueSwitch, yellowSwitch, blackSwitch };
-        correctOrder = new BreakerSwitch[] { redSwitch, blueSwitch, yellowSwitch, blackSwitch };
+        Instance = this;
+        gameManager = FindFirstObjectByType<PrototypeGameManager>();
+    }
 
-        if (redSwitch    != null) { redSwitch.switchIndex    = 0; redSwitch.switchName    = "Red";    redSwitch.nameColor    = Color.red;    redSwitch.correctDirection    = BreakerSwitch.SwitchDirection.UP;   }
-        if (blueSwitch   != null) { blueSwitch.switchIndex   = 1; blueSwitch.switchName   = "Blue";   blueSwitch.nameColor   = Color.cyan;   blueSwitch.correctDirection   = BreakerSwitch.SwitchDirection.DOWN; }
-        if (yellowSwitch != null) { yellowSwitch.switchIndex  = 2; yellowSwitch.switchName = "Yellow"; yellowSwitch.nameColor = Color.yellow; yellowSwitch.correctDirection  = BreakerSwitch.SwitchDirection.DOWN; }
-        if (blackSwitch  != null) { blackSwitch.switchIndex   = 3; blackSwitch.switchName  = "Black";  blackSwitch.nameColor  = Color.grey;   blackSwitch.correctDirection   = BreakerSwitch.SwitchDirection.DOWN; }
+    private void Start()
+    {
+        allSwitches = new[] { redSwitch, blueSwitch, yellowSwitch, blackSwitch };
+        correctOrder = new[] { redSwitch, blueSwitch, yellowSwitch, blackSwitch };
 
+        if (redSwitch != null)
+        {
+            redSwitch.switchIndex = 0;
+            redSwitch.switchName = "Rouge";
+            redSwitch.nameColor = Color.red;
+            redSwitch.correctDirection = BreakerSwitch.SwitchDirection.UP;
+        }
 
+        if (blueSwitch != null)
+        {
+            blueSwitch.switchIndex = 1;
+            blueSwitch.switchName = "Bleu";
+            blueSwitch.nameColor = Color.cyan;
+            blueSwitch.correctDirection = BreakerSwitch.SwitchDirection.DOWN;
+        }
+
+        if (yellowSwitch != null)
+        {
+            yellowSwitch.switchIndex = 2;
+            yellowSwitch.switchName = "Jaune";
+            yellowSwitch.nameColor = Color.yellow;
+            yellowSwitch.correctDirection = BreakerSwitch.SwitchDirection.DOWN;
+        }
+
+        if (blackSwitch != null)
+        {
+            blackSwitch.switchIndex = 3;
+            blackSwitch.switchName = "Noir";
+            blackSwitch.nameColor = Color.grey;
+            blackSwitch.correctDirection = BreakerSwitch.SwitchDirection.DOWN;
+        }
     }
 
     public void OnSwitchChanged(int switchIndex, BreakerSwitch.SwitchState newState)
     {
-        if (puzzleSolved || isResetting || isChecking) return;
+        if (puzzleSolved || isResetting || isChecking)
+        {
+            return;
+        }
 
         PlaySound(clickSound);
 
@@ -68,13 +104,19 @@ public class BreakerPanelManager : MonoBehaviour
         }
 
         if (!moveOrder.Contains(switchIndex))
+        {
             moveOrder.Add(switchIndex);
+        }
 
         bool allMoved = true;
-        foreach (var sw in allSwitches)
+        foreach (BreakerSwitch breakerSwitch in allSwitches)
         {
-            if (sw == null) continue;
-            if (sw.GetState() == BreakerSwitch.SwitchState.Idle)
+            if (breakerSwitch == null)
+            {
+                continue;
+            }
+
+            if (breakerSwitch.GetState() == BreakerSwitch.SwitchState.Idle)
             {
                 allMoved = false;
                 break;
@@ -88,7 +130,7 @@ public class BreakerPanelManager : MonoBehaviour
         }
     }
 
-    IEnumerator CheckPuzzle()
+    private IEnumerator CheckPuzzle()
     {
         yield return new WaitForSeconds(0.5f);
 
@@ -99,18 +141,19 @@ public class BreakerPanelManager : MonoBehaviour
             if (i >= moveOrder.Count || moveOrder[i] != correctOrder[i].switchIndex)
             {
                 correct = false;
-                Debug.Log($"❌ Mauvais ordre à l'étape {i + 1}");
+                Debug.Log("Mauvais ordre a l'etape " + (i + 1));
                 break;
             }
 
-            var state = allSwitches[moveOrder[i]].GetState();
-            bool dirOk = (state == BreakerSwitch.SwitchState.Up   && correctDirections[i] == BreakerSwitch.SwitchDirection.UP)
-                      || (state == BreakerSwitch.SwitchState.Down  && correctDirections[i] == BreakerSwitch.SwitchDirection.DOWN);
+            BreakerSwitch.SwitchState state = allSwitches[moveOrder[i]].GetState();
+            bool directionMatches =
+                (state == BreakerSwitch.SwitchState.Up && correctDirections[i] == BreakerSwitch.SwitchDirection.UP) ||
+                (state == BreakerSwitch.SwitchState.Down && correctDirections[i] == BreakerSwitch.SwitchDirection.DOWN);
 
-            if (!dirOk)
+            if (!directionMatches)
             {
                 correct = false;
-                Debug.Log($"❌ Mauvaise direction à l'étape {i + 1}");
+                Debug.Log("Mauvaise direction a l'etape " + (i + 1));
                 break;
             }
         }
@@ -118,26 +161,35 @@ public class BreakerPanelManager : MonoBehaviour
         isChecking = false;
 
         if (correct)
+        {
             StartCoroutine(SuccessSequence());
+        }
         else
+        {
             StartCoroutine(FailSequence());
+        }
     }
 
-    IEnumerator FailSequence()
+    private IEnumerator FailSequence()
     {
-        // Ne jamais toucher aux lampes si puzzle résolu
-        if (puzzleSolved) yield break;
+        if (puzzleSolved)
+        {
+            yield break;
+        }
 
         isResetting = true;
         LockAll(true);
         PlaySound(failSound);
 
-        // Pas de flicker sur les lampes en cas d'échec
-
         yield return new WaitForSeconds(0.3f);
 
-        foreach (var sw in allSwitches)
-            if (sw != null) sw.ResetSwitch();
+        foreach (BreakerSwitch breakerSwitch in allSwitches)
+        {
+            if (breakerSwitch != null)
+            {
+                breakerSwitch.ResetSwitch();
+            }
+        }
 
         moveOrder.Clear();
         AlertMonster();
@@ -147,51 +199,74 @@ public class BreakerPanelManager : MonoBehaviour
         isResetting = false;
     }
 
-    IEnumerator SuccessSequence()
+    private IEnumerator SuccessSequence()
     {
         puzzleSolved = true;
         LockAll(true);
         PlaySound(successSound);
 
-        Debug.Log("✅ Puzzle résolu ! Courant rétabli.");
+        if (countAsTask)
+        {
+            if (gameManager == null)
+            {
+                gameManager = FindFirstObjectByType<PrototypeGameManager>();
+            }
 
-        // Attendre que FailSequence finisse son flicker
+            if (gameManager != null)
+            {
+                gameManager.RegisterTaskSuccess();
+            }
+        }
+
+        Debug.Log("Puzzle resolu. Courant retabli.");
+
         yield return new WaitForSeconds(0.5f);
 
-        // Allumer les lampes définitivement
         if (roomLight != null)
         {
-            roomLight.intensity = 3f; 
+            roomLight.intensity = 3f;
         }
+
         if (roomLight1 != null)
         {
             roomLight1.intensity = 3f;
         }
 
-        Debug.Log("💡 Lampes allumées !");
+        Debug.Log("Lampes allumees.");
     }
 
-    void AlertMonster()
+    private void AlertMonster()
     {
-        if (monster == null) { Debug.Log("⚠️ Pas de monstre assigné !"); return; }
-        var agent = monster.GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (agent != null)
+        BasicMonsterController monsterController = monster != null
+            ? monster.GetComponent<BasicMonsterController>()
+            : FindFirstObjectByType<BasicMonsterController>();
+
+        if (monsterController == null)
         {
-            Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-            agent.SetDestination(player.position);
-            Debug.Log("👹 Monstre alerté !");
+            Debug.Log("Pas de controleur de monstre trouve.");
+            return;
+        }
+
+        monsterController.AlertToPlayerPosition(9f, true);
+        Debug.Log("Monstre alerte par l'echec du panneau electrique.");
+    }
+
+    private void LockAll(bool state)
+    {
+        foreach (BreakerSwitch breakerSwitch in allSwitches)
+        {
+            if (breakerSwitch != null)
+            {
+                breakerSwitch.Lock(state);
+            }
         }
     }
 
-    void LockAll(bool state)
-    {
-        foreach (var sw in allSwitches)
-            if (sw != null) sw.Lock(state);
-    }
-
-    void PlaySound(AudioClip clip)
+    private void PlaySound(AudioClip clip)
     {
         if (audioSource != null && clip != null)
+        {
             audioSource.PlayOneShot(clip);
+        }
     }
 }

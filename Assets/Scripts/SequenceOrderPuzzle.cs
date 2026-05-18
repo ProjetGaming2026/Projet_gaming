@@ -29,12 +29,14 @@ public class SequenceOrderPuzzle : MonoBehaviour
 
     private PrototypeGameManager gameManager;
     private PrototypeHUD hud;
+    private BasicMonsterController monsterController;
     private bool isSolved;
 
     private void Awake()
     {
         gameManager = FindFirstObjectByType<PrototypeGameManager>();
         hud = FindFirstObjectByType<PrototypeHUD>();
+        monsterController = FindFirstObjectByType<BasicMonsterController>();
     }
 
     public void RegisterSwitch(SequenceOrderSwitch sequenceSwitch)
@@ -131,7 +133,21 @@ public class SequenceOrderPuzzle : MonoBehaviour
         }
 
         onFailed.Invoke();
+        AlertMonsterOnFailure();
         ResetAttempt();
+    }
+
+    private void AlertMonsterOnFailure()
+    {
+        if (monsterController == null)
+        {
+            monsterController = FindFirstObjectByType<BasicMonsterController>();
+        }
+
+        if (monsterController != null)
+        {
+            monsterController.AlertToPlayerPosition(8f, true);
+        }
     }
 
     private void CompletePuzzle()

@@ -11,13 +11,16 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     [SerializeField] private string exitCode = "1946";
     [SerializeField] private int codeLength = 4;
 
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     [Header("Door Links")]
     [SerializeField] private DoorInteractable[] linkedDoorInteractables;
     [SerializeField] private DoorController[] linkedDoorControllers;
     [SerializeField] private bool autoFindSiblingDoorLeaves = true;
 
     [Header("UI Style")]
-    [SerializeField] private string facilityName = "HOSPITAL EXIT CONTROL";
+    [SerializeField] private string facilityName = "CONTROLE DE SORTIE";
     [SerializeField] private Color panelColor = new Color(0.025f, 0.03f, 0.035f, 0.96f);
     [SerializeField] private Color accentColor = new Color(0.1f, 0.85f, 0.58f, 1f);
     [SerializeField] private Color grantedTextColor = new Color(0.28f, 1f, 0.42f, 1f);
@@ -38,6 +41,9 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private string currentInput = string.Empty;
     private bool isOpen;
     private bool isBusy;
+    private bool codeValidated;
+    private bool taskRegistered;
+    private PrototypeGameManager gameManager;
     private static readonly Dictionary<DoorInteractable, ExitDoorCodeLock> LocksByDoor = new Dictionary<DoorInteractable, ExitDoorCodeLock>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -48,6 +54,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        gameManager = FindFirstObjectByType<PrototypeGameManager>();
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
@@ -81,9 +88,15 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         ResolveDoors();
         RegisterLinkedDoors();
 
-        if (isOpen)
+        if (codeValidated && CanOpenExitNow())
         {
             OpenLinkedDoors();
+            return;
+        }
+
+        if (codeValidated)
+        {
+            PrototypeHUD.ShowFeedback("Code valide. Termine tous les puzzles avant de sortir.", PrototypeHUD.FeedbackTone.Info, 2.8f);
             return;
         }
 
@@ -93,7 +106,17 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
     public string GetInteractPrompt()
     {
-        return isOpen ? "Appuie sur E pour ouvrir la sortie" : "Appuie sur E pour entrer le code de sortie";
+        if (codeValidated && CanOpenExitNow())
+        {
+            return "Appuie sur E pour ouvrir la sortie";
+        }
+
+        if (codeValidated)
+        {
+            return "Code valide. Termine tous les puzzles";
+        }
+
+        return "Appuie sur E pour entrer le code de sortie";
     }
 
     public static bool TryGetLockForDoor(DoorInteractable door, out ExitDoorCodeLock codeLock)
@@ -285,7 +308,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         SetRect(title.rectTransform, new Vector2(32f, -36f), new Vector2(-32f, -94f), new Vector2(0f, 1f), new Vector2(1f, 1f));
         title.alignment = TextAlignmentOptions.Center;
 
-        statusText = CreateText("Status", panelObject.transform, "SECURE EXIT LOCKED", 24f, accentColor);
+        statusText = CreateText("Status", panelObject.transform, "SORTIE VERROUILLEE", 24f, accentColor);
         SetRect(statusText.rectTransform, new Vector2(32f, -112f), new Vector2(-32f, -166f), new Vector2(0f, 1f), new Vector2(1f, 1f));
         statusText.alignment = TextAlignmentOptions.Center;
 
@@ -354,7 +377,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private void ShowPanel()
     {
         currentInput = string.Empty;
-        UpdateDisplay("SECURE EXIT LOCKED", accentColor);
+        UpdateDisplay("SORTIE VERROUILLEE", accentColor);
         canvas.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -438,7 +461,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         currentInput += digit;
         PlaySound(keySound);
-        UpdateDisplay("ENTER EXIT CODE", accentColor);
+        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
     }
 
     private void RemoveLastDigit()
@@ -450,14 +473,14 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         currentInput = currentInput.Substring(0, currentInput.Length - 1);
         PlaySound(keySound);
-        UpdateDisplay("ENTER EXIT CODE", accentColor);
+        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
     }
 
     private void ClearInput()
     {
         currentInput = string.Empty;
         PlaySound(keySound);
-        UpdateDisplay("ENTER EXIT CODE", accentColor);
+        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
     }
 
     private void SubmitCode()
@@ -479,13 +502,42 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private IEnumerator GrantAccess()
     {
         isBusy = true;
-        isOpen = true;
-        SetLinkedDoorInteractionLocked(false);
+        codeValidated = true;
+
+        if (countAsTask && !taskRegistered)
+        {
+            if (gameManager == null)
+            {
+                gameManager = FindFirstObjectByType<PrototypeGameManager>();
+            }
+
+            if (gameManager != null)
+            {
+                gameManager.RegisterTaskSuccess();
+                taskRegistered = true;
+            }
+        }
+
+        if (CanOpenExitNow())
+        {
+            isOpen = true;
+            SetLinkedDoorInteractionLocked(false);
+            PlaySound(grantedSound);
+            UpdateDisplay("ACCES AUTORISE", grantedTextColor);
+            yield return new WaitForSecondsRealtime(0.65f);
+            HidePanel();
+            OpenLinkedDoors();
+            isBusy = false;
+            yield break;
+        }
+
+        isOpen = false;
+        SetLinkedDoorInteractionLocked(true);
         PlaySound(grantedSound);
-        UpdateDisplay("ACCESS GRANTED", grantedTextColor);
+        UpdateDisplay("CODE VALIDE", grantedTextColor);
         yield return new WaitForSecondsRealtime(0.65f);
         HidePanel();
-        OpenLinkedDoors();
+        PrototypeHUD.ShowFeedback("Code valide. Termine tous les puzzles avant de sortir.", PrototypeHUD.FeedbackTone.Info, 3f);
         isBusy = false;
     }
 
@@ -493,15 +545,31 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         isBusy = true;
         PlaySound(deniedSound);
-        UpdateDisplay("ACCESS DENIED", dangerColor);
+        UpdateDisplay("ACCES REFUSE", dangerColor);
+        AlertMonsterOnFailure();
         yield return new WaitForSecondsRealtime(0.9f);
         currentInput = string.Empty;
-        UpdateDisplay("SECURE EXIT LOCKED", accentColor);
+        UpdateDisplay("SORTIE VERROUILLEE", accentColor);
         isBusy = false;
+    }
+
+    private void AlertMonsterOnFailure()
+    {
+        BasicMonsterController monsterController = FindFirstObjectByType<BasicMonsterController>();
+        if (monsterController != null)
+        {
+            monsterController.AlertToPlayerPosition(8f, true);
+        }
     }
 
     private void OpenLinkedDoors()
     {
+        if (!CanOpenExitNow())
+        {
+            PrototypeHUD.ShowFeedback("La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.", PrototypeHUD.FeedbackTone.Warning, 3f);
+            return;
+        }
+
         SetLinkedDoorInteractionLocked(false);
 
         for (int i = 0; i < linkedDoorInteractables.Length; i++)
@@ -519,6 +587,18 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
                 linkedDoorControllers[i].OpenDoor();
             }
         }
+    }
+
+    private bool CanOpenExitNow()
+    {
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        }
+
+        return gameManager != null &&
+            gameManager.CompletedTasks >= gameManager.RequiredTasks &&
+            gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Escape;
     }
 
     private void UpdateDisplay(string status, Color color)
