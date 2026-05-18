@@ -313,6 +313,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad216dfa50f0694fb71c0083c9e2138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSelectBootstrap
+  voiceSource: {fileID: 0}
+  ambienceSource: {fileID: 0}
+  secondAmbienceSource: {fileID: 0}
+  easyVoice: {fileID: 8300000, guid: 3d3e3b7389f3a8d4ab5002b293767098, type: 3}
+  mediumVoice: {fileID: 8300000, guid: 46ea0466bc84f32429dd832091500a71, type: 3}
+  hardVoice: {fileID: 8300000, guid: da0389b791de58649869fb9f53859aa8, type: 3}
+  easyAmbience: {fileID: 8300000, guid: 58ea1e59566f68b4c814b7ae30bd5e4e, type: 3}
+  mediumAmbience: {fileID: 8300000, guid: 58ea1e59566f68b4c814b7ae30bd5e4e, type: 3}
+  hardAmbience: {fileID: 8300000, guid: 9ba3e369e6c32b84aa80d57980f9fd77, type: 3}
+  secondAmbience: {fileID: 8300000, guid: 2038ea8e26a578d48974bc7cf0386fba, type: 3}
+  mainAmbienceVolume: 0.35
+  secondAmbienceVolume: 0.1
+  voiceVolume: 1
+  warningTexture: {fileID: 2800000, guid: 29a45272678e4af4392664421b40371c, type: 3}
+  dotsXPercent: 0.735
+  dotsYPercent: 0.47
+  dotsFontSize: 120
 --- !u!4 &1796408443
 Transform:
   m_ObjectHideFlags: 0

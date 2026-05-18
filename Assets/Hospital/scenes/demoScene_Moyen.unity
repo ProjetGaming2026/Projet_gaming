@@ -1727,6 +1727,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -4756,6 +4757,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -10554,6 +10556,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -14128,6 +14131,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -14360,6 +14364,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -16641,6 +16646,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -18825,6 +18831,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -19313,6 +19320,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -28217,6 +28225,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -28335,6 +28344,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -28649,6 +28659,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -29178,6 +29189,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -32096,6 +32108,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -34386,6 +34399,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -35556,6 +35570,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -35695,6 +35710,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -42165,6 +42181,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -43005,6 +43022,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -43855,6 +43873,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -43994,6 +44013,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -44670,6 +44690,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -46781,6 +46802,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -51095,6 +51117,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -54689,6 +54712,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -54828,6 +54852,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -64083,6 +64108,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -65698,6 +65724,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -67452,6 +67479,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -70601,6 +70629,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -72151,6 +72180,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -72432,6 +72462,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -77471,6 +77502,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -79831,6 +79863,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -83320,6 +83353,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -83438,6 +83472,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -88116,6 +88151,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -88348,6 +88384,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -89301,6 +89338,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -90013,6 +90051,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -90131,6 +90170,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -92251,6 +92291,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -94274,6 +94315,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -94392,6 +94434,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -94764,6 +94807,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -96154,6 +96198,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -97463,6 +97508,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -109291,6 +109337,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -109430,6 +109477,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -110670,6 +110718,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -115100,6 +115149,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -115239,6 +115289,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -117334,6 +117385,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -117452,6 +117504,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -125225,6 +125278,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -125343,6 +125397,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -127588,6 +127643,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -133303,6 +133359,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -135455,6 +135512,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -138376,6 +138434,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -140459,6 +140518,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -140598,6 +140658,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -141937,6 +141998,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -143054,7 +143116,6 @@ Transform:
   - {fileID: 1488337720}
   - {fileID: 1636903840}
   - {fileID: 1189540281}
-  - {fileID: 1996275447}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1768674553
@@ -146002,6 +146063,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -146906,6 +146968,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -148056,6 +148119,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -152243,6 +152307,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -152576,6 +152641,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -154731,6 +154797,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -156055,6 +156122,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -156706,6 +156774,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -158183,6 +158252,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -158864,80 +158934,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1993208721}
   m_Mesh: {fileID: 4300000, guid: ff61d88d00aba442f97c9e87dcb9ce51, type: 3}
---- !u!1001 &1996275446
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1768635474}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 10.289124
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 10.289124
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 10.289124
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.19999993
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-      propertyPath: m_Name
-      value: EntityVisualModel
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
---- !u!4 &1996275447 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
-  m_PrefabInstance: {fileID: 1996275446}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1996320953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -161014,6 +161010,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -163959,6 +163956,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -164098,6 +164096,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -164505,6 +164504,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -164623,6 +164623,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -166023,6 +166024,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -168179,6 +168181,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -169073,6 +169076,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -169913,6 +169917,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
@@ -172973,6 +172978,7 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
+  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
