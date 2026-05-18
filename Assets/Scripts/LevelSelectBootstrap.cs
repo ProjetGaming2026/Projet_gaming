@@ -6,33 +6,23 @@ public class LevelSelectBootstrap : MonoBehaviour
     private const string EasyScene = "demoScene_Facile";
     private const string MediumScene = "demoScene_Moyen";
     private const string HardScene = "demoScene_Difficile";
+    private const string BackScene = "MainMenu";
 
     private static LevelSelectBootstrap instance;
 
     private bool showMenu = true;
     private bool hasChosenLevel;
-    private Vector2 windowSize = new Vector2(860f, 620f);
+    private Vector2 windowSize = new Vector2(860f, 720f);
+
     private GUIStyle titleStyle;
     private GUIStyle subtitleStyle;
     private GUIStyle cardTitleStyle;
     private GUIStyle cardDescriptionStyle;
     private GUIStyle tagStyle;
     private GUIStyle hintStyle;
+    private GUIStyle backButtonStyle;
 
     public static bool IsMenuOpen => instance != null && instance.showMenu;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void Bootstrap()
-    {
-        if (instance != null)
-        {
-            return;
-        }
-
-        GameObject bootstrapObject = new GameObject("LevelSelectBootstrap");
-        instance = bootstrapObject.AddComponent<LevelSelectBootstrap>();
-        DontDestroyOnLoad(bootstrapObject);
-    }
 
     private void Awake()
     {
@@ -43,6 +33,7 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
 
         instance = this;
+        DontDestroyOnLoad(gameObject);
         PauseForMenu();
     }
 
@@ -64,6 +55,17 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (!showMenu)
+        {
+            return;
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
     private void OnGUI()
     {
         if (!showMenu)
@@ -75,7 +77,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         Rect overlay = new Rect(0f, 0f, Screen.width, Screen.height);
         Color previousColor = GUI.color;
-        GUI.color = new Color(0.02f, 0.04f, 0.06f, 0.86f);
+        GUI.color = new Color(0.02f, 0.04f, 0.06f, 0.45f);
         GUI.Box(overlay, GUIContent.none);
         GUI.color = previousColor;
 
@@ -92,44 +94,43 @@ public class LevelSelectBootstrap : MonoBehaviour
         );
 
         GUILayout.BeginArea(windowRect, GUI.skin.window);
-        GUILayout.Space(26f);
+
+        GUILayout.Space(24f);
         GUILayout.Label("Choix Du Niveau", titleStyle);
         GUILayout.Space(12f);
-        GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital. Le curseur reste libre tant que tu n'as pas choisi.", subtitleStyle);
+        GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital.", subtitleStyle);
         GUILayout.Space(24f);
 
         DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScene, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
+
         DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScene, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
+
         DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "8 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScene, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(18f);
+
         GUILayout.Label("Clique sur une carte pour commencer la partie.", hintStyle);
-        GUILayout.Space(8f);
+        GUILayout.Space(18f);
 
-        GUILayout.EndArea();
-    }
-
-    private void Update()
-    {
-        if (!showMenu)
+        if (GUILayout.Button("BACK", backButtonStyle, GUILayout.Height(64f)))
         {
-            return;
+            GoBack();
         }
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        GUILayout.EndArea();
     }
 
     private void DrawLevelCard(string label, string tagline, string description, string sceneName, Color cardColor, float width)
     {
         Rect cardRect = GUILayoutUtility.GetRect(width, 118f, GUILayout.ExpandWidth(true));
         bool hovered = cardRect.Contains(Event.current.mousePosition);
-        Color previousColor = GUI.color;
 
+        Color previousColor = GUI.color;
         GUI.color = hovered
             ? new Color(cardColor.r + 0.08f, cardColor.g + 0.08f, cardColor.b + 0.08f, 0.98f)
             : cardColor;
+
         GUI.Box(cardRect, GUIContent.none);
         GUI.color = previousColor;
 
@@ -155,6 +156,15 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
     }
 
+    private void GoBack()
+    {
+        hasChosenLevel = true;
+        showMenu = false;
+        ResumeAfterMenu();
+
+        SceneManager.LoadScene(BackScene);
+    }
+
     private void PauseForMenu()
     {
         showMenu = true;
@@ -174,62 +184,61 @@ public class LevelSelectBootstrap : MonoBehaviour
     {
         if (titleStyle == null)
         {
-            titleStyle = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 38,
-                fontStyle = FontStyle.Bold
-            };
+            titleStyle = new GUIStyle(GUI.skin.label);
+            titleStyle.alignment = TextAnchor.MiddleCenter;
+            titleStyle.fontSize = 38;
+            titleStyle.fontStyle = FontStyle.Bold;
+            titleStyle.normal.textColor = Color.white;
         }
 
         if (subtitleStyle == null)
         {
-            subtitleStyle = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 19,
-                wordWrap = true
-            };
+            subtitleStyle = new GUIStyle(GUI.skin.label);
+            subtitleStyle.alignment = TextAnchor.MiddleCenter;
+            subtitleStyle.fontSize = 19;
+            subtitleStyle.wordWrap = true;
+            subtitleStyle.normal.textColor = Color.white;
         }
 
         if (cardTitleStyle == null)
         {
-            cardTitleStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = 28,
-                fontStyle = FontStyle.Bold
-            };
+            cardTitleStyle = new GUIStyle(GUI.skin.label);
+            cardTitleStyle.fontSize = 28;
+            cardTitleStyle.fontStyle = FontStyle.Bold;
             cardTitleStyle.normal.textColor = Color.white;
         }
 
         if (cardDescriptionStyle == null)
         {
-            cardDescriptionStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = 18,
-                wordWrap = true
-            };
+            cardDescriptionStyle = new GUIStyle(GUI.skin.label);
+            cardDescriptionStyle.fontSize = 18;
+            cardDescriptionStyle.wordWrap = true;
             cardDescriptionStyle.normal.textColor = new Color(0.93f, 0.95f, 0.98f);
         }
 
         if (tagStyle == null)
         {
-            tagStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = 17,
-                fontStyle = FontStyle.Italic
-            };
+            tagStyle = new GUIStyle(GUI.skin.label);
+            tagStyle.fontSize = 17;
+            tagStyle.fontStyle = FontStyle.Italic;
             tagStyle.normal.textColor = new Color(0.95f, 0.9f, 0.6f);
         }
 
         if (hintStyle == null)
         {
-            hintStyle = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 16
-            };
+            hintStyle = new GUIStyle(GUI.skin.label);
+            hintStyle.alignment = TextAnchor.MiddleCenter;
+            hintStyle.fontSize = 16;
             hintStyle.normal.textColor = new Color(0.86f, 0.9f, 0.95f);
+        }
+
+        if (backButtonStyle == null)
+        {
+            backButtonStyle = new GUIStyle(GUI.skin.button);
+            backButtonStyle.fontSize = 34;
+            backButtonStyle.fontStyle = FontStyle.Bold;
+            backButtonStyle.normal.textColor = Color.white;
+            backButtonStyle.hover.textColor = Color.yellow;
         }
     }
 }
