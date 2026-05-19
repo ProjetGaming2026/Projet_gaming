@@ -11,7 +11,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private bool showMenu = true;
     private bool hasChosenLevel;
-    private Vector2 windowSize = new Vector2(720f, 520f);
+    private Vector2 windowSize = new Vector2(520f, 360f);
     private GUIStyle titleStyle;
     private GUIStyle subtitleStyle;
     private GUIStyle buttonStyle;
@@ -84,18 +84,18 @@ public class LevelSelectBootstrap : MonoBehaviour
         );
 
         GUILayout.BeginArea(windowRect, GUI.skin.window);
-        GUILayout.Space(24f);
+        GUILayout.Space(16f);
         GUILayout.Label("Choix Du Niveau", titleStyle);
-        GUILayout.Space(14f);
+        GUILayout.Space(8f);
         GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital.", subtitleStyle);
-        GUILayout.Space(24f);
+        GUILayout.Space(14f);
 
         DrawLevelButton("Facile", "Incubation plus longue, moins de taches, monstre plus indulgent.", EasyScene);
-        GUILayout.Space(16f);
+        GUILayout.Space(10f);
         DrawLevelButton("Moyen", "Experience equilibree du prototype.", MediumScene);
-        GUILayout.Space(16f);
+        GUILayout.Space(10f);
         DrawLevelButton("Difficile", "Moins de temps, plus de taches, monstre plus agressif.", HardScene);
-        GUILayout.Space(16f);
+        GUILayout.Space(10f);
 
         GUILayout.EndArea();
     }
@@ -113,12 +113,12 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private void DrawLevelButton(string label, string description, string sceneName)
     {
-        if (GUILayout.Button(label, buttonStyle, GUILayout.Height(62f)))
+        if (GUILayout.Button(label, buttonStyle, GUILayout.Height(42f)))
         {
             ChooseLevel(sceneName);
         }
 
-        GUILayout.Space(6f);
+        GUILayout.Space(2f);
         GUILayout.Label(description, subtitleStyle);
     }
 
@@ -156,7 +156,7 @@ public class LevelSelectBootstrap : MonoBehaviour
             titleStyle = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = 34,
+                fontSize = 24,
                 fontStyle = FontStyle.Bold
             };
         }
@@ -166,7 +166,7 @@ public class LevelSelectBootstrap : MonoBehaviour
             subtitleStyle = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = 18,
+                fontSize = 13,
                 wordWrap = true
             };
         }
@@ -175,7 +175,7 @@ public class LevelSelectBootstrap : MonoBehaviour
         {
             buttonStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 24,
+                fontSize = 18,
                 fontStyle = FontStyle.Bold
             };
         }

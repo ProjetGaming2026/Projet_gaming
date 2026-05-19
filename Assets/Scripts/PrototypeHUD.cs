@@ -90,8 +90,8 @@ public class PrototypeHUD : MonoBehaviour
             }
         }
 
-        GUI.Box(new Rect(20, 20, 520, 220), "");
-        GUI.Label(new Rect(35, 35, 480, 180), hudText, textStyle);
+        GUI.Box(new Rect(14, 14, 300, 120), "");
+        GUI.Label(new Rect(24, 24, 270, 96), hudText, textStyle);
 
         if (playerController != null && playerController.LastReceivedGlitch != BasicFirstPersonController.GlitchType.None)
         {
@@ -108,14 +108,14 @@ public class PrototypeHUD : MonoBehaviour
         if (textStyle == null)
         {
             textStyle = new GUIStyle(GUI.skin.label);
-            textStyle.fontSize = 28;
+            textStyle.fontSize = 16;
             textStyle.normal.textColor = Color.white;
         }
 
         if (glitchStyle == null)
         {
             glitchStyle = new GUIStyle(GUI.skin.label);
-            glitchStyle.fontSize = 32;
+            glitchStyle.fontSize = 22;
             glitchStyle.normal.textColor = Color.yellow;
             glitchStyle.alignment = TextAnchor.MiddleCenter;
         }
@@ -123,14 +123,14 @@ public class PrototypeHUD : MonoBehaviour
         if (dangerStyle == null)
         {
             dangerStyle = new GUIStyle(GUI.skin.label);
-            dangerStyle.fontSize = 36;
+            dangerStyle.fontSize = 24;
             dangerStyle.alignment = TextAnchor.MiddleCenter;
         }
 
         if (endStyle == null)
         {
             endStyle = new GUIStyle(GUI.skin.label);
-            endStyle.fontSize = 56;
+            endStyle.fontSize = 42;
             endStyle.fontStyle = FontStyle.Bold;
             endStyle.alignment = TextAnchor.MiddleCenter;
         }

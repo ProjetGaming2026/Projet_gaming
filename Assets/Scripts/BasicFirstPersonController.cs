@@ -92,7 +92,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void Update()
     {
-        if (LevelSelectBootstrap.IsMenuOpen)
+        if (LevelSelectBootstrap.IsMenuOpen || KeypadUIManager.IsUiOpen || PatientUIManager.IsUiOpen || XRayUIManager.IsUiOpen)
         {
             IsSprinting = false;
             ApplyCursorState();
@@ -323,7 +323,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void ApplyCursorState()
     {
-        if (LevelSelectBootstrap.IsMenuOpen)
+        if (LevelSelectBootstrap.IsMenuOpen || KeypadUIManager.IsUiOpen || PatientUIManager.IsUiOpen || XRayUIManager.IsUiOpen)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

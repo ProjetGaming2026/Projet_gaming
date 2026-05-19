@@ -17,6 +17,9 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     [SerializeField] private AudioClip closeSound;
     [SerializeField] private float soundVolume = 0.8f;
 
+    [Header("Lock")]
+    [SerializeField] private bool isLocked;
+
     private Quaternion closedLocalRotation;
     private Quaternion targetLocalRotation;
     private bool isOpen;
@@ -61,6 +64,11 @@ public class DoorInteractable : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        if (isLocked)
+        {
+            return;
+        }
+
         if (hinge == null)
         {
             hinge = transform;
@@ -79,6 +87,28 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
         isOpen = true;
         PlaySound(openSound);
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+    }
+
+    public void ForceClosed()
+    {
+        if (hinge == null)
+        {
+            hinge = transform;
+        }
+
+        targetLocalRotation = closedLocalRotation;
+        hinge.localRotation = closedLocalRotation;
+        isOpen = false;
+    }
+
+    public bool IsOpen()
+    {
+        return isOpen;
     }
 
     private int ResolveOpenDirection()
