@@ -237,18 +237,19 @@ public class BreakerPanelManager : MonoBehaviour
 
     private void AlertMonster()
     {
-        BasicMonsterController monsterController = monster != null
-            ? monster.GetComponent<BasicMonsterController>()
-            : FindFirstObjectByType<BasicMonsterController>();
-
-        if (monsterController == null)
+        if (monster == null)
         {
-            Debug.Log("Pas de controleur de monstre trouve.");
+            Debug.Log("Pas de monstre assigne.");
             return;
         }
 
-        monsterController.AlertToPlayerPosition(9f, true);
-        Debug.Log("Monstre alerte par l'echec du panneau electrique.");
+        UnityEngine.AI.NavMeshAgent agent = monster.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null)
+        {
+            Transform player = GameObject.FindGameObjectWithTag("Player").transform;
+            agent.SetDestination(player.position);
+            Debug.Log("Monstre alerte.");
+        }
     }
 
     private void LockAll(bool state)

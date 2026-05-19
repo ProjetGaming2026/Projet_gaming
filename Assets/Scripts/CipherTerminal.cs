@@ -28,14 +28,12 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     private string currentInput = "";
     private bool isOpen;
     private bool isSolved;
-    private BasicMonsterController monsterController;
 
     private void Awake()
     {
         ApplyEasySceneMessaging();
         EnsureScreenText();
         EnsurePuzzleReference();
-        monsterController = FindFirstObjectByType<BasicMonsterController>();
 
         if (GetComponent<Collider>() == null)
         {
@@ -147,22 +145,8 @@ public class CipherTerminal : MonoBehaviour, IInteractable
                 screenText.text = wrongMessage;
             }
 
-            AlertMonsterOnFailure();
             currentInput = "";
             Invoke(nameof(ResetDisplay), 1.5f);
-        }
-    }
-
-    private void AlertMonsterOnFailure()
-    {
-        if (monsterController == null)
-        {
-            monsterController = FindFirstObjectByType<BasicMonsterController>();
-        }
-
-        if (monsterController != null)
-        {
-            monsterController.AlertToPlayerPosition(8f, true);
         }
     }
 

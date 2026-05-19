@@ -142375,6 +142375,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 123
   hardSceneName: demoScene_Difficile
+  mediumSceneName: demoScene_Moyen
+  easySceneName: demoScene_Facile
   taskProgressDetectionBonus: 4
   taskProgressHearingBonus: 5
   taskProgressMemoryBonus: 3
@@ -142416,6 +142418,23 @@ MonoBehaviour:
   exitGuardRetargetInterval: 1
   stuckRetargetDelay: 0.95
   corridorRecoveryDistance: 1.9
+  stuckEscapeProbeDistance: 3.2
+  stuckEscapeDuration: 1.25
+  buildRuntimeNavMesh: 1
+  runtimeNavMeshLayerMask:
+    serializedVersion: 2
+    m_Bits: 123
+  runtimeNavMeshBoundsCenter: {x: 7, y: 2, z: 2}
+  runtimeNavMeshBoundsSize: {x: 90, y: 18, z: 90}
+  navMeshRepathInterval: 0.25
+  navMeshSampleDistance: 4
+  navMeshWaypointReachDistance: 0.55
+  routeWaypointReachDistance: 1.05
+  routeLineOfSightHeight: 0.9
+  routeLineOfSightRadius: 0.28
+  easyBlockedRouteDistance: 5
+  stairStepOffset: 0.45
+  stairSlopeLimit: 52
   animatedVisual: {fileID: 692512811}
   alignVisualToGround: 1
   visualGroundOffset: 0
@@ -142552,7 +142571,7 @@ Transform:
   m_GameObject: {fileID: 1768635464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.55, y: 1.5, z: 20}
+  m_LocalPosition: {x: -7.55, y: 0.8, z: 20}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:

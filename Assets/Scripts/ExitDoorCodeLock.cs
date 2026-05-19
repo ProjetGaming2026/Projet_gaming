@@ -546,20 +546,10 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         isBusy = true;
         PlaySound(deniedSound);
         UpdateDisplay("ACCES REFUSE", dangerColor);
-        AlertMonsterOnFailure();
         yield return new WaitForSecondsRealtime(0.9f);
         currentInput = string.Empty;
         UpdateDisplay("SORTIE VERROUILLEE", accentColor);
         isBusy = false;
-    }
-
-    private void AlertMonsterOnFailure()
-    {
-        BasicMonsterController monsterController = FindFirstObjectByType<BasicMonsterController>();
-        if (monsterController != null)
-        {
-            monsterController.AlertToPlayerPosition(8f, true);
-        }
     }
 
     private void OpenLinkedDoors()

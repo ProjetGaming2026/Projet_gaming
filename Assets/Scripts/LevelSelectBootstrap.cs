@@ -3,10 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class LevelSelectBootstrap : MonoBehaviour
 {
-    private const string EasyScene = "demoScene_Facile";
-    private const string MediumScene = "demoScene_Moyen";
-    private const string HardScene = "demoScene_Difficile";
-    private const string BackScene = "MainMenu";
+    private const string EasySceneName = "demoScene_Facile";
+    private const string MediumSceneName = "demoScene_Moyen";
+    private const string HardSceneName = "demoScene_Difficile";
+    private const string BackSceneName = "MainMenu";
+
+    private const string EasyScenePath = "Assets/Hospital/scenes/demoScene_Facile.unity";
+    private const string MediumScenePath = "Assets/Hospital/scenes/demoScene_Moyen.unity";
+    private const string HardScenePath = "Assets/Hospital/scenes/demoScene_Difficile.unity";
+    private const string BackScenePath = "Assets/MainMenu.unity";
 
     private static LevelSelectBootstrap instance;
 
@@ -33,7 +38,6 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
         PauseForMenu();
     }
 
@@ -45,6 +49,14 @@ public class LevelSelectBootstrap : MonoBehaviour
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -101,13 +113,13 @@ public class LevelSelectBootstrap : MonoBehaviour
         GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital.", subtitleStyle);
         GUILayout.Space(24f);
 
-        DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScene, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
+        DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScenePath, EasySceneName, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
 
-        DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScene, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
+        DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScenePath, MediumSceneName, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
 
-        DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "8 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScene, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
+        DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "8 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScenePath, HardSceneName, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(18f);
 
         GUILayout.Label("Clique sur une carte pour commencer la partie.", hintStyle);
@@ -121,7 +133,7 @@ public class LevelSelectBootstrap : MonoBehaviour
         GUILayout.EndArea();
     }
 
-    private void DrawLevelCard(string label, string tagline, string description, string sceneName, Color cardColor, float width)
+    private void DrawLevelCard(string label, string tagline, string description, string scenePath, string sceneName, Color cardColor, float width)
     {
         Rect cardRect = GUILayoutUtility.GetRect(width, 118f, GUILayout.ExpandWidth(true));
         bool hovered = cardRect.Contains(Event.current.mousePosition);
@@ -140,11 +152,11 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         if (GUI.Button(cardRect, GUIContent.none, GUIStyle.none))
         {
-            ChooseLevel(sceneName);
+            ChooseLevel(scenePath, sceneName);
         }
     }
 
-    private void ChooseLevel(string sceneName)
+    private void ChooseLevel(string scenePath, string sceneName)
     {
         hasChosenLevel = true;
         showMenu = false;
@@ -152,7 +164,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name != sceneName)
         {
-            SceneManager.LoadScene(sceneName);
+            LoadSceneExact(scenePath, sceneName);
         }
     }
 
@@ -162,7 +174,21 @@ public class LevelSelectBootstrap : MonoBehaviour
         showMenu = false;
         ResumeAfterMenu();
 
-        SceneManager.LoadScene(BackScene);
+        LoadSceneExact(BackScenePath, BackSceneName);
+    }
+
+    private void LoadSceneExact(string scenePath, string sceneName)
+    {
+        int buildIndex = SceneUtility.GetBuildIndexByScenePath(scenePath);
+        if (buildIndex >= 0)
+        {
+            Debug.Log("LevelSelectBootstrap: chargement de " + scenePath);
+            SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+            return;
+        }
+
+        Debug.LogWarning("LevelSelectBootstrap: scene absente des Build Settings: " + scenePath + ". Fallback par nom: " + sceneName);
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     private void PauseForMenu()

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KeyPickup : MonoBehaviour, IInteractable
 {
@@ -23,7 +24,10 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
         isPickedUp = true;
         EnsureInventorySystem();
-        InventorySystem.Instance.PickupLowerFloorRoomKey();
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.PickupLowerFloorRoomKey();
+        }
 
         if (countAsTask)
         {
@@ -57,6 +61,11 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
     private void EnsureInventorySystem()
     {
+        if (!InventorySystem.ShouldShowInventoryInScene(SceneManager.GetActiveScene()))
+        {
+            return;
+        }
+
         if (InventorySystem.Instance != null)
         {
             return;

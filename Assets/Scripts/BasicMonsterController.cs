@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -34,6 +36,9 @@ public class BasicMonsterController : MonoBehaviour
         new Vector3(23.7f, 1f, 0.9f),
         new Vector3(18.2f, 1f, 5.1f)
     };
+
+    private static readonly Dictionary<string, NavMeshDataInstance> RuntimeNavMeshInstances = new();
+    private static readonly Dictionary<string, NavMeshData> RuntimeNavMeshData = new();
 
     [Header("References")]
     [SerializeField] private Transform playerTarget;
@@ -107,6 +112,13 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float stuckEscapeDuration = 1.25f;
 
     [Header("Intelligence")]
+    [SerializeField] private bool buildRuntimeNavMesh = true;
+    [SerializeField] private LayerMask runtimeNavMeshLayerMask = Physics.DefaultRaycastLayers;
+    [SerializeField] private Vector3 runtimeNavMeshBoundsCenter = new Vector3(7f, 2f, 2f);
+    [SerializeField] private Vector3 runtimeNavMeshBoundsSize = new Vector3(90f, 18f, 90f);
+    [SerializeField] private float navMeshRepathInterval = 0.25f;
+    [SerializeField] private float navMeshSampleDistance = 4f;
+    [SerializeField] private float navMeshWaypointReachDistance = 0.55f;
     [SerializeField] private float routeWaypointReachDistance = 1.05f;
     [SerializeField] private float routeLineOfSightHeight = 0.9f;
     [SerializeField] private float routeLineOfSightRadius = 0.28f;
@@ -181,6 +193,10 @@ public class BasicMonsterController : MonoBehaviour
     private Vector3 stuckEscapeTarget;
     private Transform captureTarget;
     private Vector3[] navigationRoute;
+    private NavMeshPath currentNavMeshPath;
+    private Vector3 currentNavMeshTarget;
+    private float navMeshRepathTimer;
+    private bool runtimeNavMeshReady;
     private bool hasInvestigationTarget;
     private bool hasRoamTarget;
     private float stuckEscapeTimer;
@@ -208,6 +224,8 @@ public class BasicMonsterController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         ConfigureIntelligenceForScene(SceneManager.GetActiveScene().name);
         ConfigureControllerForStairs();
+        EnsureRuntimeNavMesh();
+        currentNavMeshPath = new NavMeshPath();
 
         if (playerTarget == null)
         {
@@ -290,36 +308,6 @@ public class BasicMonsterController : MonoBehaviour
         Debug.Log("L'Entite est ralentie pendant " + duration + " secondes.");
     }
 
-    public void AlertToPlayerPosition(float duration, bool immediateChase)
-    {
-        if (playerTarget == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                playerTarget = player.transform;
-            }
-        }
-
-        if (playerTarget == null)
-        {
-            return;
-        }
-
-        float effectiveDuration = Mathf.Max(duration, forcedSearchDuration);
-        RememberPlayerPosition(playerTarget.position, effectiveDuration);
-        investigationTarget = playerTarget.position;
-        hasInvestigationTarget = true;
-        forcedRevealTimer = Mathf.Max(forcedRevealTimer, effectiveDuration);
-        huntPersistenceTimer = Mathf.Max(huntPersistenceTimer, immediateChase ? effectiveDuration : huntPersistenceDuration);
-        searchRetargetTimer = 0f;
-        roamPauseTimer = 0f;
-        patrolWaitTimer = 0f;
-        stuckTimer = 0f;
-        stuckEscapeTimer = 0f;
-        Debug.Log("L'Entite connait la position du joueur apres un echec de tache.");
-    }
-
     public void BeginCapture(Transform target)
     {
         if (target == null)
@@ -380,6 +368,89 @@ public class BasicMonsterController : MonoBehaviour
 
         controller.stepOffset = Mathf.Max(controller.stepOffset, stairStepOffset);
         controller.slopeLimit = Mathf.Max(controller.slopeLimit, stairSlopeLimit);
+    }
+
+    private void EnsureRuntimeNavMesh()
+    {
+        if (!buildRuntimeNavMesh)
+        {
+            runtimeNavMeshReady = HasNavMeshNear(transform.position);
+            return;
+        }
+
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (RuntimeNavMeshInstances.ContainsKey(sceneName))
+        {
+            runtimeNavMeshReady = true;
+            return;
+        }
+
+        Bounds bounds = new Bounds(runtimeNavMeshBoundsCenter, runtimeNavMeshBoundsSize);
+        List<NavMeshBuildMarkup> markups = new List<NavMeshBuildMarkup>();
+        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
+
+        NavMeshBuilder.CollectSources(
+            bounds,
+            runtimeNavMeshLayerMask,
+            NavMeshCollectGeometry.PhysicsColliders,
+            0,
+            markups,
+            sources
+        );
+
+        if (sources.Count == 0)
+        {
+            NavMeshBuilder.CollectSources(
+                bounds,
+                runtimeNavMeshLayerMask,
+                NavMeshCollectGeometry.RenderMeshes,
+                0,
+                markups,
+                sources
+            );
+        }
+
+        if (sources.Count == 0)
+        {
+            runtimeNavMeshReady = false;
+            Debug.LogWarning("Aucune source trouvee pour construire la navigation du zombie.");
+            return;
+        }
+
+        NavMeshBuildSettings settings = NavMesh.GetSettingsByID(0);
+        float scaleY = controller != null ? Mathf.Max(Mathf.Abs(transform.lossyScale.y), 0.0001f) : 1f;
+        if (controller != null)
+        {
+            settings.agentRadius = Mathf.Max(0.18f, controller.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z)));
+            settings.agentHeight = Mathf.Max(0.8f, controller.height * scaleY);
+            settings.agentClimb = Mathf.Max(settings.agentClimb, stairStepOffset);
+            settings.agentSlope = Mathf.Max(settings.agentSlope, stairSlopeLimit);
+        }
+
+        NavMeshData navMeshData = NavMeshBuilder.BuildNavMeshData(
+            settings,
+            sources,
+            bounds,
+            Vector3.zero,
+            Quaternion.identity
+        );
+
+        if (navMeshData == null)
+        {
+            runtimeNavMeshReady = false;
+            Debug.LogWarning("Impossible de construire la navigation du zombie.");
+            return;
+        }
+
+        RuntimeNavMeshData[sceneName] = navMeshData;
+        RuntimeNavMeshInstances[sceneName] = NavMesh.AddNavMeshData(navMeshData);
+        runtimeNavMeshReady = true;
+        Debug.Log("Navigation runtime du zombie construite pour " + sceneName + ".");
+    }
+
+    private bool HasNavMeshNear(Vector3 worldPosition)
+    {
+        return NavMesh.SamplePosition(worldPosition, out _, navMeshSampleDistance, NavMesh.AllAreas);
     }
 
     public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
@@ -450,6 +521,11 @@ public class BasicMonsterController : MonoBehaviour
         if (stuckEscapeTimer > 0f)
         {
             stuckEscapeTimer -= Time.deltaTime;
+        }
+
+        if (navMeshRepathTimer > 0f)
+        {
+            navMeshRepathTimer -= Time.deltaTime;
         }
     }
 
@@ -1098,6 +1174,11 @@ public class BasicMonsterController : MonoBehaviour
             return GetFlatDirectionTo(stuckEscapeTarget) * speed;
         }
 
+        if (TryGetNavMeshVelocityTo(worldTarget, speed, targetStoppingDistance, out Vector3 navMeshVelocity))
+        {
+            return navMeshVelocity;
+        }
+
         if (!ShouldRouteAroundMap(worldTarget, urgent, distanceToTarget) ||
             !TryGetRouteWaypoint(worldTarget, out Vector3 waypoint))
         {
@@ -1110,6 +1191,81 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         return GetFlatDirectionTo(waypoint) * speed;
+    }
+
+    private bool TryGetNavMeshVelocityTo(Vector3 worldTarget, float speed, float targetStoppingDistance, out Vector3 velocity)
+    {
+        velocity = Vector3.zero;
+
+        if (!runtimeNavMeshReady || currentNavMeshPath == null)
+        {
+            return false;
+        }
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit startHit, navMeshSampleDistance, NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        if (!NavMesh.SamplePosition(worldTarget, out NavMeshHit targetHit, navMeshSampleDistance, NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        float targetDelta = Vector3.Distance(GetPlanarPosition(currentNavMeshTarget), GetPlanarPosition(targetHit.position));
+        bool shouldRepath =
+            navMeshRepathTimer <= 0f ||
+            currentNavMeshPath.status == NavMeshPathStatus.PathInvalid ||
+            currentNavMeshPath.corners == null ||
+            currentNavMeshPath.corners.Length == 0 ||
+            targetDelta > 0.8f;
+
+        if (shouldRepath)
+        {
+            if (!NavMesh.CalculatePath(startHit.position, targetHit.position, NavMesh.AllAreas, currentNavMeshPath) ||
+                currentNavMeshPath.status == NavMeshPathStatus.PathInvalid)
+            {
+                return false;
+            }
+
+            currentNavMeshTarget = targetHit.position;
+            navMeshRepathTimer = navMeshRepathInterval;
+        }
+
+        Vector3 waypoint = targetHit.position;
+        Vector3[] corners = currentNavMeshPath.corners;
+        if (corners != null && corners.Length > 1)
+        {
+            for (int i = 1; i < corners.Length; i++)
+            {
+                float distanceToCorner = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(corners[i]));
+                if (distanceToCorner > navMeshWaypointReachDistance)
+                {
+                    waypoint = corners[i];
+                    break;
+                }
+            }
+        }
+
+        float distanceToTarget = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(targetHit.position));
+        if (distanceToTarget <= targetStoppingDistance)
+        {
+            return true;
+        }
+
+        Vector3 direction = GetFlatDirectionTo(waypoint);
+        if (direction.sqrMagnitude <= 0.001f)
+        {
+            direction = GetFlatDirectionTo(targetHit.position);
+        }
+
+        if (direction.sqrMagnitude <= 0.001f)
+        {
+            return false;
+        }
+
+        velocity = direction * speed;
+        return true;
     }
 
     private bool ShouldRouteAroundMap(Vector3 worldTarget, bool urgent, float distanceToTarget)

@@ -30,8 +30,11 @@ public class ButtonAnimator : MonoBehaviour,
     void Awake()
     {
         label = GetComponentInChildren<TextMeshProUGUI>();
-        label.color = normalColor;
-        label.characterSpacing = normalSpacing;
+        if (label != null)
+        {
+            label.color = normalColor;
+            label.characterSpacing = normalSpacing;
+        }
         targetSpacing = normalSpacing;
         targetColor = normalColor;
 
@@ -39,10 +42,16 @@ public class ButtonAnimator : MonoBehaviour,
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
+        ApplySfxVolume(AudioManager.SfxVolume);
     }
 
     void Update()
     {
+        if (label == null)
+        {
+            return;
+        }
+
         label.characterSpacing = Mathf.Lerp(
             label.characterSpacing, targetSpacing, Time.deltaTime * animSpeed);
         label.color = Color.Lerp(
@@ -54,7 +63,10 @@ public class ButtonAnimator : MonoBehaviour,
         targetSpacing = hoverSpacing;
         targetColor = hoverColor;
         if (hoverSound != null)
+        {
+            ApplySfxVolume(AudioManager.SfxVolume);
             audioSource.PlayOneShot(hoverSound);
+        }
     }
 
     public void OnPointerExit(PointerEventData e)
@@ -67,9 +79,20 @@ public class ButtonAnimator : MonoBehaviour,
     {
         targetColor = selectedColor;
         if (clickSound != null)
+        {
+            ApplySfxVolume(AudioManager.SfxVolume);
             audioSource.PlayOneShot(clickSound);
+        }
         if (gameObject.activeInHierarchy)
             StartCoroutine(ResetColor());
+    }
+
+    public void ApplySfxVolume(float volume)
+    {
+        if (audioSource != null)
+        {
+            audioSource.volume = Mathf.Clamp01(volume);
+        }
     }
 
     IEnumerator ResetColor()

@@ -70,7 +70,8 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 
             if (monsterController != null)
             {
-                monsterController.AlertToPlayerPosition(Mathf.Max(revealDurationOnFailure, failureSuspicionDuration), true);
+                monsterController.RevealPlayerPosition(revealDurationOnFailure);
+                monsterController.NotifySuspiciousActivity(transform.position, failureSuspicionDuration, true);
             }
 
             Debug.Log("Terminal echoue. Position revelee temporairement.");
