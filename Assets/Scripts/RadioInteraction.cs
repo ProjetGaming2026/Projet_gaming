@@ -2,6 +2,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RadioInteraction : MonoBehaviour, IInteractable
@@ -29,6 +30,7 @@ public class RadioInteraction : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        ApplyEasySceneMessaging();
         ResolveHintReferences();
         HideHint();
         StartOpera();
@@ -210,5 +212,15 @@ public class RadioInteraction : MonoBehaviour, IInteractable
         {
             textField.SetValue(hintTextComponent, textValue);
         }
+    }
+
+    private void ApplyEasySceneMessaging()
+    {
+        if (SceneManager.GetActiveScene().name != "demoScene_Facile")
+        {
+            return;
+        }
+
+        listenMessage = "Ecoute le morse pour trouver le code de sortie.";
     }
 }

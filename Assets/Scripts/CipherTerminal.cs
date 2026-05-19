@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CipherTerminal : MonoBehaviour, IInteractable
 {
@@ -30,6 +31,7 @@ public class CipherTerminal : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        ApplyEasySceneMessaging();
         EnsureScreenText();
         EnsurePuzzleReference();
 
@@ -329,5 +331,17 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     private bool IsSceneInstance()
     {
         return gameObject.scene.IsValid() && gameObject.scene.isLoaded;
+    }
+
+    private void ApplyEasySceneMessaging()
+    {
+        if (SceneManager.GetActiveScene().name != "demoScene_Facile")
+        {
+            return;
+        }
+
+        promptMessage = "ENTRE LA PHRASE AFFICHEE :";
+        successMessage = "PHRASE VALIDEE";
+        wrongMessage = "PHRASE INCORRECTE.\nREESSAYE.";
     }
 }
