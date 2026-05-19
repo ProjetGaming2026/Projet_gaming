@@ -1,50 +1,22 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelSelectBootstrap : MonoBehaviour
 {
-    private const string EasyScene = "demoScene_Facile";
-    private const string MediumScene = "demoScene_Moyen";
-    private const string HardScene = "demoScene_Difficile";
-    private const string BackScene = "MainMenu";
+    private const string EasySceneName = "demoScene_Facile";
+    private const string MediumSceneName = "demoScene_Moyen";
+    private const string HardSceneName = "demoScene_Difficile";
+    private const string BackSceneName = "MainMenu";
 
-    [Header("Audio")]
-    [SerializeField] private AudioSource voiceSource;
-    [SerializeField] private AudioSource ambienceSource;
-    [SerializeField] private AudioSource secondAmbienceSource;
-
-    [Header("Voice Clips")]
-    [SerializeField] private AudioClip easyVoice;
-    [SerializeField] private AudioClip mediumVoice;
-    [SerializeField] private AudioClip hardVoice;
-
-    [Header("Ambience Clips")]
-    [SerializeField] private AudioClip easyAmbience;
-    [SerializeField] private AudioClip mediumAmbience;
-    [SerializeField] private AudioClip hardAmbience;
-
-    [Header("Shared Second Ambience")]
-    [SerializeField] private AudioClip secondAmbience;
-
-    [Header("Audio Volumes")]
-    [SerializeField] private float mainAmbienceVolume = 0.35f;
-    [SerializeField] private float secondAmbienceVolume = 0.15f;
-    [SerializeField] private float voiceVolume = 1f;
-
-    [Header("Warning Screen")]
-    [SerializeField] private Texture2D warningTexture;
-    [SerializeField] private float dotsXPercent = 0.618f;
-    [SerializeField] private float dotsYPercent = 0.405f;
-    [SerializeField] private int dotsFontSize = 58;
+    private const string EasyScenePath = "Assets/Hospital/scenes/demoScene_Facile.unity";
+    private const string MediumScenePath = "Assets/Hospital/scenes/demoScene_Moyen.unity";
+    private const string HardScenePath = "Assets/Hospital/scenes/demoScene_Difficile.unity";
+    private const string BackScenePath = "Assets/MainMenu.unity";
 
     private static LevelSelectBootstrap instance;
 
     private bool showMenu = true;
-    private bool showWaitingScreen;
     private bool hasChosenLevel;
-    private bool isStarting;
-
     private Vector2 windowSize = new Vector2(860f, 720f);
 
     private GUIStyle titleStyle;
@@ -54,7 +26,6 @@ public class LevelSelectBootstrap : MonoBehaviour
     private GUIStyle tagStyle;
     private GUIStyle hintStyle;
     private GUIStyle backButtonStyle;
-    private GUIStyle dotsStyle;
 
     public static bool IsMenuOpen => instance != null && instance.showMenu;
 
@@ -67,16 +38,6 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        if (voiceSource == null) voiceSource = gameObject.AddComponent<AudioSource>();
-        if (ambienceSource == null) ambienceSource = gameObject.AddComponent<AudioSource>();
-        if (secondAmbienceSource == null) secondAmbienceSource = gameObject.AddComponent<AudioSource>();
-
-        voiceSource.playOnAwake = false;
-        ambienceSource.playOnAwake = false;
-        secondAmbienceSource.playOnAwake = false;
-
         PauseForMenu();
     }
 
@@ -90,13 +51,16 @@ public class LevelSelectBootstrap : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (showWaitingScreen)
-        {
-            showWaitingScreen = false;
-        }
-
         if (!hasChosenLevel)
         {
             PauseForMenu();
@@ -105,7 +69,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private void Update()
     {
-        if (!showMenu && !showWaitingScreen)
+        if (!showMenu)
         {
             return;
         }
@@ -116,20 +80,18 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private void OnGUI()
     {
-        EnsureStyles();
-
-        if (showWaitingScreen)
-        {
-            DrawWarningScreen();
-            return;
-        }
-
         if (!showMenu)
         {
             return;
         }
 
-        DrawBlackBackground();
+        EnsureStyles();
+
+        Rect overlay = new Rect(0f, 0f, Screen.width, Screen.height);
+        Color previousColor = GUI.color;
+        GUI.color = new Color(0.02f, 0.04f, 0.06f, 0.45f);
+        GUI.Box(overlay, GUIContent.none);
+        GUI.color = previousColor;
 
         Vector2 effectiveWindowSize = new Vector2(
             Mathf.Min(windowSize.x, Screen.width - 80f),
@@ -151,17 +113,15 @@ public class LevelSelectBootstrap : MonoBehaviour
         GUILayout.Label("Selectionne la difficulte avant d'entrer dans l'hopital.", subtitleStyle);
         GUILayout.Space(24f);
 
-        DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScene, "Easy", 13, easyVoice, easyAmbience, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
-
+        DrawLevelCard("Facile", "Ideal pour decouvrir la map et les objectifs.", "13 min de jeu, plus de marge, monstre plus lent.", EasyScenePath, EasySceneName, new Color(0.18f, 0.36f, 0.22f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
 
-        DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScene, "Medium", 10, mediumVoice, mediumAmbience, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
-
+        DrawLevelCard("Moyen", "La version la plus equilibree du prototype.", "10 min de jeu, bon rythme entre exploration, poursuite et extraction.", MediumScenePath, MediumSceneName, new Color(0.18f, 0.24f, 0.34f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(14f);
 
-        DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "7 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScene, "Hard", 7, hardVoice, hardAmbience, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
-
+        DrawLevelCard("Difficile", "Pour une vraie partie sous pression.", "8 min de jeu, monstre plus agressif, erreurs plus couteuses.", HardScenePath, HardSceneName, new Color(0.36f, 0.16f, 0.16f, 0.92f), effectiveWindowSize.x - 56f);
         GUILayout.Space(18f);
+
         GUILayout.Label("Clique sur une carte pour commencer la partie.", hintStyle);
         GUILayout.Space(18f);
 
@@ -173,18 +133,7 @@ public class LevelSelectBootstrap : MonoBehaviour
         GUILayout.EndArea();
     }
 
-    private void DrawLevelCard(
-        string label,
-        string tagline,
-        string description,
-        string sceneName,
-        string difficulty,
-        int minutes,
-        AudioClip voiceClip,
-        AudioClip ambienceClip,
-        Color cardColor,
-        float width
-    )
+    private void DrawLevelCard(string label, string tagline, string description, string scenePath, string sceneName, Color cardColor, float width)
     {
         Rect cardRect = GUILayoutUtility.GetRect(width, 118f, GUILayout.ExpandWidth(true));
         bool hovered = cardRect.Contains(Event.current.mousePosition);
@@ -203,153 +152,48 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         if (GUI.Button(cardRect, GUIContent.none, GUIStyle.none))
         {
-            ChooseLevel(sceneName, difficulty, minutes, voiceClip, ambienceClip);
+            ChooseLevel(scenePath, sceneName);
         }
     }
 
-    private void ChooseLevel(string sceneName, string difficulty, int minutes, AudioClip voiceClip, AudioClip ambienceClip)
+    private void ChooseLevel(string scenePath, string sceneName)
     {
-        if (isStarting)
-        {
-            return;
-        }
-
-        StartCoroutine(PlayIntroThenLoad(sceneName, difficulty, minutes, voiceClip, ambienceClip));
-    }
-
-    private IEnumerator PlayIntroThenLoad(string sceneName, string difficulty, int minutes, AudioClip voiceClip, AudioClip ambienceClip)
-    {
-        isStarting = true;
         hasChosenLevel = true;
         showMenu = false;
-        showWaitingScreen = true;
-
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-
-        PlayerPrefs.SetString("Difficulty", difficulty);
-        PlayerPrefs.SetInt("LevelTimeMinutes", minutes);
-        PlayerPrefs.Save();
-
-        AsyncOperation loading = null;
+        ResumeAfterMenu();
 
         if (SceneManager.GetActiveScene().name != sceneName)
         {
-            loading = SceneManager.LoadSceneAsync(sceneName);
-            loading.allowSceneActivation = false;
+            LoadSceneExact(scenePath, sceneName);
         }
-
-        if (ambienceSource != null && ambienceClip != null)
-        {
-            ambienceSource.clip = ambienceClip;
-            ambienceSource.loop = true;
-            ambienceSource.volume = mainAmbienceVolume;
-            ambienceSource.Play();
-        }
-
-        if (secondAmbienceSource != null && secondAmbience != null)
-        {
-            secondAmbienceSource.clip = secondAmbience;
-            secondAmbienceSource.loop = true;
-            secondAmbienceSource.volume = secondAmbienceVolume;
-            secondAmbienceSource.Play();
-        }
-
-        if (voiceSource != null && voiceClip != null)
-        {
-            voiceSource.clip = voiceClip;
-            voiceSource.loop = false;
-            voiceSource.volume = voiceVolume;
-            voiceSource.Play();
-
-            while (voiceSource.isPlaying)
-            {
-                yield return null;
-            }
-        }
-        else
-        {
-            yield return new WaitForSecondsRealtime(1.5f);
-        }
-
-        StopIntroAudio();
-
-        if (loading != null)
-        {
-            while (loading.progress < 0.9f)
-            {
-                yield return null;
-            }
-
-            loading.allowSceneActivation = true;
-        }
-    }
-
-    private void StopIntroAudio()
-    {
-        if (ambienceSource != null && ambienceSource.isPlaying) ambienceSource.Stop();
-        if (secondAmbienceSource != null && secondAmbienceSource.isPlaying) secondAmbienceSource.Stop();
-        if (voiceSource != null && voiceSource.isPlaying) voiceSource.Stop();
-    }
-
-    private void DrawBlackBackground()
-    {
-        Color previousColor = GUI.color;
-        GUI.color = Color.black;
-        GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
-        GUI.color = previousColor;
-    }
-
-    private void DrawWarningScreen()
-    {
-        DrawBlackBackground();
-
-        if (warningTexture != null)
-        {
-            GUI.DrawTexture(
-                new Rect(0f, 0f, Screen.width, Screen.height),
-                warningTexture,
-                ScaleMode.ScaleAndCrop,
-                true
-            );
-        }
-
-        DrawAnimatedDots();
-    }
-
-    private void DrawAnimatedDots()
-    {
-        int dotCount = ((int)(Time.realtimeSinceStartup * 3f) % 4);
-        string dots = new string('.', dotCount);
-
-        Rect dotsRect = new Rect(
-            Screen.width * dotsXPercent,
-            Screen.height * dotsYPercent,
-            220f,
-            100f
-        );
-
-        Color previousColor = GUI.color;
-        GUI.color = new Color(0.55f, 0.02f, 0.02f);
-        GUI.Label(dotsRect, dots, dotsStyle);
-        GUI.color = previousColor;
     }
 
     private void GoBack()
     {
         hasChosenLevel = true;
         showMenu = false;
-        showWaitingScreen = false;
         ResumeAfterMenu();
-        StopIntroAudio();
 
-        SceneManager.LoadScene(BackScene);
+        LoadSceneExact(BackScenePath, BackSceneName);
+    }
+
+    private void LoadSceneExact(string scenePath, string sceneName)
+    {
+        int buildIndex = SceneUtility.GetBuildIndexByScenePath(scenePath);
+        if (buildIndex >= 0)
+        {
+            Debug.Log("LevelSelectBootstrap: chargement de " + scenePath);
+            SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+            return;
+        }
+
+        Debug.LogWarning("LevelSelectBootstrap: scene absente des Build Settings: " + scenePath + ". Fallback par nom: " + sceneName);
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     private void PauseForMenu()
     {
         showMenu = true;
-        showWaitingScreen = false;
         Time.timeScale = 0f;
         AudioListener.pause = true;
         Cursor.lockState = CursorLockMode.None;
@@ -422,21 +266,5 @@ public class LevelSelectBootstrap : MonoBehaviour
             backButtonStyle.normal.textColor = Color.white;
             backButtonStyle.hover.textColor = Color.yellow;
         }
-
-        if (dotsStyle == null)
-        {
-            dotsStyle = new GUIStyle(GUI.skin.label);
-            dotsStyle.alignment = TextAnchor.MiddleLeft;
-            dotsStyle.fontSize = dotsFontSize;
-            dotsStyle.fontStyle = FontStyle.Bold;
-            dotsStyle.normal.textColor = new Color(0.55f, 0.02f, 0.02f);
-        }
     }
 }
-
-
-
-
-
-
-

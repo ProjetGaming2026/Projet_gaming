@@ -39,13 +39,15 @@ public class CipherWall : MonoBehaviour
         EnsureTextMesh();
     }
 
-    public void DisplayText(string encryptedText, int shift)
+    public void DisplayText(string displayedText, int shift, bool showShift = true)
     {
         EnsureTextMesh();
 
         if (textMesh != null)
         {
-            textMesh.text = encryptedText + shiftSeparator + "+" + shift;
+            textMesh.text = showShift
+                ? displayedText + shiftSeparator + "+" + shift
+                : displayedText;
         }
     }
 

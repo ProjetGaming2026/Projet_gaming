@@ -4,6 +4,13 @@ using UnityEngine.SceneManagement;
 
 public static class GameplaySceneIntegrityBootstrap
 {
+    private const string EasyScene = "demoScene_Facile";
+    private const string MediumScene = "demoScene_Moyen";
+    private const string HardScene = "demoScene_Difficile";
+
+    private static readonly Vector3 FallbackPlayerPosition = new Vector3(20f, 1f, -2f);
+    private static readonly Vector3 FallbackMonsterPosition = new Vector3(-7.55f, 1f, 20f);
+
     private static bool isRegistered;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -31,6 +38,7 @@ public static class GameplaySceneIntegrityBootstrap
         }
 
         EnsurePlayerAndCameraTags(scene);
+        EnsureMinimumGameplayRoots(scene);
         EnsureGameplayObjects(scene);
     }
 
@@ -58,6 +66,145 @@ public static class GameplaySceneIntegrityBootstrap
         {
             fallbackCamera.tag = "MainCamera";
         }
+    }
+
+    private static void EnsureMinimumGameplayRoots(Scene scene)
+    {
+        if (!IsHospitalGameplayScene(scene))
+        {
+            return;
+        }
+
+        BasicFirstPersonController player = FindInScene<BasicFirstPersonController>(scene);
+        Camera sceneCamera = FindInScene<Camera>(scene);
+
+        if (player == null)
+        {
+            player = CreateFallbackPlayer(scene);
+            sceneCamera = player.GetComponentInChildren<Camera>(true);
+        }
+        else if (!player.CompareTag("Player"))
+        {
+            player.gameObject.tag = "Player";
+        }
+
+        player.gameObject.SetActive(true);
+
+        if (sceneCamera == null)
+        {
+            sceneCamera = CreateFallbackCamera(scene, player.transform);
+        }
+
+        if (sceneCamera != null)
+        {
+            sceneCamera.gameObject.SetActive(true);
+            sceneCamera.gameObject.tag = "MainCamera";
+            sceneCamera.enabled = true;
+        }
+
+        if (FindInScene<PrototypeGameManager>(scene) == null)
+        {
+            CreateFallbackGameManager(scene);
+        }
+
+        if (FindInScene<BasicMonsterController>(scene) == null)
+        {
+            CreateFallbackMonster(scene);
+        }
+
+        if (FindInScene<Light>(scene) == null)
+        {
+            CreateFallbackLight(scene);
+        }
+    }
+
+    private static bool IsHospitalGameplayScene(Scene scene)
+    {
+        return scene.name == EasyScene || scene.name == MediumScene || scene.name == HardScene;
+    }
+
+    private static BasicFirstPersonController CreateFallbackPlayer(Scene scene)
+    {
+        GameObject playerObject = new GameObject("Player_RuntimeFallback");
+        SceneManager.MoveGameObjectToScene(playerObject, scene);
+        playerObject.tag = "Player";
+        playerObject.transform.position = FallbackPlayerPosition;
+
+        CharacterController characterController = playerObject.AddComponent<CharacterController>();
+        characterController.height = 2f;
+        characterController.radius = 0.45f;
+        characterController.center = new Vector3(0f, 1f, 0f);
+
+        CreateFallbackCamera(scene, playerObject.transform);
+
+        playerObject.AddComponent<PlayerInteractor>();
+        playerObject.AddComponent<PlayerInteraction>();
+        return playerObject.AddComponent<BasicFirstPersonController>();
+    }
+
+    private static Camera CreateFallbackCamera(Scene scene, Transform parent)
+    {
+        GameObject cameraObject = new GameObject("Main Camera");
+        SceneManager.MoveGameObjectToScene(cameraObject, scene);
+        cameraObject.tag = "MainCamera";
+
+        if (parent != null)
+        {
+            cameraObject.transform.SetParent(parent, false);
+            cameraObject.transform.localPosition = new Vector3(0f, 1.6f, 0f);
+            cameraObject.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            cameraObject.transform.position = FallbackPlayerPosition + new Vector3(0f, 1.6f, 0f);
+            cameraObject.transform.rotation = Quaternion.identity;
+        }
+
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.nearClipPlane = 0.03f;
+        camera.farClipPlane = 500f;
+
+        if (Object.FindFirstObjectByType<AudioListener>() == null)
+        {
+            cameraObject.AddComponent<AudioListener>();
+        }
+
+        return camera;
+    }
+
+    private static void CreateFallbackGameManager(Scene scene)
+    {
+        GameObject gameManagerObject = new GameObject("GameManager_RuntimeFallback");
+        SceneManager.MoveGameObjectToScene(gameManagerObject, scene);
+        gameManagerObject.AddComponent<PrototypeGameManager>();
+    }
+
+    private static void CreateFallbackMonster(Scene scene)
+    {
+        GameObject monsterObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        SceneManager.MoveGameObjectToScene(monsterObject, scene);
+        monsterObject.name = "Entity_RuntimeFallback";
+        monsterObject.transform.position = FallbackMonsterPosition;
+        monsterObject.transform.localScale = new Vector3(0.8f, 1.2f, 0.8f);
+
+        CharacterController characterController = monsterObject.AddComponent<CharacterController>();
+        characterController.height = 2f;
+        characterController.radius = 0.45f;
+        characterController.center = new Vector3(0f, 1f, 0f);
+
+        monsterObject.AddComponent<BasicMonsterController>();
+        monsterObject.AddComponent<EntityCapture>();
+    }
+
+    private static void CreateFallbackLight(Scene scene)
+    {
+        GameObject lightObject = new GameObject("Directional Light_RuntimeFallback");
+        SceneManager.MoveGameObjectToScene(lightObject, scene);
+        lightObject.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+
+        Light light = lightObject.AddComponent<Light>();
+        light.type = LightType.Directional;
+        light.intensity = 1f;
     }
 
     private static void EnsureGameplayObjects(Scene scene)
@@ -158,7 +305,7 @@ public static class GameplaySceneIntegrityBootstrap
 
     private static T FindInScene<T>(Scene scene) where T : Component
     {
-        T[] all = Object.FindObjectsByType<T>(FindObjectsSortMode.None);
+        T[] all = Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < all.Length; i++)
         {
             if (all[i] != null && all[i].gameObject.scene == scene)
@@ -172,7 +319,7 @@ public static class GameplaySceneIntegrityBootstrap
 
     private static T[] FindAllInScene<T>(Scene scene) where T : Component
     {
-        T[] all = Object.FindObjectsByType<T>(FindObjectsSortMode.None);
+        T[] all = Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         List<T> filtered = new List<T>();
         for (int i = 0; i < all.Length; i++)
         {

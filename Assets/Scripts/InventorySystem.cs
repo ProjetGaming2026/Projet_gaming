@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
@@ -25,6 +26,12 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
+        if (!ShouldShowInventoryInScene(SceneManager.GetActiveScene()))
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -34,6 +41,14 @@ public class InventorySystem : MonoBehaviour
         Instance = this;
         BuildInventoryUi();
         RefreshUi();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     public void PickupKey()
@@ -202,6 +217,11 @@ public class InventorySystem : MonoBehaviour
         outline.effectColor = color;
         outline.effectDistance = distance;
     }
+
+    public static bool ShouldShowInventoryInScene(Scene scene)
+    {
+        return scene.IsValid() && scene.name == "demoScene_Facile";
+    }
 }
 
 public static class InventorySystemBootstrap
@@ -209,6 +229,11 @@ public static class InventorySystemBootstrap
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void EnsureInventorySystem()
     {
+        if (!InventorySystem.ShouldShowInventoryInScene(SceneManager.GetActiveScene()))
+        {
+            return;
+        }
+
         if (InventorySystem.Instance != null)
         {
             return;

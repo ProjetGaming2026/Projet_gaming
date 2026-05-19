@@ -1,11 +1,17 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KeyPickup : MonoBehaviour, IInteractable
 {
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     private bool isPickedUp;
+    private PrototypeGameManager gameManager;
 
     private void Start()
     {
+        gameManager = FindFirstObjectByType<PrototypeGameManager>();
         EnsurePickupCollider();
     }
 
@@ -18,7 +24,24 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
         isPickedUp = true;
         EnsureInventorySystem();
-        InventorySystem.Instance.PickupLowerFloorRoomKey();
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.PickupLowerFloorRoomKey();
+        }
+
+        if (countAsTask)
+        {
+            if (gameManager == null)
+            {
+                gameManager = FindFirstObjectByType<PrototypeGameManager>();
+            }
+
+            if (gameManager != null)
+            {
+                gameManager.RegisterTaskSuccess();
+            }
+        }
+
         gameObject.SetActive(false);
         Debug.Log("KeyPickup: lower floor room key picked up.");
     }
@@ -38,6 +61,11 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
     private void EnsureInventorySystem()
     {
+        if (!InventorySystem.ShouldShowInventoryInScene(SceneManager.GetActiveScene()))
+        {
+            return;
+        }
+
         if (InventorySystem.Instance != null)
         {
             return;
