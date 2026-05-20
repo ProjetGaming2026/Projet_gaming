@@ -6,12 +6,7 @@ public class CipherRuntimeBootstrap : MonoBehaviour
     private static bool isRegistered;
     private const string PersistentTerminalName = "ordinateur";
     private const string CipherAnchorTerminalName = "Terminal_01";
-    private static readonly string[] SceneNames =
-    {
-        "demoScene_Facile",
-        "demoScene_Moyen",
-        "demoScene_Difficile"
-    };
+    private const string EasySceneName = "demoScene_Facile";
 
     private static readonly string[] TerminalNames =
     {
@@ -44,8 +39,9 @@ public class CipherRuntimeBootstrap : MonoBehaviour
             return;
         }
 
-        if (!IsHospitalScene(scene.name))
+        if (scene.name != EasySceneName)
         {
+            RemoveEasyOnlyCipherObjects(scene);
             PreservePrototypeTerminal(scene);
             return;
         }
@@ -177,16 +173,48 @@ public class CipherRuntimeBootstrap : MonoBehaviour
         return null;
     }
 
-    private static bool IsHospitalScene(string sceneName)
+    private static void RemoveEasyOnlyCipherObjects(Scene scene)
     {
-        for (int i = 0; i < SceneNames.Length; i++)
+        DestroySceneObjectByName(scene, "AutoCipherWall");
+        DestroySceneObjectByName(scene, "CipherRuntimeManager");
+        DestroyAllObjectsNamed("AutoCipherWall");
+        DestroyAllObjectsNamed("CipherWallText");
+        DestroyAllObjectsNamed("CipherRuntimeManager");
+        DestroyAllCipherWalls();
+    }
+
+    private static void DestroySceneObjectByName(Scene scene, string objectName)
+    {
+        GameObject objectToDestroy = FindSceneObjectByName(scene, objectName);
+        if (objectToDestroy != null)
         {
-            if (sceneName == SceneNames[i])
+            Object.Destroy(objectToDestroy);
+        }
+    }
+
+    private static void DestroyAllObjectsNamed(string objectName)
+    {
+        Transform[] transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform candidate = transforms[i];
+            if (candidate != null && candidate.name == objectName)
             {
-                return true;
+                Object.Destroy(candidate.gameObject);
             }
         }
+    }
 
-        return false;
+    private static void DestroyAllCipherWalls()
+    {
+        CipherWall[] cipherWalls = Object.FindObjectsByType<CipherWall>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < cipherWalls.Length; i++)
+        {
+            CipherWall wall = cipherWalls[i];
+            if (wall != null)
+            {
+                Object.Destroy(wall.gameObject);
+            }
+        }
     }
 }

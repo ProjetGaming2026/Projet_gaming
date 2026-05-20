@@ -63,15 +63,15 @@ public class PadlockButton : MonoBehaviour, IInteractable
     {
         if (!initialized || controller == null)
         {
-            return "Press E to interact";
+            return GameLocalization.Text("Press E to interact", "Appuie sur E pour interagir", "Pulsa E para interactuar");
         }
 
         if (!controller.IsActive())
         {
-            return "Press E to use padlock";
+            return GameLocalization.Text("Press E to use padlock", "Appuie sur E pour utiliser le cadenas", "Pulsa E para usar el candado");
         }
 
-        return "Click or press E: " + keyValue;
+        return GameLocalization.Text("Click or press E: ", "Clique ou appuie sur E : ", "Haz clic o pulsa E: ") + keyValue;
     }
 
     private void PressPhysicalButton()

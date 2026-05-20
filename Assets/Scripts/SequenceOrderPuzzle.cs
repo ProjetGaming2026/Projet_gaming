@@ -127,10 +127,14 @@ public class SequenceOrderPuzzle : MonoBehaviour
         PlayClip(failureClip);
         if (hud != null)
         {
-            hud.ShowTemporaryStatus(failureMessage, Color.red, statusDuration);
+            hud.ShowTemporaryStatus(
+                GameLocalization.Text("Invalid sequence", failureMessage, "Secuencia invalida"),
+                Color.red,
+                statusDuration);
         }
 
         onFailed.Invoke();
+        PuzzleFailureMonsterAlert.Alert(transform);
         ResetAttempt();
     }
 
@@ -154,7 +158,10 @@ public class SequenceOrderPuzzle : MonoBehaviour
         PlayClip(successClip);
         if (hud != null)
         {
-            hud.ShowTemporaryStatus(successMessage, Color.green, statusDuration);
+            hud.ShowTemporaryStatus(
+                GameLocalization.Text("Task valid", successMessage, "Tarea valida"),
+                Color.green,
+                statusDuration);
         }
 
         onSolved.Invoke();

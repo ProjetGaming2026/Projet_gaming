@@ -56,7 +56,7 @@ public class AmbientSoundManager : MonoBehaviour
         {
             ambianceSource.clip = backroomsAmbiance;
             ambianceSource.loop = true;
-            ambianceSource.volume = ambianceVolume;
+            ambianceSource.volume = ambianceVolume * AudioManager.AmbienceVolume;
             ambianceSource.Play();
         }
 
@@ -146,6 +146,7 @@ public class AmbientSoundManager : MonoBehaviour
             targetVolume = Mathf.Lerp(targetVolume, 1f, 0.28f);
         }
 
+        targetVolume *= AudioManager.MusicVolume;
         musicSource.volume = Mathf.MoveTowards(musicSource.volume, targetVolume, fadeSpeed * Time.deltaTime);
     }
 
@@ -182,7 +183,7 @@ public class AmbientSoundManager : MonoBehaviour
 
         musicSource.clip = clip;
         musicSource.loop = false;
-        musicSource.volume = 1f;
+        musicSource.volume = AudioManager.MusicVolume;
         musicSource.Play();
     }
 
@@ -200,7 +201,7 @@ public class AmbientSoundManager : MonoBehaviour
             silence01 = Mathf.Clamp01(silence01 + 0.2f);
         }
 
-        float targetAmbianceVolume = ambianceVolume * Mathf.Lerp(1f, 0.24f, silence01);
+        float targetAmbianceVolume = ambianceVolume * AudioManager.AmbienceVolume * Mathf.Lerp(1f, 0.24f, silence01);
         targetAmbianceVolume *= Mathf.Lerp(0.92f, 1.06f, confinement);
         ambianceSource.volume = Mathf.MoveTowards(ambianceSource.volume, targetAmbianceVolume, Time.deltaTime * 0.85f);
         ambianceSource.pitch = Mathf.MoveTowards(ambianceSource.pitch, Mathf.Lerp(0.96f, 1.04f, confinement), Time.deltaTime * 0.4f);
@@ -229,7 +230,7 @@ public class AmbientSoundManager : MonoBehaviour
     {
         if (ambianceSource != null)
         {
-            ambianceSource.volume = Mathf.MoveTowards(ambianceSource.volume, ambianceVolume, Time.deltaTime * 0.8f);
+            ambianceSource.volume = Mathf.MoveTowards(ambianceSource.volume, ambianceVolume * AudioManager.AmbienceVolume, Time.deltaTime * 0.8f);
             ambianceSource.pitch = Mathf.MoveTowards(ambianceSource.pitch, 1f, Time.deltaTime * 0.5f);
         }
 

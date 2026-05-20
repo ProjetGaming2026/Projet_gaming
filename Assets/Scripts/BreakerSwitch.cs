@@ -128,15 +128,15 @@ public class BreakerSwitch : MonoBehaviour
         float y = Screen.height - boxHeight - 40f;
 
         GUI.Box(new Rect(x, y, boxWidth, boxHeight), string.Empty, boxStyle);
-        GUI.Label(new Rect(x, y + 6f, boxWidth, 30f), "Interrupteur " + switchName, nameStyle);
+        GUI.Label(new Rect(x, y + 6f, boxWidth, 30f), GameLocalization.Text("Switch ", "Interrupteur ", "Interruptor ") + switchName, nameStyle);
 
         string upLabel = currentState == SwitchState.Up
-            ? "[ E ] Remettre au centre"
-            : "[ E ] Basculer vers le haut";
+            ? GameLocalization.Text("[ E ] Reset to center", "[ E ] Remettre au centre", "[ E ] Volver al centro")
+            : GameLocalization.Text("[ E ] Switch upward", "[ E ] Basculer vers le haut", "[ E ] Cambiar hacia arriba");
 
         string downLabel = currentState == SwitchState.Down
-            ? "[ Q ] Remettre au centre"
-            : "[ Q ] Basculer vers le bas";
+            ? GameLocalization.Text("[ Q ] Reset to center", "[ Q ] Remettre au centre", "[ Q ] Volver al centro")
+            : GameLocalization.Text("[ Q ] Switch downward", "[ Q ] Basculer vers le bas", "[ Q ] Cambiar hacia abajo");
 
         GUI.Label(new Rect(x, y + 38f, boxWidth, 24f), upLabel, textStyle);
         GUI.Label(new Rect(x, y + 62f, boxWidth, 24f), downLabel, textStyle);
