@@ -33,8 +33,8 @@ public class PrototypeGameManager : MonoBehaviour
     public float TimeRemaining => Mathf.Max(0f, levelTimer);
     public bool HasConfiguredExitZones => exitZones != null && exitZones.Length > 0;
     public string LastLossKillerName { get; private set; } = "L'Entite";
-    public string LastLossMessage { get; private set; } = "L'Entite t'a rattrape.";
-    public string LastWinMessage { get; private set; } = "Tu as survecu.";
+    public string LastLossMessage { get; private set; } = "";
+    public string LastWinMessage { get; private set; } = "";
 
     private float phaseTimer;
     private float levelTimer;
@@ -84,6 +84,14 @@ public class PrototypeGameManager : MonoBehaviour
         exitZones = newExitZones;
     }
 
+    public void AssignPlayerController(BasicFirstPersonController player)
+    {
+        if (player != null)
+        {
+            playerController = player;
+        }
+    }
+
     public void RegisterTaskSuccess()
     {
         if (CurrentPhase == GamePhase.Escape ||
@@ -107,7 +115,10 @@ public class PrototypeGameManager : MonoBehaviour
     {
         LastLossKillerName = string.IsNullOrWhiteSpace(killerName) ? "L'Entite" : killerName;
         LastLossMessage = string.IsNullOrWhiteSpace(message)
-            ? LastLossKillerName + " t'a massacre dans l'hopital."
+            ? GameLocalization.Text(
+                LastLossKillerName + " slaughtered you in the hospital.",
+                LastLossKillerName + " t'a massacre dans l'hopital.",
+                LastLossKillerName + " te masacro en el hospital.")
             : message;
         SetPhase(GamePhase.Lose);
     }
@@ -115,7 +126,10 @@ public class PrototypeGameManager : MonoBehaviour
     public void TriggerWin(string message = null)
     {
         LastWinMessage = string.IsNullOrWhiteSpace(message)
-            ? "Tu as survecu. L'evacuation est reussie."
+            ? GameLocalization.Text(
+                "You survived. Evacuation complete.",
+                "Tu as survecu. L'evacuation est reussie.",
+                "Has sobrevivido. Evacuacion completada.")
             : message;
         SetPhase(GamePhase.Win);
     }
@@ -177,8 +191,14 @@ public class PrototypeGameManager : MonoBehaviour
 
         levelTimer = 0f;
         Debug.Log("Temps ecoule. Partie perdue.");
-        PrototypeHUD.ShowFeedback("Temps ecoule. L'entite te rattrape.", PrototypeHUD.FeedbackTone.Failure, 3f);
-        TriggerLoss("L'Entite", "Le temps est ecoule. L'Entite t'a retrouve et t'a acheve.");
+        PrototypeHUD.ShowFeedback(GameLocalization.Text(
+            "Time is up. The entity catches you.",
+            "Temps ecoule. L'entite te rattrape.",
+            "Tiempo agotado. La entidad te alcanza."), PrototypeHUD.FeedbackTone.Failure, 3f);
+        TriggerLoss("L'Entite", GameLocalization.Text(
+            "Time is up. The entity found you and finished you.",
+            "Le temps est ecoule. L'Entite t'a retrouve et t'a acheve.",
+            "El tiempo se agoto. La Entidad te encontro y acabo contigo."));
     }
 
     private void ActivateRandomExit()

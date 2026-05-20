@@ -126,17 +126,17 @@ public class PrototypeHUD : MonoBehaviour
         }
 
         string hudText =
-            "Phase : " + gameManager.CurrentPhase + "\n" +
-            "Taches : " + gameManager.CompletedTasks + " / " + gameManager.RequiredTasks;
+            GameLocalization.Text("Phase: ", "Phase : ", "Fase: ") + GameLocalization.PhaseName(gameManager.CurrentPhase) + "\n" +
+            GameLocalization.Text("Tasks: ", "Taches : ", "Tareas: ") + gameManager.CompletedTasks + " / " + gameManager.RequiredTasks;
 
         if (gameManager.HasTimeLimit)
         {
-            hudText += "\nTemps restant : " + FormatDuration(gameManager.TimeRemaining);
+            hudText += "\n" + GameLocalization.Text("Time left: ", "Temps restant : ", "Tiempo restante: ") + FormatDuration(gameManager.TimeRemaining);
         }
 
         if (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Incubation)
         {
-            hudText += "\nReveil de l'entite : " + gameManager.PhaseTimeRemaining.ToString("F0") + "s";
+            hudText += "\n" + GameLocalization.Text("Entity awakening: ", "Reveil de l'entite : ", "Despertar de la entidad: ") + gameManager.PhaseTimeRemaining.ToString("F0") + "s";
         }
 
         if (gameManager.CurrentPhase == PrototypeGameManager.GamePhase.Escape &&
@@ -145,11 +145,11 @@ public class PrototypeHUD : MonoBehaviour
         {
             if (gameManager.ActiveExitZone.PlayerInside)
             {
-                hudText += "\nExtraction : " + gameManager.ActiveExitZone.EscapeTimeRemaining.ToString("F1") + "s";
+                hudText += "\n" + GameLocalization.Text("Extraction: ", "Extraction : ", "Extraccion: ") + gameManager.ActiveExitZone.EscapeTimeRemaining.ToString("F1") + "s";
             }
             else
             {
-                hudText += "\nExtraction : trouvez et tenez la sortie";
+                hudText += "\n" + GameLocalization.Text("Extraction: find and hold the exit", "Extraction : trouvez et tenez la sortie", "Extraccion: encuentra y manten la salida");
             }
         }
 
@@ -341,7 +341,7 @@ public class PrototypeHUD : MonoBehaviour
             dangerStyle.normal.textColor = Color.red;
             GUI.Label(
                 new Rect(Screen.width / 2 - 220, Screen.height - 120, 440, 50),
-                "DANGER TRES PROCHE",
+                GameLocalization.Text("DANGER VERY CLOSE", "DANGER TRES PROCHE", "PELIGRO MUY CERCA"),
                 dangerStyle
             );
         }
@@ -350,7 +350,7 @@ public class PrototypeHUD : MonoBehaviour
             dangerStyle.normal.textColor = Color.yellow;
             GUI.Label(
                 new Rect(Screen.width / 2 - 180, Screen.height - 120, 360, 50),
-                "Danger proche",
+                GameLocalization.Text("Danger close", "Danger proche", "Peligro cerca"),
                 dangerStyle
             );
         }
@@ -360,7 +360,7 @@ public class PrototypeHUD : MonoBehaviour
     {
         string objectiveText = BuildObjectiveText();
         GUI.Box(new Rect(20, 285, 540, 120), "");
-        GUI.Label(new Rect(35, 298, 180, 28), "Objectif Actuel", objectiveTitleStyle);
+        GUI.Label(new Rect(35, 298, 240, 28), GameLocalization.Text("Current Objective", "Objectif Actuel", "Objetivo Actual"), objectiveTitleStyle);
         GUI.Label(new Rect(35, 332, 500, 58), objectiveText, objectiveBodyStyle);
     }
 
@@ -369,29 +369,53 @@ public class PrototypeHUD : MonoBehaviour
         switch (gameManager.CurrentPhase)
         {
             case PrototypeGameManager.GamePhase.Incubation:
-                return "Survis jusqu'au reveil de l'entite et prepare-toi a explorer l'hopital.";
+                return GameLocalization.Text(
+                    "Survive until the entity wakes up and prepare to explore the hospital.",
+                    "Survis jusqu'au reveil de l'entite et prepare-toi a explorer l'hopital.",
+                    "Sobrevive hasta que despierte la entidad y preparate para explorar el hospital.");
 
             case PrototypeGameManager.GamePhase.Chase:
             {
                 int remainingTasks = Mathf.Max(0, gameManager.RequiredTasks - gameManager.CompletedTasks);
                 return remainingTasks > 0
-                    ? "Active les terminaux restants. Encore " + remainingTasks + " tache(s) a valider."
-                    : "Toutes les taches sont completees. Cherche la sortie active.";
+                    ? GameLocalization.Text(
+                        "Activate the remaining terminals. " + remainingTasks + " task(s) left.",
+                        "Active les terminaux restants. Encore " + remainingTasks + " tache(s) a valider.",
+                        "Activa los terminales restantes. Quedan " + remainingTasks + " tarea(s).")
+                    : GameLocalization.Text(
+                        "All tasks are complete. Find the active exit.",
+                        "Toutes les taches sont completees. Cherche la sortie active.",
+                        "Todas las tareas estan completas. Busca la salida activa.");
             }
 
             case PrototypeGameManager.GamePhase.Escape:
                 return gameManager.ActiveExitZone != null && gameManager.ActiveExitZone.IsActive
-                    ? "Rejoins la sortie active et reste dans la zone jusqu'a l'extraction."
-                    : "Trouve la sortie active pour t'echapper.";
+                    ? GameLocalization.Text(
+                        "Reach the active exit and stay in the zone until extraction.",
+                        "Rejoins la sortie active et reste dans la zone jusqu'a l'extraction.",
+                        "Llega a la salida activa y quedate en la zona hasta la extraccion.")
+                    : GameLocalization.Text(
+                        "Find the active exit to escape.",
+                        "Trouve la sortie active pour t'echapper.",
+                        "Encuentra la salida activa para escapar.");
 
             case PrototypeGameManager.GamePhase.Win:
-                return "Tu as survecu. L'evacuation est reussie.";
+                return GameLocalization.Text(
+                    "You survived. Evacuation complete.",
+                    "Tu as survecu. L'evacuation est reussie.",
+                    "Has sobrevivido. Evacuacion completada.");
 
             case PrototypeGameManager.GamePhase.Lose:
-                return "L'entite t'a rattrape. Relance une partie pour tenter une autre approche.";
+                return GameLocalization.Text(
+                    "The entity caught you. Restart and try another approach.",
+                    "L'entite t'a rattrape. Relance une partie pour tenter une autre approche.",
+                    "La entidad te atrapo. Reinicia e intenta otra estrategia.");
 
             default:
-                return "Explore l'hopital et reste en vie.";
+                return GameLocalization.Text(
+                    "Explore the hospital and stay alive.",
+                    "Explore l'hopital et reste en vie.",
+                    "Explora el hospital y sigue con vida.");
         }
     }
 
@@ -456,7 +480,10 @@ public class PrototypeHUD : MonoBehaviour
             ? "L'Entite"
             : gameManager.LastLossKillerName;
         string lossMessage = string.IsNullOrWhiteSpace(gameManager.LastLossMessage)
-            ? killerName + " t'a massacre."
+            ? GameLocalization.Text(
+                killerName + " slaughtered you.",
+                killerName + " t'a massacre.",
+                killerName + " te masacro.")
             : gameManager.LastLossMessage;
 
         float pulse = 0.86f + Mathf.Abs(Mathf.Sin(Time.unscaledTime * 2.9f)) * 0.14f;
@@ -470,11 +497,11 @@ public class PrototypeHUD : MonoBehaviour
         Rect titleRect = new Rect((Screen.width - titleWidth) * 0.5f, Screen.height * 0.31f, titleWidth, 128f);
         Rect subtitleRect = new Rect((Screen.width - 640f) * 0.5f, titleRect.yMax + 50f, 640f, 90f);
 
-        DrawGlitchTitle("VOUS AVEZ ECHOUE", titleRect, pulse);
+        DrawGlitchTitle(GameLocalization.Text("YOU FAILED", "VOUS AVEZ ECHOUE", "HAS FALLADO"), titleRect, pulse);
         DrawGlitchSubtitle("GAME OVER", subtitleRect, pulse);
 
         DrawOffsetLabel(
-            "TU AS ETE TUE PAR " + killerName.ToUpperInvariant(),
+            GameLocalization.Text("YOU WERE KILLED BY ", "TU AS ETE TUE PAR ", "TE MATO ") + killerName.ToUpperInvariant(),
             new Rect(Screen.width * 0.5f - 330f, titleRect.y - 42f, 660f, 28f),
             horrorCornerStyle,
             Vector2.zero,
@@ -482,7 +509,10 @@ public class PrototypeHUD : MonoBehaviour
         );
 
         string body =
-            "Le sang a coule. " + killerName + " t'a trouve avant la sortie.\n\n" +
+            GameLocalization.Text(
+                "Blood was spilled. " + killerName + " found you before the exit.",
+                "Le sang a coule. " + killerName + " t'a trouve avant la sortie.",
+                "La sangre corrio. " + killerName + " te encontro antes de la salida.") + "\n\n" +
             lossMessage;
         GUI.Label(
             new Rect(Screen.width * 0.5f - 360f, subtitleRect.yMax + 34f, 720f, 118f),
@@ -491,7 +521,7 @@ public class PrototypeHUD : MonoBehaviour
         );
 
         DrawOffsetLabel(
-            "PARTIE TERMINEE",
+            GameLocalization.Text("GAME FINISHED", "PARTIE TERMINEE", "PARTIDA TERMINADA"),
             new Rect(Screen.width * 0.5f - 240f, Screen.height - 92f, 480f, 38f),
             horrorCornerStyle,
             Vector2.zero,
@@ -516,10 +546,13 @@ public class PrototypeHUD : MonoBehaviour
         GUI.Box(panelRect, GUIContent.none);
 
         endStyle.normal.textColor = new Color(0.45f, 1f, 0.55f);
-        GUI.Label(new Rect(panelRect.x, panelRect.y + 48f, panelRect.width, 90f), "VICTOIRE", endStyle);
+        GUI.Label(new Rect(panelRect.x, panelRect.y + 48f, panelRect.width, 90f), GameLocalization.Text("VICTORY", "VICTOIRE", "VICTORIA"), endStyle);
+        string winMessage = string.IsNullOrWhiteSpace(gameManager.LastWinMessage)
+            ? GameLocalization.Text("You survived. Evacuation complete.", "Tu as survecu. L'evacuation est reussie.", "Has sobrevivido. Evacuacion completada.")
+            : gameManager.LastWinMessage;
         GUI.Label(
             new Rect(panelRect.x + 48f, panelRect.y + 150f, panelRect.width - 96f, 90f),
-            gameManager.LastWinMessage,
+            winMessage,
             horrorBodyStyle
         );
     }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PadlockController : MonoBehaviour, IInteractable
 {
+    public static bool IsAnyPadlockActive { get; private set; }
+
     [Header("Code")]
     [SerializeField] private string secretCode = "1234";
     [SerializeField] private int codeLength = 4;
@@ -75,6 +77,7 @@ public class PadlockController : MonoBehaviour, IInteractable
         }
 
         isActive = !isActive;
+        IsAnyPadlockActive = isActive;
         Debug.Log(isActive
             ? "PadlockController: padlock activated. Click the physical buttons."
             : "PadlockController: padlock deactivated.");
@@ -89,10 +92,12 @@ public class PadlockController : MonoBehaviour, IInteractable
     {
         if (isSolved)
         {
-            return "Unlocked";
+            return GameLocalization.Text("Unlocked", "Deverrouille", "Desbloqueado");
         }
 
-        return isActive ? "Click the keypad buttons" : "Press E to use padlock";
+        return isActive
+            ? GameLocalization.Text("Click the keypad buttons", "Clique sur les touches du clavier", "Haz clic en los botones del teclado")
+            : GameLocalization.Text("Press E to use padlock", "Appuie sur E pour utiliser le cadenas", "Pulsa E para usar el candado");
     }
 
     public void OnKeyPressed(string keyValue)
@@ -154,6 +159,7 @@ public class PadlockController : MonoBehaviour, IInteractable
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             isActive = false;
+            IsAnyPadlockActive = false;
             Debug.Log("PadlockController: padlock deactivated with Escape.");
             return true;
         }
@@ -376,7 +382,8 @@ public class PadlockController : MonoBehaviour, IInteractable
         {
             isSolved = true;
             isActive = false;
-            UpdateScreenText("ACCESS GRANTED", BuildEnteredCodeDisplay(false), grantedTextColor);
+            IsAnyPadlockActive = false;
+            UpdateScreenText(GameLocalization.Text("ACCESS GRANTED", "ACCES AUTORISE", "ACCESO AUTORIZADO"), BuildEnteredCodeDisplay(false), grantedTextColor);
             PlaySound(successSound);
             Debug.Log("PadlockController: correct code entered. Opening linked door.");
 
@@ -392,9 +399,13 @@ public class PadlockController : MonoBehaviour, IInteractable
             return;
         }
 
-        UpdateScreenText("ACCESS DENIED", "INVALID CODE", deniedTextColor);
+        UpdateScreenText(
+            GameLocalization.Text("ACCESS DENIED", "ACCES REFUSE", "ACCESO DENEGADO"),
+            GameLocalization.Text("INVALID CODE", "CODE INVALIDE", "CODIGO INVALIDO"),
+            deniedTextColor);
         PlaySound(errorSound);
         Debug.Log("PadlockController: wrong code entered.");
+        PuzzleFailureMonsterAlert.Alert(transform);
 
         if (resetRoutine != null)
         {
@@ -414,10 +425,21 @@ public class PadlockController : MonoBehaviour, IInteractable
         resetRoutine = null;
     }
 
+    private void OnDisable()
+    {
+        if (isActive)
+        {
+            isActive = false;
+            IsAnyPadlockActive = false;
+        }
+    }
+
     private void UpdateDisplay(Color color)
     {
         UpdateScreenText(
-            isActive ? "ENTER ACCESS CODE" : "SYSTEM LOCKED",
+            isActive
+                ? GameLocalization.Text("ENTER ACCESS CODE", "ENTRE LE CODE D'ACCES", "INTRODUCE CODIGO DE ACCESO")
+                : GameLocalization.Text("SYSTEM LOCKED", "SYSTEME VERROUILLE", "SISTEMA BLOQUEADO"),
             BuildEnteredCodeDisplay(true),
             color == Color.white ? idleTextColor : color
         );

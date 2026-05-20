@@ -47,7 +47,7 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     {
         if (screenText != null)
         {
-            screenText.text = "[ APPUYEZ SUR E ]";
+            screenText.text = GameLocalization.Text("[ PRESS E ]", "[ APPUYEZ SUR E ]", "[ PULSA E ]");
         }
     }
 
@@ -71,7 +71,7 @@ public class CipherTerminal : MonoBehaviour, IInteractable
         else if (screenText != null)
         {
             IsAnyTerminalOpen = false;
-            screenText.text = "[ APPUYEZ SUR E ]";
+            screenText.text = GameLocalization.Text("[ PRESS E ]", "[ APPUYEZ SUR E ]", "[ PULSA E ]");
         }
     }
 
@@ -133,7 +133,7 @@ public class CipherTerminal : MonoBehaviour, IInteractable
 
             if (screenText != null)
             {
-                screenText.text = successMessage;
+                screenText.text = GameLocalization.Text("ACCESS GRANTED...", successMessage, "ACCESO CONCEDIDO...");
             }
 
             cipherPuzzle.OnPuzzleSolved();
@@ -142,10 +142,11 @@ public class CipherTerminal : MonoBehaviour, IInteractable
         {
             if (screenText != null)
             {
-                screenText.text = wrongMessage;
+                screenText.text = GameLocalization.Text("WRONG CODE.\nTRY AGAIN.", wrongMessage, "CODIGO INCORRECTO.\nINTENTA OTRA VEZ.");
             }
 
             currentInput = "";
+            PuzzleFailureMonsterAlert.Alert(transform);
             Invoke(nameof(ResetDisplay), 1.5f);
         }
     }
@@ -154,7 +155,8 @@ public class CipherTerminal : MonoBehaviour, IInteractable
     {
         if (screenText != null)
         {
-            screenText.text = FormatForScreen(promptMessage) + "\n> " + FormatForScreen(currentInput + "_");
+            string localizedPrompt = GameLocalization.Text("ENTER THE CIPHER PHRASE:", promptMessage, "INTRODUCE LA FRASE CIFRADA:");
+            screenText.text = FormatForScreen(localizedPrompt) + "\n> " + FormatForScreen(currentInput + "_");
         }
     }
 

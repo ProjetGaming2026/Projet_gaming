@@ -161,17 +161,17 @@ public class PlayerInteractor : MonoBehaviour
         {
             if (door.IsInteractionLocked)
             {
-                return "Appuie sur E pour entrer le code de sortie";
+                return GameLocalization.Text("Press E to enter the exit code", "Appuie sur E pour entrer le code de sortie", "Pulsa E para introducir el codigo de salida");
             }
 
             return door.IsOpen
-                ? "Appuie sur E pour fermer"
-                : "Appuie sur E pour ouvrir";
+                ? GameLocalization.Text("Press E to close", "Appuie sur E pour fermer", "Pulsa E para cerrar")
+                : GameLocalization.Text("Press E to open", "Appuie sur E pour ouvrir", "Pulsa E para abrir");
         }
 
         if (interactable is TaskTerminal)
         {
-            return "Appuie sur E pour utiliser le terminal";
+            return GameLocalization.Text("Press E to use the terminal", "Appuie sur E pour utiliser le terminal", "Pulsa E para usar el terminal");
         }
 
         if (interactable is PadlockButton padlockButton)
@@ -186,12 +186,12 @@ public class PlayerInteractor : MonoBehaviour
 
         if (interactable is PadlockPuzzle)
         {
-            return "Appuie sur E pour interagir avec le cadenas";
+            return GameLocalization.Text("Press E to interact with the padlock", "Appuie sur E pour interagir avec le cadenas", "Pulsa E para interactuar con el candado");
         }
 
         if (interactable is RadioInteraction)
         {
-            return "Appuie sur E pour activer la radio";
+            return GameLocalization.Text("Press E to activate the radio", "Appuie sur E pour activer la radio", "Pulsa E para activar la radio");
         }
 
         if (interactable is KeyPickup keyPickup)
@@ -200,7 +200,10 @@ public class PlayerInteractor : MonoBehaviour
         }
 
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
-        return "Appuie sur E pour interagir avec " + targetName;
+        return GameLocalization.Text(
+            "Press E to interact with " + targetName,
+            "Appuie sur E pour interagir avec " + targetName,
+            "Pulsa E para interactuar con " + targetName);
     }
 
     private static IInteractable ResolveInteractable(Collider hitCollider)

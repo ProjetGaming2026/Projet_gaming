@@ -5,9 +5,7 @@ public class TaskTerminal : MonoBehaviour, IInteractable
 {
     [Header("Task")]
     [SerializeField, Range(0f, 1f)] private float successChance = 0.6f;
-    [SerializeField] private float revealDurationOnFailure = 3f;
     [SerializeField] private float suspicionDurationOnUse = 5f;
-    [SerializeField] private float failureSuspicionDuration = 8f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent onSuccess;
@@ -39,7 +37,10 @@ public class TaskTerminal : MonoBehaviour, IInteractable
     {
         if (gameManager == null || gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Chase)
         {
-            PrototypeHUD.ShowFeedback("Le terminal n'est pas disponible pour l'instant.", PrototypeHUD.FeedbackTone.Warning, 2.2f);
+            PrototypeHUD.ShowFeedback(GameLocalization.Text(
+                "The terminal is not available yet.",
+                "Le terminal n'est pas disponible pour l'instant.",
+                "El terminal aun no esta disponible."), PrototypeHUD.FeedbackTone.Warning, 2.2f);
             Debug.Log("Le terminal ne peut etre utilise qu'en phase CHASE.");
             return;
         }
@@ -62,20 +63,21 @@ public class TaskTerminal : MonoBehaviour, IInteractable
             }
 
             Debug.Log("Terminal reussi. Progression mise a jour.");
-            PrototypeHUD.ShowFeedback("Tache reussie. Progression mise a jour.", PrototypeHUD.FeedbackTone.Success, 2.8f);
+            PrototypeHUD.ShowFeedback(GameLocalization.Text(
+                "Task complete. Progress updated.",
+                "Tache reussie. Progression mise a jour.",
+                "Tarea completada. Progreso actualizado."), PrototypeHUD.FeedbackTone.Success, 2.8f);
         }
         else
         {
             onFailure.Invoke();
-
-            if (monsterController != null)
-            {
-                monsterController.RevealPlayerPosition(revealDurationOnFailure);
-                monsterController.NotifySuspiciousActivity(transform.position, failureSuspicionDuration, true);
-            }
+            PuzzleFailureMonsterAlert.Alert(transform);
 
             Debug.Log("Terminal echoue. Position revelee temporairement.");
-            PrototypeHUD.ShowFeedback("Echec du terminal. L'entite a ete alertee.", PrototypeHUD.FeedbackTone.Failure, 2.8f);
+            PrototypeHUD.ShowFeedback(GameLocalization.Text(
+                "Terminal failed. The entity has been alerted.",
+                "Echec du terminal. L'entite a ete alertee.",
+                "Terminal fallado. La entidad ha sido alertada."), PrototypeHUD.FeedbackTone.Failure, 2.8f);
         }
     }
 }

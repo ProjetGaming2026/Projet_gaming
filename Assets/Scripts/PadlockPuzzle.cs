@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PadlockPuzzle : MonoBehaviour, IInteractable
 {
+    public static bool IsAnyPadlockFocused { get; private set; }
+
     [Header("Code Settings")]
     public int[] correctCode = { 1, 2, 1, 0 };
 
@@ -49,6 +51,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         if (!isInFocus)
         {
             isInFocus = true;
+            IsAnyPadlockFocused = true;
             isZooming = true;
             isReturning = false;
 
@@ -165,7 +168,10 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         for (int i = 0; i < correctCode.Length; i++)
         {
             if (dials[i].GetNumber() != correctCode[i])
+            {
+                PuzzleFailureMonsterAlert.Alert(transform);
                 return;
+            }
         }
 
         Unlock();
@@ -175,6 +181,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
     {
         isSolved = true;
         isInFocus = false;
+        IsAnyPadlockFocused = false;
         isZooming = false;
         isReturning = true; // retour smooth
 
@@ -210,6 +217,7 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
     private void ExitFocus()
     {
         isInFocus = false;
+        IsAnyPadlockFocused = false;
         isZooming = false;
         isReturning = false;
 
@@ -220,6 +228,14 @@ public class PadlockPuzzle : MonoBehaviour, IInteractable
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Debug.Log("Exit focus - camera reset instantané.");
+    }
+
+    private void OnDisable()
+    {
+        if (isInFocus)
+        {
+            IsAnyPadlockFocused = false;
+        }
     }
 
     private void ResolveReferences()

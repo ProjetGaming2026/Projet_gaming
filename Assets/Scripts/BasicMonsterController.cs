@@ -1,13 +1,21 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
 
 [RequireComponent(typeof(CharacterController))]
 public class BasicMonsterController : MonoBehaviour
 {
+    private const string NurseSceneVisualName = "NurseSceneVisual";
+    private const string NurseRuntimeVisualName = "NurseRuntimeVisual";
+
     private enum MonsterState
     {
         Dormant,
@@ -110,6 +118,8 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float corridorRecoveryDistance = 1.9f;
     [SerializeField] private float stuckEscapeProbeDistance = 3.2f;
     [SerializeField] private float stuckEscapeDuration = 1.25f;
+    [SerializeField] private float stuckMinimumProgressRatio = 0.18f;
+    [SerializeField] private float wedgedContactAcceleration = 1.35f;
 
     [Header("Intelligence")]
     [SerializeField] private bool buildRuntimeNavMesh = true;
@@ -128,6 +138,12 @@ public class BasicMonsterController : MonoBehaviour
 
     [Header("Visual Motion")]
     [SerializeField] private Transform animatedVisual;
+    [SerializeField] private bool useScaryNurseVisual = true;
+    [SerializeField] private string nurseModelAssetPath = "Assets/mixamo/Scary Zombie Pack/Nurse.fbx";
+    [SerializeField] private string scaryZombieAnimationAssetFolder = "Assets/mixamo/Scary Zombie Pack";
+    [SerializeField] private float nurseTargetVisualHeight = 1.95f;
+    [SerializeField] private Vector3 nurseVisualLocalPosition = Vector3.zero;
+    [SerializeField] private Vector3 nurseVisualLocalEulerAngles = Vector3.zero;
     [SerializeField] private bool alignVisualToGround = true;
     [SerializeField] private float visualGroundOffset = 0f;
     [SerializeField] private float visualGroundingSmoothing = 24f;
@@ -218,6 +234,7 @@ public class BasicMonsterController : MonoBehaviour
     private AnimationClip runAnimationClip;
     private AnimationClip turnAnimationClip;
     private AnimationClip attackAnimationClip;
+    private readonly Collider[] overlapBuffer = new Collider[16];
 
     private void Awake()
     {
@@ -246,6 +263,8 @@ public class BasicMonsterController : MonoBehaviour
             gameManager = FindFirstObjectByType<PrototypeGameManager>();
         }
 
+        ConfigureScaryNurseVisual();
+
         if (animatedVisual == null)
         {
             animatedVisual = FindAnimatedVisual();
@@ -269,6 +288,52 @@ public class BasicMonsterController : MonoBehaviour
         lastYaw = transform.eulerAngles.y;
         TryInitializeMixamoAnimations();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (Application.isPlaying || !useScaryNurseVisual)
+        {
+            return;
+        }
+
+        ApplyScaryNurseAnimationNames();
+        EditorApplication.delayCall -= EnsureNurseSceneVisualAfterValidation;
+        EditorApplication.delayCall += EnsureNurseSceneVisualAfterValidation;
+    }
+
+    [InitializeOnLoadMethod]
+    private static void EnsureNurseVisualsAfterScriptReload()
+    {
+        EditorApplication.delayCall += () =>
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                return;
+            }
+
+            BasicMonsterController[] monsters = Object.FindObjectsByType<BasicMonsterController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < monsters.Length; i++)
+            {
+                BasicMonsterController monster = monsters[i];
+                if (monster != null && monster.useScaryNurseVisual)
+                {
+                    monster.EnsureNurseSceneVisual();
+                }
+            }
+        };
+    }
+
+    private void EnsureNurseSceneVisualAfterValidation()
+    {
+        if (this == null || Application.isPlaying || !useScaryNurseVisual || gameObject == null || !gameObject.scene.IsValid())
+        {
+            return;
+        }
+
+        EnsureNurseSceneVisual();
+    }
+#endif
 
     private void Update()
     {
@@ -300,6 +365,55 @@ public class BasicMonsterController : MonoBehaviour
     {
         forcedRevealTimer = Mathf.Max(forcedRevealTimer, duration);
         Debug.Log("Position du joueur revelee a l'Entite pendant " + duration + " secondes.");
+    }
+
+    public void AssignPlayerTarget(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        playerTarget = target;
+        playerController = target.GetComponent<BasicFirstPersonController>();
+    }
+
+    public void HuntPlayerAfterPuzzleFailure(float duration)
+    {
+        if (playerTarget == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerTarget = player.transform;
+            }
+        }
+
+        float effectiveDuration = Mathf.Max(duration, forcedSearchDuration, memoryDuration);
+        forcedRevealTimer = Mathf.Max(forcedRevealTimer, effectiveDuration);
+        huntPersistenceTimer = Mathf.Max(huntPersistenceTimer, effectiveDuration);
+        roamPauseTimer = 0f;
+        patrolWaitTimer = 0f;
+        searchRetargetTimer = 0f;
+        stuckTimer = 0f;
+        hasRoamTarget = false;
+        hasInvestigationTarget = false;
+
+        if (currentNavMeshPath != null)
+        {
+            currentNavMeshPath.ClearCorners();
+        }
+
+        currentNavMeshTarget = Vector3.positiveInfinity;
+
+        if (playerTarget != null)
+        {
+            RememberPlayerPosition(playerTarget.position, effectiveDuration);
+            investigationTarget = playerTarget.position;
+            hasInvestigationTarget = true;
+        }
+
+        Debug.Log("Echec de puzzle: l'Entite chasse le joueur pendant " + effectiveDuration + " secondes.");
     }
 
     public void ApplyStaticTrap(float duration)
@@ -1027,6 +1141,138 @@ public class BasicMonsterController : MonoBehaviour
         return true;
     }
 
+    private bool TryGetDepenetrationEscapeDirection(out Vector3 direction)
+    {
+        direction = Vector3.zero;
+        if (controller == null)
+        {
+            return false;
+        }
+
+        GetControllerWorldCapsule(transform.position, out Vector3 pointA, out Vector3 pointB, out float radius);
+        int hitCount = Physics.OverlapCapsuleNonAlloc(
+            pointA,
+            pointB,
+            radius * 1.04f,
+            overlapBuffer,
+            obstacleMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider other = overlapBuffer[i];
+            overlapBuffer[i] = null;
+            if (other == null ||
+                other.transform == null ||
+                other.transform.IsChildOf(transform) ||
+                (playerTarget != null && other.transform.IsChildOf(playerTarget)))
+            {
+                continue;
+            }
+
+            if (!Physics.ComputePenetration(
+                controller,
+                transform.position,
+                transform.rotation,
+                other,
+                other.transform.position,
+                other.transform.rotation,
+                out Vector3 pushDirection,
+                out float pushDistance))
+            {
+                continue;
+            }
+
+            pushDirection.y = 0f;
+            if (pushDirection.sqrMagnitude <= 0.001f)
+            {
+                continue;
+            }
+
+            direction += pushDirection.normalized * Mathf.Max(pushDistance, 0.08f);
+        }
+
+        if (direction.sqrMagnitude <= 0.001f)
+        {
+            return false;
+        }
+
+        direction.Normalize();
+        return true;
+    }
+
+    private bool HasBodySpaceAt(Vector3 worldPosition)
+    {
+        if (controller == null)
+        {
+            return true;
+        }
+
+        GetControllerWorldCapsule(worldPosition, out Vector3 pointA, out Vector3 pointB, out float radius);
+        int hitCount = Physics.OverlapCapsuleNonAlloc(
+            pointA,
+            pointB,
+            radius * 0.96f,
+            overlapBuffer,
+            obstacleMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider other = overlapBuffer[i];
+            overlapBuffer[i] = null;
+            if (other == null ||
+                other.transform == null ||
+                other.transform.IsChildOf(transform) ||
+                (playerTarget != null && other.transform.IsChildOf(playerTarget)))
+            {
+                continue;
+            }
+
+            if (!Physics.ComputePenetration(
+                controller,
+                worldPosition,
+                transform.rotation,
+                other,
+                other.transform.position,
+                other.transform.rotation,
+                out Vector3 pushDirection,
+                out _))
+            {
+                return false;
+            }
+
+            if (pushDirection.y > 0.45f)
+            {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private void GetControllerWorldCapsule(Vector3 worldPosition, out Vector3 pointA, out Vector3 pointB, out float radius)
+    {
+        Vector3 lossyScale = transform.lossyScale;
+        float scaleX = Mathf.Abs(lossyScale.x);
+        float scaleY = Mathf.Abs(lossyScale.y);
+        float scaleZ = Mathf.Abs(lossyScale.z);
+        float horizontalScale = Mathf.Max(Mathf.Max(scaleX, scaleZ), 0.0001f);
+
+        radius = Mathf.Max(controller.radius * horizontalScale, 0.05f);
+        float height = Mathf.Max(controller.height * Mathf.Max(scaleY, 0.0001f), radius * 2f);
+        Vector3 center = worldPosition + transform.TransformVector(controller.center);
+        Vector3 up = transform.up;
+        float capsuleHalf = Mathf.Max(0f, height * 0.5f - radius);
+
+        pointA = center + up * capsuleHalf;
+        pointB = center - up * capsuleHalf;
+    }
+
     private void UpdateNavigationRecovery(Vector3 targetVelocity, bool isChasing, bool isInvestigating)
     {
         Vector3 planarDelta = transform.position - lastPosition;
@@ -1039,13 +1285,27 @@ public class BasicMonsterController : MonoBehaviour
             return;
         }
 
-        if (planarDelta.sqrMagnitude >= 0.0004f)
+        Vector3 targetDirection = targetVelocity.normalized;
+        targetDirection.y = 0f;
+        if (targetDirection.sqrMagnitude <= 0.001f)
         {
             stuckTimer = 0f;
             return;
         }
 
-        stuckTimer += Time.deltaTime;
+        targetDirection.Normalize();
+        float forwardProgress = Vector3.Dot(planarDelta, targetDirection);
+        float expectedProgress = targetVelocity.magnitude * Time.deltaTime;
+        float minimumProgress = Mathf.Max(0.012f, expectedProgress * Mathf.Clamp01(stuckMinimumProgressRatio));
+        bool touchingSide = (controller.collisionFlags & CollisionFlags.Sides) != 0;
+
+        if (forwardProgress >= minimumProgress && (!touchingSide || planarDelta.magnitude >= minimumProgress * 1.6f))
+        {
+            stuckTimer = 0f;
+            return;
+        }
+
+        stuckTimer += Time.deltaTime * (touchingSide ? Mathf.Max(1f, wedgedContactAcceleration) : 1f);
         float effectiveStuckDelay = isChasing ? stuckRetargetDelay * 0.8f : stuckRetargetDelay;
 
         if (stuckTimer < effectiveStuckDelay)
@@ -1060,7 +1320,21 @@ public class BasicMonsterController : MonoBehaviour
             fallbackDirection = transform.right * lastAvoidanceSign;
         }
 
-        if (TryFindOpenEscapePoint(transform.position + targetVelocity.normalized * stuckEscapeProbeDistance, out Vector3 escapePoint))
+        if (TryGetDepenetrationEscapeDirection(out Vector3 depenetrationDirection))
+        {
+            fallbackDirection = depenetrationDirection;
+            if (TryFindOpenEscapePoint(transform.position + depenetrationDirection.normalized * stuckEscapeProbeDistance, out Vector3 depenetrationEscapePoint))
+            {
+                stuckEscapeTarget = depenetrationEscapePoint;
+            }
+            else
+            {
+                stuckEscapeTarget = transform.position + depenetrationDirection.normalized * corridorRecoveryDistance;
+            }
+
+            stuckEscapeTimer = stuckEscapeDuration;
+        }
+        else if (TryFindOpenEscapePoint(transform.position + targetVelocity.normalized * stuckEscapeProbeDistance, out Vector3 escapePoint))
         {
             stuckEscapeTarget = escapePoint;
             stuckEscapeTimer = stuckEscapeDuration;
@@ -1120,6 +1394,293 @@ public class BasicMonsterController : MonoBehaviour
 
         return null;
     }
+
+    private void ConfigureScaryNurseVisual()
+    {
+        if (!useScaryNurseVisual)
+        {
+            return;
+        }
+
+        ApplyScaryNurseAnimationNames();
+
+        Transform existingNurse = FindNurseVisual();
+        if (existingNurse != null)
+        {
+            DisablePreviousMonsterVisuals();
+            EnsureNurseAnimator(existingNurse.gameObject);
+            animatedVisual = existingNurse;
+            return;
+        }
+
+#if UNITY_EDITOR
+        GameObject nurseObject = CreateNurseVisual(NurseRuntimeVisualName, true);
+        if (nurseObject == null)
+        {
+            return;
+        }
+
+        animatedVisual = nurseObject.transform;
+#endif
+    }
+
+    private void ApplyScaryNurseAnimationNames()
+    {
+        idleClipResourceName = "zombie idle";
+        walkClipResourceName = "zombie walk";
+        runClipResourceName = "zombie run";
+        attackClipResourceName = "zombie attack";
+        if (string.IsNullOrWhiteSpace(turnClipResourceName) || NameMatches(turnClipResourceName, "Zombie Turn"))
+        {
+            turnClipResourceName = string.Empty;
+        }
+    }
+
+    private Transform FindNurseVisual()
+    {
+        Transform sceneVisual = transform.Find(NurseSceneVisualName);
+        if (sceneVisual != null)
+        {
+            return sceneVisual;
+        }
+
+        Transform runtimeVisual = transform.Find(NurseRuntimeVisualName);
+        if (runtimeVisual != null)
+        {
+            return runtimeVisual;
+        }
+
+        return null;
+    }
+
+#if UNITY_EDITOR
+    private void EnsureNurseSceneVisual()
+    {
+        ApplyScaryNurseAnimationNames();
+
+        Transform existingNurse = transform.Find(NurseSceneVisualName);
+        Transform runtimeNurse = transform.Find(NurseRuntimeVisualName);
+        if (existingNurse == null && runtimeNurse != null)
+        {
+            runtimeNurse.name = NurseSceneVisualName;
+            existingNurse = runtimeNurse;
+        }
+
+        GameObject nurseObject = existingNurse != null
+            ? existingNurse.gameObject
+            : CreateNurseVisual(NurseSceneVisualName, false);
+
+        if (nurseObject == null)
+        {
+            return;
+        }
+
+        ConfigureNurseVisualObject(nurseObject);
+        DisablePreviousMonsterVisuals();
+        animatedVisual = nurseObject.transform;
+        EditorUtility.SetDirty(this);
+        EditorSceneManager.MarkSceneDirty(gameObject.scene);
+    }
+
+    private GameObject CreateNurseVisual(string visualName, bool runtimeInstance)
+    {
+        EnsureHumanoidImporter(nurseModelAssetPath, false);
+        GameObject nursePrefab = LoadAssetAtPathWithImport<GameObject>(nurseModelAssetPath);
+        if (nursePrefab == null)
+        {
+            Debug.LogWarning("Nurse FBX introuvable: " + nurseModelAssetPath);
+            return null;
+        }
+
+        DisablePreviousMonsterVisuals();
+
+        GameObject nurseObject = runtimeInstance
+            ? Instantiate(nursePrefab, transform)
+            : PrefabUtility.InstantiatePrefab(nursePrefab, transform) as GameObject;
+        if (nurseObject == null)
+        {
+            nurseObject = Instantiate(nursePrefab, transform);
+        }
+
+        nurseObject.name = visualName;
+        if (!runtimeInstance)
+        {
+            Undo.RegisterCreatedObjectUndo(nurseObject, "Add Nurse Visual");
+        }
+
+        ConfigureNurseVisualObject(nurseObject);
+        return nurseObject;
+    }
+
+    private void ConfigureNurseVisualObject(GameObject nurseObject)
+    {
+        if (nurseObject == null)
+        {
+            return;
+        }
+
+        nurseObject.transform.localPosition = nurseVisualLocalPosition;
+        nurseObject.transform.localRotation = Quaternion.Euler(nurseVisualLocalEulerAngles);
+        nurseObject.transform.localScale = Vector3.one;
+        ScaleVisualToTargetHeight(nurseObject.transform, nurseTargetVisualHeight);
+        AssignNurseTextures(nurseObject);
+        EnsureNurseAnimator(nurseObject);
+    }
+#endif
+
+    private void DisablePreviousMonsterVisuals()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child == null ||
+                child.name == "EntityPrisonVisual" ||
+                child.name == NurseSceneVisualName ||
+                child.name == NurseRuntimeVisualName)
+            {
+                continue;
+            }
+
+            if (child.GetComponentInChildren<Renderer>(true) != null)
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void ScaleVisualToTargetHeight(Transform visual, float targetHeight)
+    {
+        if (visual == null || targetHeight <= 0f || !TryGetRendererBounds(visual, out Bounds bounds) || bounds.size.y <= 0.001f)
+        {
+            return;
+        }
+
+        float scale = targetHeight / bounds.size.y;
+        visual.localScale *= scale;
+    }
+
+    private bool TryGetRendererBounds(Transform root, out Bounds bounds)
+    {
+        bounds = default;
+        if (root == null)
+        {
+            return false;
+        }
+
+        Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private void AssignNurseTextures(GameObject nurseObject)
+    {
+#if UNITY_EDITOR
+        if (nurseObject == null)
+        {
+            return;
+        }
+
+        Texture2D bodyTexture = LoadAssetAtPathWithImport<Texture2D>("Assets/mixamo/Scary Zombie Pack/body.png");
+        Texture2D headTexture = LoadAssetAtPathWithImport<Texture2D>("Assets/mixamo/Scary Zombie Pack/head.png");
+        Renderer[] renderers = nurseObject.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || renderer.sharedMaterials == null)
+            {
+                continue;
+            }
+
+            Material[] materials = renderer.materials;
+            for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+            {
+                Material material = materials[materialIndex];
+                if (material == null)
+                {
+                    continue;
+                }
+
+                string materialName = NormalizeAnimationName(material.name);
+                Texture2D texture = materialName.Contains("head") ? headTexture : bodyTexture;
+                if (texture != null && material.HasProperty("_BaseMap"))
+                {
+                    material.SetTexture("_BaseMap", texture);
+                }
+                else if (texture != null && material.HasProperty("_MainTex"))
+                {
+                    material.SetTexture("_MainTex", texture);
+                }
+            }
+        }
+#endif
+    }
+
+    private void EnsureNurseAnimator(GameObject nurseObject)
+    {
+#if UNITY_EDITOR
+        if (nurseObject == null)
+        {
+            return;
+        }
+
+        Animator nurseAnimator = nurseObject.GetComponent<Animator>();
+        if (nurseAnimator == null)
+        {
+            nurseAnimator = nurseObject.GetComponentInChildren<Animator>(true);
+        }
+
+        if (nurseAnimator == null)
+        {
+            nurseAnimator = nurseObject.AddComponent<Animator>();
+        }
+
+        Avatar nurseAvatar = LoadAvatarFromModel(nurseModelAssetPath);
+        if (nurseAvatar != null && nurseAvatar.isValid && nurseAvatar.isHuman)
+        {
+            nurseAnimator.avatar = nurseAvatar;
+        }
+
+        nurseAnimator.enabled = true;
+        nurseAnimator.runtimeAnimatorController = null;
+        nurseAnimator.applyRootMotion = false;
+        nurseAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+#endif
+    }
+
+#if UNITY_EDITOR
+    private Avatar LoadAvatarFromModel(string modelPath)
+    {
+        Object[] assets = LoadAllAssetsAtPathWithImport(modelPath);
+        for (int i = 0; i < assets.Length; i++)
+        {
+            if (assets[i] is Avatar avatar && avatar.isValid && avatar.isHuman)
+            {
+                return avatar;
+            }
+        }
+
+        return null;
+    }
+#endif
 
     private Transform[] FindPatrolPointsInScene()
     {
@@ -1388,6 +1949,7 @@ public class BasicMonsterController : MonoBehaviour
             70f,
             -110f,
             110f,
+            180f,
             160f,
             -160f
         };
@@ -1405,6 +1967,11 @@ public class BasicMonsterController : MonoBehaviour
             }
 
             Vector3 candidate = transform.position + direction.normalized * Mathf.Min(clearance, stuckEscapeProbeDistance);
+            if (!HasBodySpaceAt(candidate))
+            {
+                continue;
+            }
+
             float targetProgress = Vector3.Dot(desiredDirection.normalized, direction.normalized);
             float score = clearance + targetProgress * (intelligenceLevel == IntelligenceLevel.Hard ? 1.2f : 0.65f);
 
@@ -1710,13 +2277,13 @@ public class BasicMonsterController : MonoBehaviour
 
         if (idleAnimationClip == null || walkAnimationClip == null || runAnimationClip == null)
         {
-            Debug.LogWarning("Clips Mixamo incomplets. Verifie Assets/Resources/Mixamo et les noms de clips dans BasicMonsterController.");
+            Debug.LogWarning("Clips Mixamo incomplets. Verifie Assets/mixamo/Scary Zombie Pack et les noms de clips dans BasicMonsterController.");
             return;
         }
 
         animationGraph = PlayableGraph.Create(name + "_MixamoGraph");
         animationGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-        animationMixer = AnimationMixerPlayable.Create(animationGraph, 2, true);
+        animationMixer = AnimationMixerPlayable.Create(animationGraph, 2);
 
         AnimationPlayableOutput output = AnimationPlayableOutput.Create(animationGraph, "ZombieAnimation", visualAnimator);
         output.SetSourcePlayable(animationMixer);
@@ -1728,6 +2295,14 @@ public class BasicMonsterController : MonoBehaviour
 
     private AnimationClip LoadMixamoClip(string clipResourceName, params string[] fallbackKeywords)
     {
+#if UNITY_EDITOR
+        AnimationClip editorClip = LoadAnimationClipFromAssetFolder(clipResourceName, fallbackKeywords);
+        if (editorClip != null)
+        {
+            return editorClip;
+        }
+#endif
+
         AnimationClip[] clips = string.IsNullOrWhiteSpace(clipResourceName)
             ? System.Array.Empty<AnimationClip>()
             : Resources.LoadAll<AnimationClip>(mixamoResourcesFolder + "/" + clipResourceName);
@@ -1755,6 +2330,155 @@ public class BasicMonsterController : MonoBehaviour
 
         return null;
     }
+
+#if UNITY_EDITOR
+    private AnimationClip LoadAnimationClipFromAssetFolder(string clipResourceName, params string[] fallbackKeywords)
+    {
+        string animationFolder = NormalizeAssetPath(scaryZombieAnimationAssetFolder);
+        if (string.IsNullOrWhiteSpace(animationFolder) || !Directory.Exists(animationFolder))
+        {
+            return null;
+        }
+
+        string[] fbxPaths = Directory.GetFiles(animationFolder, "*.fbx", SearchOption.TopDirectoryOnly);
+        AnimationClip clip = FindClipInFbxFiles(fbxPaths, clipResourceName, true);
+        if (clip != null)
+        {
+            return clip;
+        }
+
+        clip = FindClipInFbxFiles(fbxPaths, clipResourceName, false);
+        if (clip != null)
+        {
+            return clip;
+        }
+
+        if (fallbackKeywords != null)
+        {
+            for (int i = 0; i < fallbackKeywords.Length; i++)
+            {
+                clip = FindClipInFbxFiles(fbxPaths, fallbackKeywords[i], false);
+                if (clip != null)
+                {
+                    return clip;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private AnimationClip FindClipInFbxFiles(string[] fbxPaths, string expectedName, bool exactFileNameOnly)
+    {
+        if (fbxPaths == null || string.IsNullOrWhiteSpace(expectedName))
+        {
+            return null;
+        }
+
+        string normalizedExpected = NormalizeAnimationName(expectedName);
+        for (int i = 0; i < fbxPaths.Length; i++)
+        {
+            string path = NormalizeAssetPath(fbxPaths[i]);
+            string fileName = NormalizeAnimationName(Path.GetFileNameWithoutExtension(path));
+            bool fileMatches = exactFileNameOnly
+                ? fileName == normalizedExpected
+                : fileName == normalizedExpected || fileName.Contains(normalizedExpected);
+            if (!fileMatches)
+            {
+                continue;
+            }
+
+            EnsureHumanoidImporter(path, true);
+            Object[] assets = LoadAllAssetsAtPathWithImport(path);
+            for (int assetIndex = 0; assetIndex < assets.Length; assetIndex++)
+            {
+                if (assets[assetIndex] is AnimationClip animationClip && IsUsableAnimationClip(animationClip))
+                {
+                    return animationClip;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private T LoadAssetAtPathWithImport<T>(string path) where T : Object
+    {
+        string normalizedPath = NormalizeAssetPath(path);
+        T asset = AssetDatabase.LoadAssetAtPath<T>(normalizedPath);
+        if (asset == null && File.Exists(normalizedPath))
+        {
+            AssetDatabase.ImportAsset(normalizedPath, ImportAssetOptions.Default);
+            asset = AssetDatabase.LoadAssetAtPath<T>(normalizedPath);
+        }
+
+        return asset;
+    }
+
+    private Object[] LoadAllAssetsAtPathWithImport(string path)
+    {
+        string normalizedPath = NormalizeAssetPath(path);
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(normalizedPath);
+        if ((assets == null || assets.Length == 0) && File.Exists(normalizedPath))
+        {
+            AssetDatabase.ImportAsset(normalizedPath, ImportAssetOptions.Default);
+            assets = AssetDatabase.LoadAllAssetsAtPath(normalizedPath);
+        }
+
+        return assets ?? System.Array.Empty<Object>();
+    }
+
+    private void EnsureHumanoidImporter(string path, bool importAnimation)
+    {
+        string normalizedPath = NormalizeAssetPath(path);
+        ModelImporter importer = AssetImporter.GetAtPath(normalizedPath) as ModelImporter;
+        if (importer == null)
+        {
+            return;
+        }
+
+        bool changed = false;
+        if (importer.animationType != ModelImporterAnimationType.Human)
+        {
+            importer.animationType = ModelImporterAnimationType.Human;
+            changed = true;
+        }
+
+        if (importer.avatarSetup != ModelImporterAvatarSetup.CreateFromThisModel)
+        {
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            changed = true;
+        }
+
+        if (importer.importAnimation != importAnimation)
+        {
+            importer.importAnimation = importAnimation;
+            changed = true;
+        }
+
+        if (changed)
+        {
+            importer.SaveAndReimport();
+        }
+    }
+
+    private string NormalizeAssetPath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return string.Empty;
+        }
+
+        string normalizedPath = path.Trim().Replace('\\', '/');
+        int assetsIndex = normalizedPath.IndexOf("/Assets/", System.StringComparison.OrdinalIgnoreCase);
+        if (assetsIndex >= 0)
+        {
+            normalizedPath = normalizedPath.Substring(assetsIndex + 1);
+        }
+
+        return normalizedPath;
+    }
+#endif
 
     private AnimationClip FindUsableClip(AnimationClip[] clips)
     {

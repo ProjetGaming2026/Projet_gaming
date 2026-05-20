@@ -17590,6 +17590,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f5d01224d42f493598c626537b1ae8c, type: 3}
+--- !u!4 &234078708 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+  m_PrefabInstance: {fileID: 505766913}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &234122454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22986,9 +22991,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1315598511849914499, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
       propertyPath: m_Name
       value: EntityVisualModel
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 91d35d77d36dbea4a9bc237b41cf6785, type: 3}
       propertyPath: m_CullingMode
@@ -38755,6 +38768,91 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e900ff9e8f48146f8be8c8da7ffde386, type: 3}
   m_PrefabInstance: {fileID: 1535579999}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &505766913
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1768635474}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 195.99985
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 195.99985
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 195.99985
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6796009744405785935, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 831459904}
+    - target: {fileID: 919132149155446097, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_Name
+      value: NurseSceneVisual
+      objectReference: {fileID: 0}
+    - target: {fileID: 2772105478904033430, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2113772992}
+    - target: {fileID: 5866666021909216657, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
 --- !u!1 &506500999
 GameObject:
   m_ObjectHideFlags: 0
@@ -65890,6 +65988,89 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e02c7a6cd9cc543c698d4a099b5b616c, type: 3}
   m_PrefabInstance: {fileID: 1009414353}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &831459904
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: body (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: ddf6b315d28eec34eb20cfc8d3a5d58b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!4 &831484787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
@@ -142420,6 +142601,8 @@ MonoBehaviour:
   corridorRecoveryDistance: 1.9
   stuckEscapeProbeDistance: 3.2
   stuckEscapeDuration: 1.25
+  stuckMinimumProgressRatio: 0.18
+  wedgedContactAcceleration: 1.35
   buildRuntimeNavMesh: 1
   runtimeNavMeshLayerMask:
     serializedVersion: 2
@@ -142435,7 +142618,13 @@ MonoBehaviour:
   easyBlockedRouteDistance: 5
   stairStepOffset: 0.45
   stairSlopeLimit: 52
-  animatedVisual: {fileID: 692512811}
+  animatedVisual: {fileID: 234078708}
+  useScaryNurseVisual: 1
+  nurseModelAssetPath: Assets/mixamo/Scary Zombie Pack/Nurse.fbx
+  scaryZombieAnimationAssetFolder: Assets/mixamo/Scary Zombie Pack
+  nurseTargetVisualHeight: 1.95
+  nurseVisualLocalPosition: {x: 0, y: 0, z: 0}
+  nurseVisualLocalEulerAngles: {x: 0, y: 0, z: 0}
   alignVisualToGround: 1
   visualGroundOffset: 0
   visualGroundingSmoothing: 24
@@ -142448,11 +142637,11 @@ MonoBehaviour:
   visualSmoothing: 10
   captureTurnSpeedMultiplier: 1.8
   mixamoResourcesFolder: Mixamo
-  idleClipResourceName: Idle_with_skin
-  walkClipResourceName: Zombie Walk
-  runClipResourceName: Zombie Running
-  turnClipResourceName: Zombie Turn
-  attackClipResourceName: Zombie Attack
+  idleClipResourceName: zombie idle
+  walkClipResourceName: zombie walk
+  runClipResourceName: zombie run
+  turnClipResourceName: 
+  attackClipResourceName: zombie attack
   animationBlendDuration: 0.18
   animationMoveThreshold: 0.12
   turnAnimationAngularSpeedThreshold: 80
@@ -142571,13 +142760,14 @@ Transform:
   m_GameObject: {fileID: 1768635464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.55, y: 0.8, z: 20}
+  m_LocalPosition: {x: -7.55, y: 0, z: 20}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1636903840}
   - {fileID: 1189540281}
   - {fileID: 692512811}
+  - {fileID: 234078708}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1768674553
@@ -170173,6 +170363,89 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
+--- !u!21 &2113772992
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: head (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: cabf09f76f3388a4bb575e17b9b6ef12, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1001 &2114929911
 PrefabInstance:
   m_ObjectHideFlags: 0

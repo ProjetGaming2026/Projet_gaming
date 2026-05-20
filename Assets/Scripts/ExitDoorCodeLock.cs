@@ -39,7 +39,6 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private TMP_Text hintText;
     private AudioSource audioSource;
     private string currentInput = string.Empty;
-    private bool isOpen;
     private bool isBusy;
     private bool codeValidated;
     private bool taskRegistered;
@@ -96,7 +95,10 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         if (codeValidated)
         {
-            PrototypeHUD.ShowFeedback("Code valide. Termine tous les puzzles avant de sortir.", PrototypeHUD.FeedbackTone.Info, 2.8f);
+            PrototypeHUD.ShowFeedback(GameLocalization.Text(
+                "Valid code. Finish all puzzles before leaving.",
+                "Code valide. Termine tous les puzzles avant de sortir.",
+                "Codigo valido. Termina todos los puzzles antes de salir."), PrototypeHUD.FeedbackTone.Info, 2.8f);
             return;
         }
 
@@ -108,15 +110,15 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         if (codeValidated && CanOpenExitNow())
         {
-            return "Appuie sur E pour ouvrir la sortie";
+            return GameLocalization.Text("Press E to open the exit", "Appuie sur E pour ouvrir la sortie", "Pulsa E para abrir la salida");
         }
 
         if (codeValidated)
         {
-            return "Code valide. Termine tous les puzzles";
+            return GameLocalization.Text("Valid code. Finish all puzzles", "Code valide. Termine tous les puzzles", "Codigo valido. Termina todos los puzzles");
         }
 
-        return "Appuie sur E pour entrer le code de sortie";
+        return GameLocalization.Text("Press E to enter the exit code", "Appuie sur E pour entrer le code de sortie", "Pulsa E para introducir el codigo de salida");
     }
 
     public static bool TryGetLockForDoor(DoorInteractable door, out ExitDoorCodeLock codeLock)
@@ -304,11 +306,11 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         AddOutline(panelObject, accentColor, new Vector2(2f, -2f));
 
-        TMP_Text title = CreateText("Title", panelObject.transform, facilityName, 30f, textColor);
+        TMP_Text title = CreateText("Title", panelObject.transform, GameLocalization.Text("EXIT CONTROL", facilityName, "CONTROL DE SALIDA"), 30f, textColor);
         SetRect(title.rectTransform, new Vector2(32f, -36f), new Vector2(-32f, -94f), new Vector2(0f, 1f), new Vector2(1f, 1f));
         title.alignment = TextAlignmentOptions.Center;
 
-        statusText = CreateText("Status", panelObject.transform, "SORTIE VERROUILLEE", 24f, accentColor);
+        statusText = CreateText("Status", panelObject.transform, GameLocalization.Text("EXIT LOCKED", "SORTIE VERROUILLEE", "SALIDA BLOQUEADA"), 24f, accentColor);
         SetRect(statusText.rectTransform, new Vector2(32f, -112f), new Vector2(-32f, -166f), new Vector2(0f, 1f), new Vector2(1f, 1f));
         statusText.alignment = TextAlignmentOptions.Center;
 
@@ -319,7 +321,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         CreateKeypad(panelObject.transform);
 
-        hintText = CreateText("Hint", panelObject.transform, "ENTRER: VALIDER   RETOUR: EFFACER   ESC: ANNULER", 18f, new Color(0.62f, 0.7f, 0.68f, 1f));
+        hintText = CreateText("Hint", panelObject.transform, GameLocalization.Text("ENTER: SUBMIT   BACKSPACE: DELETE   ESC: CANCEL", "ENTRER: VALIDER   RETOUR: EFFACER   ESC: ANNULER", "ENTER: VALIDAR   RETROCESO: BORRAR   ESC: CANCELAR"), 18f, new Color(0.62f, 0.7f, 0.68f, 1f));
         SetRect(hintText.rectTransform, new Vector2(32f, 34f), new Vector2(-32f, 82f), Vector2.zero, Vector2.one);
         hintText.alignment = TextAlignmentOptions.Center;
     }
@@ -377,7 +379,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private void ShowPanel()
     {
         currentInput = string.Empty;
-        UpdateDisplay("SORTIE VERROUILLEE", accentColor);
+        UpdateDisplay(GameLocalization.Text("EXIT LOCKED", "SORTIE VERROUILLEE", "SALIDA BLOQUEADA"), accentColor);
         canvas.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -461,7 +463,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         currentInput += digit;
         PlaySound(keySound);
-        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
+        UpdateDisplay(GameLocalization.Text("ENTER EXIT CODE", "ENTRE LE CODE DE SORTIE", "INTRODUCE CODIGO DE SALIDA"), accentColor);
     }
 
     private void RemoveLastDigit()
@@ -473,14 +475,14 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         currentInput = currentInput.Substring(0, currentInput.Length - 1);
         PlaySound(keySound);
-        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
+        UpdateDisplay(GameLocalization.Text("ENTER EXIT CODE", "ENTRE LE CODE DE SORTIE", "INTRODUCE CODIGO DE SALIDA"), accentColor);
     }
 
     private void ClearInput()
     {
         currentInput = string.Empty;
         PlaySound(keySound);
-        UpdateDisplay("ENTRE LE CODE DE SORTIE", accentColor);
+        UpdateDisplay(GameLocalization.Text("ENTER EXIT CODE", "ENTRE LE CODE DE SORTIE", "INTRODUCE CODIGO DE SALIDA"), accentColor);
     }
 
     private void SubmitCode()
@@ -520,10 +522,9 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         if (CanOpenExitNow())
         {
-            isOpen = true;
             SetLinkedDoorInteractionLocked(false);
             PlaySound(grantedSound);
-            UpdateDisplay("ACCES AUTORISE", grantedTextColor);
+            UpdateDisplay(GameLocalization.Text("ACCESS GRANTED", "ACCES AUTORISE", "ACCESO AUTORIZADO"), grantedTextColor);
             yield return new WaitForSecondsRealtime(0.65f);
             HidePanel();
             OpenLinkedDoors();
@@ -531,13 +532,15 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
             yield break;
         }
 
-        isOpen = false;
         SetLinkedDoorInteractionLocked(true);
         PlaySound(grantedSound);
-        UpdateDisplay("CODE VALIDE", grantedTextColor);
+        UpdateDisplay(GameLocalization.Text("VALID CODE", "CODE VALIDE", "CODIGO VALIDO"), grantedTextColor);
         yield return new WaitForSecondsRealtime(0.65f);
         HidePanel();
-        PrototypeHUD.ShowFeedback("Code valide. Termine tous les puzzles avant de sortir.", PrototypeHUD.FeedbackTone.Info, 3f);
+        PrototypeHUD.ShowFeedback(GameLocalization.Text(
+            "Valid code. Finish all puzzles before leaving.",
+            "Code valide. Termine tous les puzzles avant de sortir.",
+            "Codigo valido. Termina todos los puzzles antes de salir."), PrototypeHUD.FeedbackTone.Info, 3f);
         isBusy = false;
     }
 
@@ -545,10 +548,11 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         isBusy = true;
         PlaySound(deniedSound);
-        UpdateDisplay("ACCES REFUSE", dangerColor);
+        PuzzleFailureMonsterAlert.Alert(transform);
+        UpdateDisplay(GameLocalization.Text("ACCESS DENIED", "ACCES REFUSE", "ACCESO DENEGADO"), dangerColor);
         yield return new WaitForSecondsRealtime(0.9f);
         currentInput = string.Empty;
-        UpdateDisplay("SORTIE VERROUILLEE", accentColor);
+        UpdateDisplay(GameLocalization.Text("EXIT LOCKED", "SORTIE VERROUILLEE", "SALIDA BLOQUEADA"), accentColor);
         isBusy = false;
     }
 
@@ -556,7 +560,10 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         if (!CanOpenExitNow())
         {
-            PrototypeHUD.ShowFeedback("La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.", PrototypeHUD.FeedbackTone.Warning, 3f);
+            PrototypeHUD.ShowFeedback(GameLocalization.Text(
+                "The exit stays locked until every puzzle is solved.",
+                "La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.",
+                "La salida sigue bloqueada hasta resolver todos los puzzles."), PrototypeHUD.FeedbackTone.Warning, 3f);
             return;
         }
 

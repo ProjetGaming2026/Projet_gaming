@@ -58,7 +58,10 @@ public class KeyDoor : MonoBehaviour, IInteractable
             if (inventory == null || !inventory.HasLowerFloorRoomKey())
             {
                 PlayOneShot(lockedSound);
-                RoomKeyDoorHud.Show("CLE DE CHAMBRE REQUISE", "Cette porte mene a la chambre de l'etage inferieur.", true);
+                RoomKeyDoorHud.Show(
+                    GameLocalization.Text("ROOM KEY REQUIRED", "CLE DE CHAMBRE REQUISE", "LLAVE DE HABITACION REQUERIDA"),
+                    GameLocalization.Text("This door leads to the lower floor room.", "Cette porte mene a la chambre de l'etage inferieur.", "Esta puerta lleva a la habitacion del piso inferior."),
+                    true);
                 Debug.Log("KeyDoor: door3b locked. Lower floor room key is missing.");
                 return;
             }
@@ -70,7 +73,10 @@ public class KeyDoor : MonoBehaviour, IInteractable
             }
 
             PlayOneShot(unlockSound);
-            RoomKeyDoorHud.Show("PORTE DEVERROUILLEE", "Cle de chambre utilisee.", false);
+            RoomKeyDoorHud.Show(
+                GameLocalization.Text("DOOR UNLOCKED", "PORTE DEVERROUILLEE", "PUERTA DESBLOQUEADA"),
+                GameLocalization.Text("Room key used.", "Cle de chambre utilisee.", "Llave de habitacion usada."),
+                false);
             Debug.Log("KeyDoor: door3b unlocked with the lower floor room key.");
         }
 
@@ -83,15 +89,22 @@ public class KeyDoor : MonoBehaviour, IInteractable
 
         if (!lowerFloorRoomDoorUnlocked)
         {
-            return lockedPrompt;
+            return GameLocalization.Text(
+                "Press E to unlock with the room key",
+                lockedPrompt,
+                "Pulsa E para abrir con la llave de habitacion");
         }
 
         if (linkedDoor != null)
         {
-            return linkedDoor.IsOpen ? unlockedClosePrompt : unlockedOpenPrompt;
+            return linkedDoor.IsOpen
+                ? GameLocalization.Text("Press E to close", unlockedClosePrompt, "Pulsa E para cerrar")
+                : GameLocalization.Text("Press E to open", unlockedOpenPrompt, "Pulsa E para abrir");
         }
 
-        return fallbackOpen ? unlockedClosePrompt : unlockedOpenPrompt;
+        return fallbackOpen
+            ? GameLocalization.Text("Press E to close", unlockedClosePrompt, "Pulsa E para cerrar")
+            : GameLocalization.Text("Press E to open", unlockedOpenPrompt, "Pulsa E para abrir");
     }
 
     private void ToggleDoor()
