@@ -37,35 +37,19 @@ public static class GameplaySceneIntegrityBootstrap
             return;
         }
 
-        EnsurePlayerAndCameraTags(scene);
-        EnsureMinimumGameplayRoots(scene);
+        if (IsHospitalGameplayScene(scene))
+        {
+            EnsurePlayerAndCameraTags(scene);
+            EnsureMinimumGameplayRoots(scene);
+        }
+
         EnsureGameplayObjects(scene);
     }
 
     private static void EnsurePlayerAndCameraTags(Scene scene)
     {
-        BasicFirstPersonController player = FindInScene<BasicFirstPersonController>(scene);
-        if (player != null && !player.CompareTag("Player"))
-        {
-            player.gameObject.tag = "Player";
-        }
-
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null && mainCamera.gameObject.scene == scene)
-        {
-            return;
-        }
-
-        if (player == null)
-        {
-            return;
-        }
-
-        Camera fallbackCamera = player.GetComponentInChildren<Camera>(true);
-        if (fallbackCamera != null)
-        {
-            fallbackCamera.tag = "MainCamera";
-        }
+        BasicFirstPersonController player = FindAuthoritativePlayer(scene);
+        ApplyPlayerCameraAuthority(scene, player);
     }
 
     private static void EnsureMinimumGameplayRoots(Scene scene)
@@ -75,8 +59,8 @@ public static class GameplaySceneIntegrityBootstrap
             return;
         }
 
-        BasicFirstPersonController player = FindInScene<BasicFirstPersonController>(scene);
-        Camera sceneCamera = FindInScene<Camera>(scene);
+        BasicFirstPersonController player = FindAuthoritativePlayer(scene);
+        Camera sceneCamera = player != null ? player.GetComponentInChildren<Camera>(true) : FindInScene<Camera>(scene);
 
         if (player == null)
         {
@@ -88,23 +72,25 @@ public static class GameplaySceneIntegrityBootstrap
             player.gameObject.tag = "Player";
         }
 
-        player.gameObject.SetActive(true);
+        ApplyPlayerCameraAuthority(scene, player);
+        sceneCamera = player.GetComponentInChildren<Camera>(true);
 
         if (sceneCamera == null)
         {
             sceneCamera = CreateFallbackCamera(scene, player.transform);
         }
 
-        if (sceneCamera != null)
-        {
-            sceneCamera.gameObject.SetActive(true);
-            sceneCamera.gameObject.tag = "MainCamera";
-            sceneCamera.enabled = true;
-        }
+        ApplyPlayerCameraAuthority(scene, player);
 
         if (FindInScene<PrototypeGameManager>(scene) == null)
         {
             CreateFallbackGameManager(scene);
+        }
+
+        PrototypeGameManager gameManager = FindInScene<PrototypeGameManager>(scene);
+        if (gameManager != null)
+        {
+            gameManager.AssignPlayerController(player);
         }
 
         if (FindInScene<BasicMonsterController>(scene) == null)
@@ -112,15 +98,167 @@ public static class GameplaySceneIntegrityBootstrap
             CreateFallbackMonster(scene);
         }
 
+        RetargetGameplayToPlayer(scene, player);
+
         if (FindInScene<Light>(scene) == null)
         {
             CreateFallbackLight(scene);
+        }
+
+        if (FindInScene<GameplayPauseOptionsMenu>(scene) == null)
+        {
+            CreatePauseOptionsMenu(scene);
         }
     }
 
     private static bool IsHospitalGameplayScene(Scene scene)
     {
         return scene.name == EasyScene || scene.name == MediumScene || scene.name == HardScene;
+    }
+
+    private static BasicFirstPersonController FindAuthoritativePlayer(Scene scene)
+    {
+        BasicFirstPersonController[] players = FindAllInScene<BasicFirstPersonController>(scene);
+        if (players.Length == 0)
+        {
+            return null;
+        }
+
+        BasicFirstPersonController best = null;
+        int bestScore = int.MinValue;
+        for (int i = 0; i < players.Length; i++)
+        {
+            BasicFirstPersonController candidate = players[i];
+            if (candidate == null)
+            {
+                continue;
+            }
+
+            int score = 0;
+            if (candidate.gameObject.activeSelf)
+            {
+                score += 20;
+            }
+
+            if (candidate.gameObject.activeInHierarchy)
+            {
+                score += 20;
+            }
+
+            if (candidate.CompareTag("Player"))
+            {
+                score += 10;
+            }
+
+            Camera candidateCamera = candidate.GetComponentInChildren<Camera>(true);
+            if (candidateCamera != null)
+            {
+                score += 35;
+            }
+
+            if (scene.name == EasyScene && candidate.name.Trim() == "Player (1)")
+            {
+                score += 100;
+            }
+
+            if (candidate.name.Trim() == "Player_RuntimeFallback")
+            {
+                score -= 50;
+            }
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = candidate;
+            }
+        }
+
+        return best;
+    }
+
+    private static void ApplyPlayerCameraAuthority(Scene scene, BasicFirstPersonController player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        player.gameObject.SetActive(true);
+        player.gameObject.tag = "Player";
+        DisablePlayerBodyRenderers(player);
+
+        BasicFirstPersonController[] players = FindAllInScene<BasicFirstPersonController>(scene);
+        for (int i = 0; i < players.Length; i++)
+        {
+            BasicFirstPersonController candidate = players[i];
+            if (candidate == null || candidate == player)
+            {
+                continue;
+            }
+
+            candidate.SetExternalControlLock(true);
+            candidate.gameObject.tag = "Untagged";
+            candidate.gameObject.SetActive(false);
+        }
+
+        Camera playerCamera = player.GetComponentInChildren<Camera>(true);
+        Camera[] cameras = FindAllInScene<Camera>(scene);
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            Camera camera = cameras[i];
+            if (camera == null)
+            {
+                continue;
+            }
+
+            bool isPlayerCamera = camera == playerCamera;
+            camera.gameObject.tag = isPlayerCamera ? "MainCamera" : "Untagged";
+            camera.enabled = isPlayerCamera;
+
+            AudioListener listener = camera.GetComponent<AudioListener>();
+            if (listener != null)
+            {
+                listener.enabled = isPlayerCamera;
+            }
+
+            if (isPlayerCamera)
+            {
+                camera.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    private static void DisablePlayerBodyRenderers(BasicFirstPersonController player)
+    {
+        Renderer[] renderers = player.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+        }
+    }
+
+    private static void RetargetGameplayToPlayer(Scene scene, BasicFirstPersonController player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        BasicMonsterController[] monsters = FindAllInScene<BasicMonsterController>(scene);
+        for (int i = 0; i < monsters.Length; i++)
+        {
+            monsters[i].AssignPlayerTarget(player.transform);
+        }
+
+        EntityCapture[] captures = FindAllInScene<EntityCapture>(scene);
+        for (int i = 0; i < captures.Length; i++)
+        {
+            captures[i].AssignPlayerTarget(player.transform);
+        }
     }
 
     private static BasicFirstPersonController CreateFallbackPlayer(Scene scene)
@@ -205,6 +343,13 @@ public static class GameplaySceneIntegrityBootstrap
         Light light = lightObject.AddComponent<Light>();
         light.type = LightType.Directional;
         light.intensity = 1f;
+    }
+
+    private static void CreatePauseOptionsMenu(Scene scene)
+    {
+        GameObject pauseObject = new GameObject("GameplayPauseOptionsMenu_Runtime");
+        SceneManager.MoveGameObjectToScene(pauseObject, scene);
+        pauseObject.AddComponent<GameplayPauseOptionsMenu>();
     }
 
     private static void EnsureGameplayObjects(Scene scene)

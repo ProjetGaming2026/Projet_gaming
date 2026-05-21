@@ -144,6 +144,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         PlayerPrefs.SetInt(LanguageKey, optionIndex);
+        PlayerPrefs.Save();
         ApplyLanguage();
     }
 
