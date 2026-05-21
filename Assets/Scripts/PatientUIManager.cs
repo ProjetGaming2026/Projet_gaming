@@ -1,3 +1,4 @@
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,13 +10,11 @@ public class PatientUIManager : MonoBehaviour
 
     [Header("UI")]
     public GameObject panel;
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI ageText;
-    public TextMeshProUGUI diseaseText;
-    public TextMeshProUGUI notesText;
     public Button closeButton;
 
     private Canvas rootCanvas;
+    private TextMeshProUGUI headerText;
+    private readonly TextMeshProUGUI[] patientCards = new TextMeshProUGUI[4];
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void EnsureExists()
@@ -50,24 +49,33 @@ public class PatientUIManager : MonoBehaviour
         Hide();
     }
 
+    private void Update()
+    {
+        if (IsUiOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            Hide();
+        }
+    }
+
+    // Legacy single-patient entry point kept for compatibility, but now the gameplay
+    // shows the four patient dossiers together so the player can memorize the order.
     public void Show(PatientFolder patient)
     {
-        if (patient == null)
-        {
-            return;
-        }
+        ShowAllOrdered();
+    }
 
+    public void ShowAllOrdered()
+    {
         BuildUiIfNeeded();
 
-        patient.isRead = true;
-        nameText.text = $"Nom : {patient.patientName}";
-        ageText.text = $"Age : {patient.patientAge} ans";
-        diseaseText.text = $"Maladie : {patient.disease}";
-        notesText.text = $"Notes :\n{patient.medicalNotes}";
+        for (int i = 0; i < patientCards.Length; i++)
+        {
+            patientCards[i].text = BuildPatientCardText(i + 1);
+        }
 
         panel.SetActive(true);
         SetCursorUnlocked();
-        Debug.Log($"[PatientUIManager] Showing patient file #{patient.patientID:00}.", this);
+        Debug.Log("[PatientUIManager] Showing ordered patient dossier board.", this);
     }
 
     public void Hide()
@@ -80,13 +88,11 @@ public class PatientUIManager : MonoBehaviour
         SetCursorLocked();
     }
 
-    // Legacy compatibility for the old patient-folder implementation.
     public void ShowPatient(PatientFolder patient, Transform viewer)
     {
-        Show(patient);
+        ShowAllOrdered();
     }
 
-    // Legacy compatibility for older callers.
     public void HidePatient()
     {
         Hide();
@@ -94,7 +100,7 @@ public class PatientUIManager : MonoBehaviour
 
     private void BuildUiIfNeeded()
     {
-        if (rootCanvas != null && panel != null && nameText != null && notesText != null && closeButton != null)
+        if (rootCanvas != null && panel != null && closeButton != null && headerText != null && patientCards.All(card => card != null))
         {
             return;
         }
@@ -105,42 +111,92 @@ public class PatientUIManager : MonoBehaviour
             rootCanvas = gameObject.AddComponent<Canvas>();
             rootCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             rootCanvas.sortingOrder = 620;
-            gameObject.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            gameObject.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920f, 1080f);
+
+            CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+
             gameObject.AddComponent<GraphicRaycaster>();
         }
 
         if (panel == null)
         {
-            panel = CreatePanel(rootCanvas.transform, "PatientPanel", new Vector2(700f, 500f));
+            panel = CreatePanel(rootCanvas.transform, "PatientPanel", new Vector2(780f, 480f));
         }
 
-        if (nameText == null)
+        if (headerText == null)
         {
-            nameText = CreateText(panel.transform, "NameText", 28f, FontStyles.Bold, new Vector2(24f, -26f), new Vector2(-24f, -68f));
+            headerText = CreateText(
+                panel.transform,
+                "HeaderText",
+                22f,
+                FontStyles.Bold,
+                new Vector2(24f, -18f),
+                new Vector2(-24f, -58f),
+                TextAlignmentOptions.Center);
+            headerText.text = "DOSSIERS PATIENTS";
         }
 
-        if (ageText == null)
-        {
-            ageText = CreateText(panel.transform, "AgeText", 24f, FontStyles.Normal, new Vector2(24f, -82f), new Vector2(-24f, -118f));
-        }
-
-        if (diseaseText == null)
-        {
-            diseaseText = CreateText(panel.transform, "DiseaseText", 24f, FontStyles.Normal, new Vector2(24f, -128f), new Vector2(-24f, -184f));
-        }
-
-        if (notesText == null)
-        {
-            notesText = CreateText(panel.transform, "NotesText", 22f, FontStyles.Normal, new Vector2(24f, -194f), new Vector2(-24f, -86f), TextAlignmentOptions.TopLeft);
-            notesText.enableWordWrapping = true;
-            notesText.overflowMode = TextOverflowModes.Overflow;
-        }
+        EnsurePatientCards(panel.transform);
 
         if (closeButton == null)
         {
-            closeButton = CreateButton(panel.transform, "CloseButton", "FERMER", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(180f, 48f), new Vector2(0f, 28f));
+            closeButton = CreateButton(
+                panel.transform,
+                "CloseButton",
+                "FERMER",
+                new Vector2(0.5f, 0f),
+                new Vector2(0.5f, 0f),
+                new Vector2(180f, 46f),
+                new Vector2(0f, 24f));
         }
+    }
+
+    private void EnsurePatientCards(Transform parent)
+    {
+        float panelWidth = 300f;
+        float panelHeight = 130f;
+        Vector2[] positions =
+        {
+            new Vector2(-160f, 78f),
+            new Vector2(160f, 78f),
+            new Vector2(-160f, -62f),
+            new Vector2(160f, -62f),
+        };
+
+        for (int i = 0; i < patientCards.Length; i++)
+        {
+            string cardName = $"PatientCard_{i + 1:00}";
+            Transform existing = parent.Find(cardName);
+            GameObject cardPanel = existing != null ? existing.gameObject : CreateCardPanel(parent, cardName, new Vector2(panelWidth, panelHeight), positions[i]);
+
+            RectTransform cardRect = cardPanel.GetComponent<RectTransform>();
+            cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+            cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+            cardRect.pivot = new Vector2(0.5f, 0.5f);
+            cardRect.sizeDelta = new Vector2(panelWidth, panelHeight);
+            cardRect.anchoredPosition = positions[i];
+
+            TextMeshProUGUI cardText = cardPanel.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (cardText == null)
+            {
+                cardText = CreateCardText(cardPanel.transform, $"{cardName}_Text");
+            }
+
+            patientCards[i] = cardText;
+        }
+    }
+
+    private string BuildPatientCardText(int patientIndex)
+    {
+        return patientIndex switch
+        {
+            1 => "DOSSIER 01\nPatient A-17\nSymptome : respiration difficile\nZone : cage thoracique\nOrdre : 1",
+            2 => "DOSSIER 02\nPatient B-09\nSymptome : incapacite de marcher\nZone : pied\nOrdre : 2",
+            3 => "DOSSIER 03\nPatient C-31\nSymptome : perte de memoire\nZone : crane\nOrdre : 3",
+            4 => "DOSSIER 04\nPatient D-44\nSymptome : dos brise\nZone : colonne vertebrale\nOrdre : 4",
+            _ => string.Empty
+        };
     }
 
     private GameObject CreatePanel(Transform parent, string objectName, Vector2 size)
@@ -156,8 +212,46 @@ public class PatientUIManager : MonoBehaviour
         rect.anchoredPosition = Vector2.zero;
 
         Image image = panelObject.GetComponent<Image>();
-        image.color = new Color(0.03f, 0.03f, 0.03f, 0.94f);
+        image.color = new Color(0.02f, 0.02f, 0.02f, 0.95f);
         return panelObject;
+    }
+
+    private GameObject CreateCardPanel(Transform parent, string objectName, Vector2 size, Vector2 anchoredPosition)
+    {
+        GameObject cardObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        cardObject.transform.SetParent(parent, false);
+
+        RectTransform rect = cardObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPosition;
+
+        Image image = cardObject.GetComponent<Image>();
+        image.color = new Color(0.08f, 0.08f, 0.08f, 0.92f);
+        return cardObject;
+    }
+
+    private TextMeshProUGUI CreateCardText(Transform parent, string objectName)
+    {
+        GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(parent, false);
+
+        RectTransform rect = textObject.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = new Vector2(18f, 16f);
+        rect.offsetMax = new Vector2(-18f, -16f);
+
+        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+        text.fontSize = 11f;
+        text.fontStyle = FontStyles.Normal;
+        text.color = Color.white;
+        text.alignment = TextAlignmentOptions.TopLeft;
+        text.enableWordWrapping = true;
+        text.overflowMode = TextOverflowModes.Ellipsis;
+        return text;
     }
 
     private TextMeshProUGUI CreateText(
@@ -213,7 +307,7 @@ public class PatientUIManager : MonoBehaviour
 
         TextMeshProUGUI labelText = labelObject.GetComponent<TextMeshProUGUI>();
         labelText.text = label;
-        labelText.fontSize = 22f;
+        labelText.fontSize = 18f;
         labelText.fontStyle = FontStyles.Bold;
         labelText.color = Color.white;
         labelText.alignment = TextAlignmentOptions.Center;

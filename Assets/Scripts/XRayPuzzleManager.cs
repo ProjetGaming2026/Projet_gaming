@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class XRayPuzzleManager : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class XRayPuzzleManager : MonoBehaviour
     public bool puzzleSolved = false;
 
     private AudioSource audioSource;
+    private readonly List<int> selectionOrder = new List<int>(4);
+    private static readonly int[] ExpectedOrder = { 2, 3, 1, 4 };
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void EnsureExists()
@@ -52,67 +56,183 @@ public class XRayPuzzleManager : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
         RefreshReferences();
-        RepositionXRaysForRoom();
+        EnsureXRayVisuals();
+        EnsureAccentLight();
     }
 
     public void RefreshReferences()
     {
-        if (allFolders == null || allFolders.Length == 0)
-        {
-            allFolders = FindObjectsByType<PatientFolder>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .OrderBy(folder => folder.patientID)
-                .ToArray();
-        }
+        allFolders = FindObjectsByType<PatientFolder>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            .OrderBy(folder => folder.patientID)
+            .ToArray();
 
-        if (allXRays == null || allXRays.Length == 0)
-        {
-            allXRays = FindObjectsByType<XRayItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .OrderBy(xray => xray.xrayID)
-                .ToArray();
-        }
-    }
-
-    private void RepositionXRaysForRoom()
-    {
-        GameObject keypad = GameObject.Find("SM_Pin_Pad");
-        if (keypad == null)
-        {
-            return;
-        }
-
-        RefreshReferences();
-        if (allXRays == null || allXRays.Length == 0)
-        {
-            return;
-        }
-
-        // Force the X-rays onto the back wall inside the padded room so the next task
-        // becomes visible immediately after the keypad door opens.
-        Vector3 basePosition = keypad.transform.position + new Vector3(-0.70f, 0.18f, -2.32f);
-        Vector3 horizontalStep = new Vector3(0.46f, 0f, 0f);
-        Vector3 verticalStep = new Vector3(0f, 0.58f, 0f);
-        Quaternion wallRotation = Quaternion.Euler(0f, 180f, 0f);
-
-        for (int i = 0; i < allXRays.Length; i++)
-        {
-            if (allXRays[i] == null)
-            {
-                continue;
-            }
-
-            int row = i / 2;
-            int col = i % 2;
-            Transform xrayTransform = allXRays[i].transform;
-            xrayTransform.position = basePosition + horizontalStep * col - verticalStep * row;
-            xrayTransform.rotation = wallRotation;
-            xrayTransform.localScale = new Vector3(0.24f, 0.34f, 1f);
-        }
+        allXRays = FindObjectsByType<XRayItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            .OrderBy(xray => xray.xrayID)
+            .ToArray();
     }
 
     public bool HasAnyFolderBeenRead()
     {
         RefreshReferences();
         return allFolders != null && allFolders.Any(folder => folder != null && folder.isRead);
+    }
+
+    private void EnsureXRayVisuals()
+    {
+        if (allXRays == null || allXRays.Length == 0)
+        {
+            return;
+        }
+
+        foreach (XRayItem xray in allXRays)
+        {
+            if (xray == null || xray.xraySprite == null)
+            {
+                continue;
+            }
+
+            Renderer renderer = xray.GetComponentInChildren<Renderer>();
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            Material runtimeMaterial = renderer.material;
+            runtimeMaterial.shader = ResolveXRayShader(runtimeMaterial.shader);
+
+            Texture texture = xray.xraySprite.texture;
+            runtimeMaterial.mainTexture = texture;
+
+            if (runtimeMaterial.HasProperty("_BaseMap"))
+            {
+                runtimeMaterial.SetTexture("_BaseMap", texture);
+            }
+
+            if (runtimeMaterial.HasProperty("_BaseColor"))
+            {
+                runtimeMaterial.SetColor("_BaseColor", new Color(0.95f, 0.98f, 1f, 1f));
+            }
+
+            if (runtimeMaterial.HasProperty("_Color"))
+            {
+                runtimeMaterial.color = new Color(0.95f, 0.98f, 1f, 1f);
+            }
+
+            if (runtimeMaterial.HasProperty("_EmissionColor"))
+            {
+                runtimeMaterial.EnableKeyword("_EMISSION");
+                runtimeMaterial.SetColor("_EmissionColor", new Color(0.22f, 0.24f, 0.28f, 1f));
+            }
+
+            if (runtimeMaterial.HasProperty("_Smoothness"))
+            {
+                runtimeMaterial.SetFloat("_Smoothness", 0f);
+            }
+
+            if (runtimeMaterial.HasProperty("_Metallic"))
+            {
+                runtimeMaterial.SetFloat("_Metallic", 0f);
+            }
+
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+        }
+    }
+
+    private void EnsureAccentLight()
+    {
+        if (allXRays == null || allXRays.Length == 0)
+        {
+            return;
+        }
+
+        GameObject lightObject = GameObject.Find("XRayPuzzleAccentLight");
+        if (lightObject == null)
+        {
+            lightObject = new GameObject("XRayPuzzleAccentLight");
+            Light accentLight = lightObject.AddComponent<Light>();
+            accentLight.type = LightType.Point;
+            accentLight.range = 3.5f;
+            accentLight.intensity = 0.55f;
+            accentLight.color = new Color(0.82f, 0.9f, 1f, 1f);
+        }
+
+        Vector3 center = Vector3.zero;
+        int count = 0;
+        foreach (XRayItem xray in allXRays)
+        {
+            if (xray == null)
+            {
+                continue;
+            }
+
+            center += xray.transform.position;
+            count++;
+        }
+
+        if (count == 0)
+        {
+            return;
+        }
+
+        center /= count;
+        lightObject.transform.position = center + new Vector3(0.35f, 0f, 0f);
+    }
+
+    private Shader ResolveXRayShader(Shader currentShader)
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader != null)
+        {
+            return shader;
+        }
+
+        shader = Shader.Find("Standard");
+        if (shader != null)
+        {
+            return shader;
+        }
+
+        shader = Shader.Find("Unlit/Texture");
+        if (shader != null)
+        {
+            return shader;
+        }
+
+        return currentShader;
+    }
+
+    public void SelectXRay(XRayItem xray)
+    {
+        if (xray == null || puzzleSolved || horrorActive)
+        {
+            return;
+        }
+
+        RefreshReferences();
+
+        if (xray.isSolved)
+        {
+            XRayUIManager.Instance?.ShowToast("Deja selectionne", new Color(0.9f, 0.9f, 0.9f, 1f), 1.2f);
+            return;
+        }
+
+        int expectedStep = selectionOrder.Count;
+        if (expectedStep >= ExpectedOrder.Length)
+        {
+            return;
+        }
+
+        if (xray.xrayID == ExpectedOrder[expectedStep])
+        {
+            selectionOrder.Add(xray.xrayID);
+            xray.MarkSolvedVisual();
+            OnCorrect();
+            return;
+        }
+
+        ResetSequence();
+        TriggerHorror();
     }
 
     public void OnCorrect()
@@ -123,7 +243,7 @@ public class XRayPuzzleManager : MonoBehaviour
         }
 
         RefreshReferences();
-        solvedCount = allXRays.Count(xray => xray != null && xray.isSolved);
+        solvedCount = selectionOrder.Count;
         PlayOneShot(successSound);
         XRayUIManager.Instance?.ShowToast($"{solvedCount}/4 correctes", new Color(0.35f, 1f, 0.4f, 1f), 1.6f);
 
@@ -141,6 +261,30 @@ public class XRayPuzzleManager : MonoBehaviour
         }
 
         StartCoroutine(HorrorSequence());
+    }
+
+    public void ResetSequence()
+    {
+        selectionOrder.Clear();
+        RefreshReferences();
+
+        if (allXRays == null)
+        {
+            return;
+        }
+
+        foreach (XRayItem xray in allXRays)
+        {
+            if (xray == null)
+            {
+                continue;
+            }
+
+            xray.isSolved = false;
+            xray.ResetVisual();
+        }
+
+        solvedCount = 0;
     }
 
     public IEnumerator SuccessSequence()

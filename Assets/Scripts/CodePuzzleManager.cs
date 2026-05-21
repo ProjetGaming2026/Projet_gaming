@@ -8,6 +8,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     private const string ExpectedPuzzleCode = "6334";
 
     public static CodePuzzleManager Instance { get; private set; }
+    public bool IsPuzzleSolved => puzzleSolved;
 
     [Header("Code")]
     public string secretCode = ExpectedPuzzleCode;

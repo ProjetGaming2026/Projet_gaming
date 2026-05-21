@@ -52,7 +52,7 @@ public class XRayItem : MonoBehaviour, IInteractable
             return;
         }
 
-        XRayUIManager.Instance?.Show(this);
+        XRayPuzzleManager.Instance.SelectXRay(this);
     }
 
     public void MarkSolvedVisual()

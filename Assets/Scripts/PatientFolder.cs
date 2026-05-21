@@ -39,8 +39,8 @@ public class PatientFolder : MonoBehaviour, IInteractable
             return;
         }
 
-        Debug.Log($"[PatientFolder] Opening patient folder #{patientID:00} ({patientName}).", this);
-        PatientUIManager.Instance.Show(this);
+        Debug.Log($"[PatientFolder] Opening ordered patient dossier board from #{patientID:00} ({patientName}).", this);
+        PatientUIManager.Instance.ShowAllOrdered();
     }
 
     public bool CanInteractFromMainCamera()

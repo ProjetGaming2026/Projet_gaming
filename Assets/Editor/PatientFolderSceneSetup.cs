@@ -1,17 +1,17 @@
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public static class PatientFolderSceneSetup
 {
     private const string TargetScenePath = "Assets/Hospital/scenes/demoScene_Moyen.unity";
     private const string PaperMaterialPath = "Assets/Hospital/_Materials/PatientFolderPaper.mat";
-    private const string UiRootName = "PatientUIRoot";
-    private const string UiPanelName = "PatientPanel";
-    private const string UiTextName = "PatientInfoText";
+    private const string TablePrefabPath = "Assets/Hospital/_Prefabs/furniture/table.prefab";
+    // Tuned to place the table clearly inside the padded room on the left side after the
+    // keypad door opens, so the player sees it as soon as they enter the chamber.
+    private static readonly Vector3 TableRoomOffset = new Vector3(-1.25f, 0f, 0.18f);
+    private const float RoomFloorOffsetFromKeypad = 1.02f;
 
     [MenuItem("Tools/Gameplay/Setup Patient Folders In DemoScene Moyen")]
     public static void SetupPatientFoldersInDemoSceneMoyen()
@@ -23,6 +23,13 @@ public static class PatientFolderSceneSetup
             return;
         }
 
+        GameObject keypad = FindRoot(scene, "SM_Pin_Pad");
+        if (keypad == null)
+        {
+            Debug.LogWarning("[PatientFolderSceneSetup] SM_Pin_Pad not found in scene.");
+            return;
+        }
+
         Material paperMaterial = GetOrCreatePaperMaterial();
         if (paperMaterial == null)
         {
@@ -30,265 +37,158 @@ public static class PatientFolderSceneSetup
             return;
         }
 
-        EnsurePatientUiManager(scene);
-
-        GameObject root = FindOrCreateRoot(scene, "PatientFolders");
-        GameObject keypad = FindRoot(scene, "SM_Pin_Pad");
-        if (keypad != null)
+        GameObject tablePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TablePrefabPath);
+        if (tablePrefab == null)
         {
-            EnsurePatientTable(root.transform, keypad.transform);
-        }
-
-        PatientData[] patients =
-        {
-            new PatientData(1, "Sarah M.", 67, "Amnesie traumatique severe", "Patiente retrouvee inconsciente\ndans le couloir du sous-sol.\nAucun souvenir des 3 derniers mois."),
-            new PatientData(2, "Adam K.", 45, "Contusion pulmonaire grave", "Retrouve dans la chambre 12.\nRespiration difficile.\nCause du traumatisme inconnue."),
-            new PatientData(3, "Elena R.", 30, "Fracture complexe du pied", "Patiente admise en urgence.\nImpossibilite de marcher.\nRefuse de parler de l'incident."),
-            new PatientData(4, "Marcus T.", 55, "Hernie discale L4-L5", "Douleurs lombaires extremes.\nPatient agite et violent.\nTransfert demande."),
-        };
-
-        PlacementData[] placements = ResolvePlacements(keypad != null ? keypad.transform : null);
-
-        for (int i = 0; i < patients.Length; i++)
-        {
-            CreateOrUpdateFolder(root.transform, patients[i], placements[i], paperMaterial);
-        }
-
-        EditorSceneManager.MarkSceneDirty(scene);
-        EditorSceneManager.SaveScene(scene);
-        Debug.Log("[PatientFolderSceneSetup] Patient folders created in demoScene_Moyen.");
-    }
-
-    private static void CreateOrUpdateFolder(Transform parent, PatientData data, PlacementData placement, Material paperMaterial)
-    {
-        string objectName = $"Dossier_Patient{data.PatientId:00}";
-        GameObject folder = FindChildByName(parent, objectName);
-
-        if (folder == null)
-        {
-            folder = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            folder.name = objectName;
-            folder.transform.SetParent(parent, true);
-        }
-
-        folder.transform.position = placement.Position;
-        folder.transform.rotation = placement.Rotation;
-        folder.transform.localScale = new Vector3(0.32f, 0.42f, 0.32f);
-
-        MeshRenderer renderer = folder.GetComponent<MeshRenderer>();
-        if (renderer != null)
-        {
-            renderer.sharedMaterial = paperMaterial;
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-        }
-
-        EnsureFolderCollider(folder);
-
-        PatientFolder patientFolder = folder.GetComponent<PatientFolder>();
-        if (patientFolder == null)
-        {
-            patientFolder = folder.AddComponent<PatientFolder>();
-        }
-
-        patientFolder.patientID = data.PatientId;
-        patientFolder.patientName = data.PatientName;
-        patientFolder.patientAge = data.PatientAge;
-        patientFolder.disease = data.Disease;
-        patientFolder.medicalNotes = data.Notes;
-        patientFolder.isRead = false;
-
-        EnsureFolderLabel(folder.transform, data);
-
-        Debug.Log($"[PatientFolderSceneSetup] {objectName} => {data.PatientName}, pos {placement.Position}");
-    }
-
-    private static void EnsurePatientTable(Transform parent, Transform keypadTransform)
-    {
-        GameObject tableRoot = FindChildByName(parent, "PatientTable");
-        if (tableRoot == null)
-        {
-            tableRoot = new GameObject("PatientTable");
-            tableRoot.transform.SetParent(parent, true);
-        }
-
-        // Keep the patient table clearly inside the padded room, just after the keypad door.
-        Vector3 tableCenter = keypadTransform.position + new Vector3(-1.90f, -0.96f, -0.02f);
-
-        tableRoot.transform.position = tableCenter;
-        tableRoot.transform.rotation = Quaternion.identity;
-        tableRoot.transform.localScale = Vector3.one;
-
-        CreateOrUpdateTablePart(tableRoot.transform, "TableTop", new Vector3(0f, 0.62f, 0f), new Vector3(0.58f, 0.05f, 0.42f));
-        CreateOrUpdateTablePart(tableRoot.transform, "Leg_A", new Vector3(-0.22f, 0.31f, -0.15f), new Vector3(0.05f, 0.62f, 0.05f));
-        CreateOrUpdateTablePart(tableRoot.transform, "Leg_B", new Vector3(0.22f, 0.31f, -0.15f), new Vector3(0.05f, 0.62f, 0.05f));
-        CreateOrUpdateTablePart(tableRoot.transform, "Leg_C", new Vector3(-0.22f, 0.31f, 0.15f), new Vector3(0.05f, 0.62f, 0.05f));
-        CreateOrUpdateTablePart(tableRoot.transform, "Leg_D", new Vector3(0.22f, 0.31f, 0.15f), new Vector3(0.05f, 0.62f, 0.05f));
-    }
-
-    private static void CreateOrUpdateTablePart(Transform parent, string objectName, Vector3 localPosition, Vector3 localScale)
-    {
-        GameObject part = FindChildByName(parent, objectName);
-        if (part == null)
-        {
-            part = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            part.name = objectName;
-            part.transform.SetParent(parent, false);
-        }
-
-        part.transform.localPosition = localPosition;
-        part.transform.localRotation = Quaternion.identity;
-        part.transform.localScale = localScale;
-
-        Renderer renderer = part.GetComponent<Renderer>();
-        if (renderer != null && renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_Color"))
-        {
-            renderer.sharedMaterial.color = new Color(0.35f, 0.28f, 0.22f, 1f);
-        }
-    }
-
-    private static void EnsurePatientUiManager(Scene scene)
-    {
-        PatientUIManager existingManager = Object.FindObjectOfType<PatientUIManager>(true);
-        if (existingManager != null)
-        {
-            ConfigureExistingUi(existingManager);
+            Debug.LogWarning("[PatientFolderSceneSetup] table.prefab not found.");
             return;
         }
 
-        GameObject root = new GameObject(UiRootName);
+        foreach (GameObject existingTable in FindAllGameObjectsInScene(scene, "PatientFilesTable"))
+        {
+            Object.DestroyImmediate(existingTable);
+        }
+
+        DeleteOrphanFolders(scene);
+        DeleteLoosePaperQuads(scene);
+
+        GameObject tableInstance = CreateSceneTable(scene, keypad.transform.position, tablePrefab);
+        if (tableInstance == null)
+        {
+            Debug.LogWarning("[PatientFolderSceneSetup] Unable to instantiate table prefab.");
+            return;
+        }
+
+        ConfigureTableInteraction(tableInstance);
+        BuildFoldersOnTable(scene, tableInstance, paperMaterial);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[PatientFolderSceneSetup] PatientFilesTable and folders placed in demoScene_Moyen.");
+    }
+
+    private static void ConfigureTableInteraction(GameObject tableInstance)
+    {
+        Bounds bounds = CalculateBounds(tableInstance);
+        BoxCollider collider = tableInstance.GetComponent<BoxCollider>();
+        if (collider == null)
+        {
+            collider = tableInstance.AddComponent<BoxCollider>();
+        }
+
+        collider.center = tableInstance.transform.InverseTransformPoint(bounds.center);
+        collider.size = new Vector3(bounds.size.x + 0.10f, bounds.size.y + 0.12f, bounds.size.z + 0.10f);
+        collider.isTrigger = false;
+
+        PatientFilesTableInteraction interaction = tableInstance.GetComponent<PatientFilesTableInteraction>();
+        if (interaction == null)
+        {
+            tableInstance.AddComponent<PatientFilesTableInteraction>();
+        }
+    }
+
+    private static GameObject CreateSceneTable(Scene scene, Vector3 keypadPosition, GameObject tablePrefab)
+    {
+        GameObject instance = PrefabUtility.InstantiatePrefab(tablePrefab, scene) as GameObject;
+        if (instance == null)
+        {
+            return null;
+        }
+
+        instance.name = "PatientFilesTable";
+        instance.transform.position = keypadPosition + TableRoomOffset;
+        instance.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+        instance.transform.localScale = Vector3.one;
+
+        Bounds bounds = CalculateBounds(instance);
+        float desiredFloorY = keypadPosition.y - RoomFloorOffsetFromKeypad;
+        instance.transform.position += Vector3.up * (desiredFloorY - bounds.min.y);
+        return instance;
+    }
+
+    private static void BuildFoldersOnTable(Scene scene, GameObject tableInstance, Material paperMaterial)
+    {
+        foreach (GameObject existingRoot in FindAllGameObjectsInScene(scene, "PatientFolders"))
+        {
+            Object.DestroyImmediate(existingRoot);
+        }
+
+        GameObject root = new GameObject("PatientFolders");
         SceneManager.MoveGameObjectToScene(root, scene);
+        root.transform.SetParent(tableInstance.transform, false);
 
-        Canvas canvas = root.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 500;
-        root.AddComponent<CanvasScaler>();
-        root.AddComponent<GraphicRaycaster>();
-
-        GameObject panel = new GameObject(UiPanelName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        panel.transform.SetParent(root.transform, false);
-        RectTransform panelRect = panel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(460f, 240f);
-        panelRect.anchoredPosition = Vector2.zero;
-
-        Image panelImage = panel.GetComponent<Image>();
-        panelImage.color = new Color(0.03f, 0.03f, 0.03f, 0.82f);
-
-        GameObject textObject = new GameObject(UiTextName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(panel.transform, false);
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = new Vector2(22f, 20f);
-        textRect.offsetMax = new Vector2(-22f, -20f);
-
-        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-        text.fontSize = 20f;
-        text.color = new Color(0.96f, 0.92f, 0.83f, 1f);
-        text.alignment = TextAlignmentOptions.TopLeft;
-        text.enableWordWrapping = true;
-        text.overflowMode = TextOverflowModes.Ellipsis;
-        text.text = "DOSSIER MEDICAL";
-
-        PatientUIManager manager = root.AddComponent<PatientUIManager>();
-        SetPrivateField(manager, "rootCanvas", canvas);
-        SetPrivateField(manager, "patientPanel", panel);
-        SetPrivateField(manager, "patientInfoText", text);
-
-        panel.SetActive(false);
-        Debug.Log("[PatientFolderSceneSetup] Patient UI created.");
-    }
-
-    private static void ConfigureExistingUi(PatientUIManager manager)
-    {
-        Canvas canvas = manager.GetComponentInChildren<Canvas>(true);
-        if (canvas != null)
+        PatientData[] patients =
         {
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 500;
-        }
-
-        Transform panelTransform = manager.transform.Find(UiPanelName);
-        GameObject panel = panelTransform != null ? panelTransform.gameObject : FindNamedChild(manager.gameObject, UiPanelName);
-        if (panel == null)
-        {
-            panel = CreatePanelUnderRoot(manager.gameObject);
-        }
-
-        RectTransform panelRect = panel.GetComponent<RectTransform>();
-        if (panelRect != null)
-        {
-            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRect.pivot = new Vector2(0.5f, 0.5f);
-            panelRect.sizeDelta = new Vector2(460f, 240f);
-            panelRect.anchoredPosition = Vector2.zero;
-        }
-
-        Image panelImage = panel.GetComponent<Image>();
-        if (panelImage == null)
-        {
-            panelImage = panel.AddComponent<Image>();
-        }
-
-        panelImage.color = new Color(0.03f, 0.03f, 0.03f, 0.82f);
-
-        TMP_Text text = panel.GetComponentInChildren<TMP_Text>(true);
-        if (text == null)
-        {
-            text = CreateTextUnderPanel(panel);
-        }
-
-        if (text != null)
-        {
-            text.fontSize = 20f;
-            text.color = new Color(0.96f, 0.92f, 0.83f, 1f);
-            text.alignment = TextAlignmentOptions.TopLeft;
-            text.enableWordWrapping = true;
-            text.overflowMode = TextOverflowModes.Ellipsis;
-
-            RectTransform textRect = text.GetComponent<RectTransform>();
-            if (textRect != null)
-            {
-                textRect.anchorMin = Vector2.zero;
-                textRect.anchorMax = Vector2.one;
-                textRect.offsetMin = new Vector2(22f, 20f);
-                textRect.offsetMax = new Vector2(-22f, -20f);
-            }
-        }
-
-        SetPrivateField(manager, "rootCanvas", canvas);
-        SetPrivateField(manager, "patientPanel", panel);
-        SetPrivateField(manager, "patientInfoText", text);
-        panel.SetActive(false);
-    }
-
-    // Places the patient files directly on the padded-room floor behind the keypad door.
-    private static PlacementData[] ResolvePlacements(Transform keypadTransform)
-    {
-        if (keypadTransform != null)
-        {
-            // Put the folders on the table inside the room, not in the corridor.
-            Vector3 basePosition = keypadTransform.position + new Vector3(-1.90f, -0.36f, -0.02f);
-            return new[]
-            {
-                new PlacementData(basePosition + new Vector3(-0.10f, 0f, -0.08f), Quaternion.Euler(90f, -8f, 0f)),
-                new PlacementData(basePosition + new Vector3(0.10f, 0f, -0.06f), Quaternion.Euler(90f, 9f, 0f)),
-                new PlacementData(basePosition + new Vector3(-0.08f, 0f, 0.08f), Quaternion.Euler(90f, -4f, 0f)),
-                new PlacementData(basePosition + new Vector3(0.10f, 0f, 0.08f), Quaternion.Euler(90f, 6f, 0f)),
-            };
-        }
-
-        return new[]
-        {
-            new PlacementData(new Vector3(0.34f, -6.26f, -3.60f), Quaternion.Euler(90f, 0f, 0f)),
-            new PlacementData(new Vector3(0.78f, -6.26f, -3.60f), Quaternion.Euler(90f, 14f, 0f)),
-            new PlacementData(new Vector3(0.42f, -6.26f, -3.18f), Quaternion.Euler(90f, -12f, 0f)),
-            new PlacementData(new Vector3(0.84f, -6.26f, -3.22f), Quaternion.Euler(90f, 7f, 0f)),
+            new PatientData(1, "Patient A-17", 0, "respiration difficile", "Zone : cage thoracique\nOrdre : 1"),
+            new PatientData(2, "Patient B-09", 0, "incapacite de marcher", "Zone : pied\nOrdre : 2"),
+            new PatientData(3, "Patient C-31", 0, "perte de memoire", "Zone : crane\nOrdre : 3"),
+            new PatientData(4, "Patient D-44", 0, "dos brise", "Zone : colonne vertebrale\nOrdre : 4"),
         };
+
+        Bounds tableBounds = CalculateBounds(tableInstance);
+        Vector3 localTopCenter = tableInstance.transform.InverseTransformPoint(new Vector3(tableBounds.center.x, tableBounds.max.y + 0.008f, tableBounds.center.z));
+        Vector3[] localOffsets =
+        {
+            new Vector3(-0.16f, 0f, -0.11f),
+            new Vector3(0.12f, 0f, -0.05f),
+            new Vector3(-0.04f, 0f, 0.10f),
+            new Vector3(0.18f, 0f, 0.14f),
+        };
+
+        float[] yRotations = { -14f, 9f, -6f, 12f };
+        string[] folderNames =
+        {
+            "Dossier_Patient01",
+            "Dossier_Patient02",
+            "Dossier_Patient03",
+            "Dossier_Patient04",
+        };
+
+        for (int i = 0; i < patients.Length; i++)
+        {
+            GameObject folder = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            folder.name = folderNames[i];
+            folder.transform.SetParent(root.transform, false);
+            folder.transform.localPosition = localTopCenter + localOffsets[i];
+            folder.transform.localRotation = Quaternion.Euler(90f, yRotations[i], 0f);
+            folder.transform.localScale = new Vector3(0.28f, 0.38f, 0.28f);
+
+            MeshRenderer renderer = folder.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = paperMaterial;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+
+            Collider folderCollider = folder.GetComponent<Collider>();
+            if (folderCollider != null)
+            {
+                Object.DestroyImmediate(folderCollider);
+            }
+
+            PatientFolder patientFolder = folder.AddComponent<PatientFolder>();
+            patientFolder.patientID = patients[i].PatientId;
+            patientFolder.patientName = patients[i].PatientName;
+            patientFolder.patientAge = patients[i].PatientAge;
+            patientFolder.disease = patients[i].Disease;
+            patientFolder.medicalNotes = patients[i].Notes;
+            patientFolder.isRead = false;
+        }
+    }
+
+    private static Bounds CalculateBounds(GameObject target)
+    {
+        Renderer[] renderers = target.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0)
+        {
+            return new Bounds(target.transform.position, Vector3.one);
+        }
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        return bounds;
     }
 
     private static Material GetOrCreatePaperMaterial()
@@ -307,35 +207,99 @@ public static class PatientFolderSceneSetup
 
         if (shader == null)
         {
-            shader = Shader.Find("Standard");
-        }
-
-        if (shader == null)
-        {
             return null;
         }
 
         material = new Material(shader);
         material.name = "PatientFolderPaper";
         material.color = new Color(0.84f, 0.78f, 0.62f, 1f);
-
         AssetDatabase.CreateAsset(material, PaperMaterialPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         return material;
     }
 
-    private static GameObject FindOrCreateRoot(Scene scene, string rootName)
+    private static void DeleteOrphanFolders(Scene scene)
     {
-        GameObject existing = FindRoot(scene, rootName);
-        if (existing != null)
+        string[] names =
         {
-            return existing;
+            "PatientFolders",
+            "Dossier_Patient01",
+            "Dossier_Patient02",
+            "Dossier_Patient03",
+            "Dossier_Patient04",
+        };
+
+        foreach (string objectName in names)
+        {
+            foreach (GameObject target in FindAllGameObjectsInScene(scene, objectName))
+            {
+                Object.DestroyImmediate(target);
+            }
+        }
+    }
+
+    private static void DeleteLoosePaperQuads(Scene scene)
+    {
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            DeleteLoosePaperQuadsRecursive(root.transform);
+        }
+    }
+
+    private static void DeleteLoosePaperQuadsRecursive(Transform current)
+    {
+        for (int i = current.childCount - 1; i >= 0; i--)
+        {
+            DeleteLoosePaperQuadsRecursive(current.GetChild(i));
         }
 
-        GameObject root = new GameObject(rootName);
-        SceneManager.MoveGameObjectToScene(root, scene);
-        return root;
+        if (current.name == "PatientFilesTable" || current.IsChildOf(FindTransformByName(current.root, "PatientFilesTable")))
+        {
+            return;
+        }
+
+        MeshRenderer renderer = current.GetComponent<MeshRenderer>();
+        MeshFilter filter = current.GetComponent<MeshFilter>();
+        if (renderer == null || filter == null || filter.sharedMesh == null)
+        {
+            return;
+        }
+
+        if (!filter.sharedMesh.name.ToLowerInvariant().Contains("quad"))
+        {
+            return;
+        }
+
+        Material sharedMaterial = renderer.sharedMaterial;
+        if (sharedMaterial == null)
+        {
+            return;
+        }
+
+        if (sharedMaterial.name.Contains("PatientFolderPaper"))
+        {
+            Object.DestroyImmediate(current.gameObject);
+        }
+    }
+
+    private static Transform FindTransformByName(Transform root, string objectName)
+    {
+        if (root.name == objectName)
+        {
+            return root;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform match = FindTransformByName(root.GetChild(i), objectName);
+            if (match != null)
+            {
+                return match;
+            }
+        }
+
+        return null;
     }
 
     private static GameObject FindRoot(Scene scene, string rootName)
@@ -351,104 +315,61 @@ public static class PatientFolderSceneSetup
         return null;
     }
 
-    private static GameObject FindChildByName(Transform parent, string childName)
+    private static GameObject FindGameObjectInScene(Scene scene, string objectName)
     {
-        foreach (Transform child in parent)
+        foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (child.name == childName)
+            Transform match = FindRecursive(root.transform, objectName);
+            if (match != null)
             {
-                return child.gameObject;
+                return match.gameObject;
             }
         }
 
         return null;
     }
 
-    private static void EnsureFolderCollider(GameObject folder)
+    private static System.Collections.Generic.List<GameObject> FindAllGameObjectsInScene(Scene scene, string objectName)
     {
-        Collider[] colliders = folder.GetComponents<Collider>();
-        foreach (Collider existingCollider in colliders)
+        var matches = new System.Collections.Generic.List<GameObject>();
+        foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (!(existingCollider is BoxCollider))
-            {
-                Object.DestroyImmediate(existingCollider);
-            }
+            FindAllRecursive(root.transform, objectName, matches);
         }
 
-        BoxCollider boxCollider = folder.GetComponent<BoxCollider>();
-        if (boxCollider == null)
-        {
-            boxCollider = folder.AddComponent<BoxCollider>();
-        }
-
-        boxCollider.isTrigger = false;
-        boxCollider.center = Vector3.zero;
-        boxCollider.size = new Vector3(0.78f, 0.08f, 0.78f);
+        return matches;
     }
 
-    private static GameObject FindNamedChild(GameObject root, string childName)
+    private static Transform FindRecursive(Transform current, string objectName)
     {
-        Transform[] children = root.GetComponentsInChildren<Transform>(true);
-        foreach (Transform child in children)
+        if (current.name == objectName)
         {
-            if (child.name == childName)
+            return current;
+        }
+
+        for (int i = 0; i < current.childCount; i++)
+        {
+            Transform match = FindRecursive(current.GetChild(i), objectName);
+            if (match != null)
             {
-                return child.gameObject;
+                return match;
             }
         }
 
         return null;
     }
 
-    private static GameObject CreatePanelUnderRoot(GameObject root)
+    private static void FindAllRecursive(Transform current, string objectName, System.Collections.Generic.List<GameObject> matches)
     {
-        GameObject panel = new GameObject(UiPanelName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        panel.transform.SetParent(root.transform, false);
-        return panel;
-    }
-
-    private static TMP_Text CreateTextUnderPanel(GameObject panel)
-    {
-        GameObject textObject = new GameObject(UiTextName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(panel.transform, false);
-        return textObject.GetComponent<TextMeshProUGUI>();
-    }
-
-    private static void EnsureFolderLabel(Transform folderTransform, PatientData data)
-    {
-        Transform labelTransform = folderTransform.Find("FolderLabel");
-        GameObject labelObject = labelTransform != null ? labelTransform.gameObject : new GameObject("FolderLabel");
-        labelObject.transform.SetParent(folderTransform, false);
-        labelObject.transform.localPosition = new Vector3(0f, -0.18f, -0.015f);
-        labelObject.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-        labelObject.transform.localScale = Vector3.one * 0.03f;
-
-        TextMesh label = labelObject.GetComponent<TextMesh>();
-        if (label == null)
+        if (current.name == objectName)
         {
-            label = labelObject.AddComponent<TextMesh>();
+            matches.Add(current.gameObject);
         }
 
-        label.text = $"Dossier {data.PatientId:00}";
-        label.anchor = TextAnchor.MiddleCenter;
-        label.alignment = TextAlignment.Center;
-        label.characterSize = 0.18f;
-        label.fontSize = 28;
-        label.color = new Color(0.32f, 0.12f, 0.05f, 1f);
-    }
-
-    private static void SetPrivateField(Object target, string fieldName, Object value)
-    {
-        SerializedObject serializedObject = new SerializedObject(target);
-        SerializedProperty property = serializedObject.FindProperty(fieldName);
-        if (property == null)
+        for (int i = 0; i < current.childCount; i++)
         {
-            Debug.LogWarning($"[PatientFolderSceneSetup] Missing serialized field '{fieldName}'.");
-            return;
+            FindAllRecursive(current.GetChild(i), objectName, matches);
         }
-
-        property.objectReferenceValue = value;
-        serializedObject.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private readonly struct PatientData
@@ -466,18 +387,6 @@ public static class PatientFolderSceneSetup
             PatientAge = patientAge;
             Disease = disease;
             Notes = notes;
-        }
-    }
-
-    private readonly struct PlacementData
-    {
-        public readonly Vector3 Position;
-        public readonly Quaternion Rotation;
-
-        public PlacementData(Vector3 position, Quaternion rotation)
-        {
-            Position = position;
-            Rotation = rotation;
         }
     }
 }

@@ -33,6 +33,7 @@ public static class XRayPuzzleSceneSetupTool
             root = new GameObject(RootName);
             SceneManager.MoveGameObjectToScene(root, scene);
         }
+        root.SetActive(true);
 
         GameObject keypad = FindRoot(scene, "SM_Pin_Pad");
         if (keypad == null)
@@ -68,9 +69,10 @@ public static class XRayPuzzleSceneSetupTool
     // Places the radiographies on the inner wall of the padded room behind the keypad door.
     private static void CreateXRays(Transform parent, Transform keypadTransform)
     {
-        Vector3 basePosition = keypadTransform.position + new Vector3(-2.58f, 0.26f, -0.54f);
-        Vector3 horizontalStep = new Vector3(0f, 0f, 0.56f);
-        Vector3 verticalStep = new Vector3(0f, 0.62f, 0f);
+        // Visible on the right-side wall once the player enters the padded room.
+        Vector3 basePosition = keypadTransform.position + new Vector3(-1.30f, 0.22f, -1.18f);
+        Vector3 horizontalStep = new Vector3(0f, 0f, 0.52f);
+        Vector3 verticalStep = new Vector3(0f, 0.58f, 0f);
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
 
         for (int i = 0; i < XRayDefinitions.Length; i++)
@@ -89,7 +91,7 @@ public static class XRayPuzzleSceneSetupTool
 
             xrayObject.transform.position = position;
             xrayObject.transform.rotation = rotation;
-            xrayObject.transform.localScale = new Vector3(0.28f, 0.40f, 1f);
+            xrayObject.transform.localScale = new Vector3(0.24f, 0.34f, 1f);
 
             EnsureCollider(xrayObject);
             ApplyTextureToRenderer(xrayObject, XRayDefinitions[i].TexturePath);
@@ -156,6 +158,22 @@ public static class XRayPuzzleSceneSetupTool
         if (material.HasProperty("_BaseMap"))
         {
             material.SetTexture("_BaseMap", texture);
+        }
+
+        if (material.HasProperty("_BaseColor"))
+        {
+            material.SetColor("_BaseColor", new Color(0.95f, 0.98f, 1f, 1f));
+        }
+
+        if (material.HasProperty("_Color"))
+        {
+            material.color = new Color(0.95f, 0.98f, 1f, 1f);
+        }
+
+        if (material.HasProperty("_EmissionColor"))
+        {
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", new Color(0.18f, 0.2f, 0.24f, 1f));
         }
     }
 
