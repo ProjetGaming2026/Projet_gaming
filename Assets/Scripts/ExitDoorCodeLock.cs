@@ -12,7 +12,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     [SerializeField] private int codeLength = 4;
 
     [Header("Task Progression")]
-    [SerializeField] private bool countAsTask = true;
+    [SerializeField] private bool countAsTask;
 
     [Header("Door Links")]
     [SerializeField] private DoorInteractable[] linkedDoorInteractables;
@@ -95,10 +95,18 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         if (codeValidated)
         {
-            PrototypeHUD.ShowFeedback(GameLocalization.Text(
-                "Valid code. Finish all puzzles before leaving.",
-                "Code valide. Termine tous les puzzles avant de sortir.",
-                "Codigo valido. Termina todos los puzzles antes de salir."), PrototypeHUD.FeedbackTone.Info, 2.8f);
+if (codeValidated)
+{
+    SetLinkedDoorInteractionLocked(true);
+
+    PrototypeHUD.ShowFeedback(GameLocalization.Text(
+        "Valid code. Finish all puzzles before leaving.",
+        "Code valide. Termine tous les puzzles avant de sortir.",
+        "Codigo valido. Termina todos los puzzles antes de salir."),
+        PrototypeHUD.FeedbackTone.Info, 2.8f);
+
+    return;
+}
             return;
         }
 
@@ -560,10 +568,18 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         if (!CanOpenExitNow())
         {
-            PrototypeHUD.ShowFeedback(GameLocalization.Text(
-                "The exit stays locked until every puzzle is solved.",
-                "La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.",
-                "La salida sigue bloqueada hasta resolver todos los puzzles."), PrototypeHUD.FeedbackTone.Warning, 3f);
+if (!CanOpenExitNow())
+{
+    SetLinkedDoorInteractionLocked(true);
+
+    PrototypeHUD.ShowFeedback(GameLocalization.Text(
+        "The exit stays locked until every puzzle is solved.",
+        "La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.",
+        "La salida sigue bloqueada hasta resolver todos los puzzles."),
+        PrototypeHUD.FeedbackTone.Warning, 3f);
+
+    return;
+}
             return;
         }
 
