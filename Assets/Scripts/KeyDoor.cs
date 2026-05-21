@@ -20,6 +20,7 @@ public class KeyDoor : MonoBehaviour, IInteractable
     [Header("Fallback Motion")]
     [SerializeField] private float fallbackOpenAngle = 95f;
     [SerializeField] private float fallbackOpenDuration = 0.85f;
+    [SerializeField] private Transform fallbackMotionTarget;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -44,8 +45,14 @@ public class KeyDoor : MonoBehaviour, IInteractable
     private void Awake()
     {
         ResolveReferences();
-        fallbackClosedRotation = transform.localRotation;
-        fallbackOpenRotation = fallbackClosedRotation * Quaternion.Euler(0f, fallbackOpenAngle, 0f);
+        RefreshFallbackRotations();
+    }
+
+    public void SetFallbackMotionTarget(Transform motionTarget)
+    {
+        fallbackMotionTarget = motionTarget != null ? motionTarget : transform;
+        fallbackOpen = false;
+        RefreshFallbackRotations();
     }
 
     public void Interact()
@@ -109,6 +116,12 @@ public class KeyDoor : MonoBehaviour, IInteractable
             return;
         }
 
+        Transform motionTarget = GetFallbackMotionTarget();
+        if (motionTarget == null)
+        {
+            return;
+        }
+
         Quaternion targetRotation = fallbackOpen ? fallbackClosedRotation : fallbackOpenRotation;
         fallbackOpen = !fallbackOpen;
 
@@ -117,12 +130,17 @@ public class KeyDoor : MonoBehaviour, IInteractable
             StopCoroutine(fallbackMotionRoutine);
         }
 
-        fallbackMotionRoutine = StartCoroutine(RotateFallbackDoor(targetRotation));
+        fallbackMotionRoutine = StartCoroutine(RotateFallbackDoor(motionTarget, targetRotation));
     }
 
-    private IEnumerator RotateFallbackDoor(Quaternion targetRotation)
+    private IEnumerator RotateFallbackDoor(Transform motionTarget, Quaternion targetRotation)
     {
-        Quaternion startRotation = transform.localRotation;
+        if (motionTarget == null)
+        {
+            yield break;
+        }
+
+        Quaternion startRotation = motionTarget.localRotation;
         float elapsed = 0f;
 
         while (elapsed < fallbackOpenDuration)
@@ -130,12 +148,29 @@ public class KeyDoor : MonoBehaviour, IInteractable
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / Mathf.Max(0.01f, fallbackOpenDuration));
             t = t * t * (3f - 2f * t);
-            transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
+            motionTarget.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
             yield return null;
         }
 
-        transform.localRotation = targetRotation;
+        motionTarget.localRotation = targetRotation;
         fallbackMotionRoutine = null;
+    }
+
+    private Transform GetFallbackMotionTarget()
+    {
+        return fallbackMotionTarget != null ? fallbackMotionTarget : transform;
+    }
+
+    private void RefreshFallbackRotations()
+    {
+        Transform motionTarget = GetFallbackMotionTarget();
+        if (motionTarget == null)
+        {
+            return;
+        }
+
+        fallbackClosedRotation = motionTarget.localRotation;
+        fallbackOpenRotation = fallbackClosedRotation * Quaternion.Euler(0f, fallbackOpenAngle, 0f);
     }
 
     private void ResolveReferences()
@@ -202,6 +237,10 @@ public class KeyDoor : MonoBehaviour, IInteractable
 
 public static class LowerFloorRoomDoorBootstrap
 {
+    private const string TargetSceneName = "demoScene_Facile";
+    private const string DoorName = "door3b";
+    private const string DoorFrameName = "door3_frame";
+    private const string RotationMarkerName = "point rotation";
     private static bool registered;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -228,44 +267,142 @@ public static class LowerFloorRoomDoorBootstrap
             return;
         }
 
-        int configuredCount = 0;
+        Transform targetDoorRoot = FindTargetDoorRoot(scene);
+        if (targetDoorRoot == null)
+        {
+            Debug.LogWarning("LowerFloorRoomDoorBootstrap: target door3b with point rotation marker not found. No room key door configured.");
+            return;
+        }
+
+        Transform movingDoorPanel = FindMovingDoorPanel(targetDoorRoot);
+        int removedCount = RemoveKeyDoorFromOtherDoor3B(scene, targetDoorRoot);
+        bool wasConfigured = false;
+        KeyDoor keyDoor = targetDoorRoot.GetComponent<KeyDoor>();
+        if (keyDoor == null)
+        {
+            keyDoor = targetDoorRoot.gameObject.AddComponent<KeyDoor>();
+            wasConfigured = true;
+        }
+
+        keyDoor.SetFallbackMotionTarget(movingDoorPanel != null ? movingDoorPanel : targetDoorRoot);
+
+        if (wasConfigured || removedCount > 0)
+        {
+            string motionTargetName = movingDoorPanel != null ? movingDoorPanel.name : targetDoorRoot.name;
+            Debug.Log("LowerFloorRoomDoorBootstrap: KeyDoor is limited to the door3b that contains point rotation. Motion target: " + motionTargetName + ". Removed from other door3b objects: " + removedCount + ".");
+        }
+    }
+
+    private static Transform FindTargetDoorRoot(Scene scene)
+    {
+        if (!string.Equals(scene.name, TargetSceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            Transform[] transforms = roots[i].GetComponentsInChildren<Transform>(true);
+            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            {
+                Transform candidate = transforms[transformIndex];
+                if (IsTargetDoorRoot(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindDirectChild(Transform parent, string childName)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (string.Equals(child.name, childName, StringComparison.OrdinalIgnoreCase))
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private static int RemoveKeyDoorFromOtherDoor3B(Scene scene, Transform targetDoor)
+    {
+        int removedCount = 0;
         foreach (GameObject root in scene.GetRootGameObjects())
         {
             Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
             for (int i = 0; i < transforms.Length; i++)
             {
                 Transform candidate = transforms[i];
-                if (!IsDoor3BRoot(candidate))
+                if (candidate == targetDoor || !IsNamedDoor3B(candidate))
                 {
                     continue;
                 }
 
-                if (candidate.GetComponent<KeyDoor>() == null)
+                KeyDoor keyDoor = candidate.GetComponent<KeyDoor>();
+                if (keyDoor == null)
                 {
-                    candidate.gameObject.AddComponent<KeyDoor>();
-                    configuredCount++;
+                    continue;
                 }
+
+                UnityEngine.Object.Destroy(keyDoor);
+                removedCount++;
             }
         }
 
-        if (configuredCount > 0)
-        {
-            Debug.Log("LowerFloorRoomDoorBootstrap: added KeyDoor to " + configuredCount + " door3b object(s).");
-        }
+        return removedCount;
     }
 
-    private static bool IsDoor3BRoot(Transform candidate)
+    private static bool IsTargetDoorRoot(Transform candidate)
     {
-        if (!string.Equals(candidate.name, "door3b", StringComparison.OrdinalIgnoreCase))
+        if (!IsNamedDoor3B(candidate))
         {
             return false;
         }
 
-        return HasDirectChild(candidate, "point rotation") ||
-               HasDirectChild(candidate, "door3_frame") ||
-               HasDescendant(candidate, "door3_hatch") ||
-               HasDescendant(candidate, "door3b_hatch") ||
-               candidate.GetComponent<DoorInteractable>() != null;
+        return HasDirectChild(candidate, DoorFrameName) &&
+               HasDirectChild(candidate, RotationMarkerName) &&
+               FindMovingDoorPanel(candidate) != null;
+    }
+
+    private static bool IsNamedDoor3B(Transform candidate)
+    {
+        return candidate != null && string.Equals(candidate.name, DoorName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static Transform FindMovingDoorPanel(Transform doorRoot)
+    {
+        if (doorRoot == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < doorRoot.childCount; i++)
+        {
+            Transform child = doorRoot.GetChild(i);
+            if (!IsNamedDoor3B(child))
+            {
+                continue;
+            }
+
+            if (child.GetComponent<MeshFilter>() != null && child.GetComponent<Collider>() != null)
+            {
+                return child;
+            }
+        }
+
+        return FindDirectChild(doorRoot, DoorName);
     }
 
     private static bool HasDirectChild(Transform parent, string childName)

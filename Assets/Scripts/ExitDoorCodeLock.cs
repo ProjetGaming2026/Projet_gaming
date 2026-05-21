@@ -12,7 +12,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     [SerializeField] private int codeLength = 4;
 
     [Header("Task Progression")]
-    [SerializeField] private bool countAsTask = true;
+    [SerializeField] private bool countAsTask;
 
     [Header("Door Links")]
     [SerializeField] private DoorInteractable[] linkedDoorInteractables;
@@ -96,6 +96,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
         if (codeValidated)
         {
+            SetLinkedDoorInteractionLocked(true);
             PrototypeHUD.ShowFeedback("Code valide. Termine tous les puzzles avant de sortir.", PrototypeHUD.FeedbackTone.Info, 2.8f);
             return;
         }
@@ -556,6 +557,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     {
         if (!CanOpenExitNow())
         {
+            SetLinkedDoorInteractionLocked(true);
             PrototypeHUD.ShowFeedback("La sortie reste verrouillee tant que tous les puzzles ne sont pas valides.", PrototypeHUD.FeedbackTone.Warning, 3f);
             return;
         }
