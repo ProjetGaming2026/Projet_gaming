@@ -5,9 +5,6 @@ TagManager:
   serializedVersion: 3
   tags:
   - PuzzleLight
-  - heart
-  - liver
-  - hand
   layers:
   - Default
   - TransparentFX
