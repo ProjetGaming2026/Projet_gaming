@@ -115,13 +115,13 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         DrawHorrorTitle(new Rect(windowRect.x + 24f * uiScale, startY, windowRect.width - 48f * uiScale, titleHeight), "Choix Du Niveau", uiScale);
 
-        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale, buttonWidth, buttonHeight), "Facile", EasyScenePath, EasySceneName, new Color(0.25f, 0.88f, 0.56f, 1f), "I");
-        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap), buttonWidth, buttonHeight), "Moyen", MediumScenePath, MediumSceneName, new Color(0.42f, 0.72f, 1f, 1f), "II");
-        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap) * 2f, buttonWidth, buttonHeight), "Difficile", HardScenePath, HardSceneName, new Color(1f, 0.32f, 0.3f, 1f), "III");
+        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale, buttonWidth, buttonHeight), "Facile", EasyScenePath, EasySceneName, new Color(0.25f, 0.88f, 0.56f, 1f), "I", DifficultyWarningTransition.VoiceClip.Easy);
+        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap), buttonWidth, buttonHeight), "Moyen", MediumScenePath, MediumSceneName, new Color(0.42f, 0.72f, 1f, 1f), "II", DifficultyWarningTransition.VoiceClip.Medium);
+        DrawLevelCard(new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap) * 2f, buttonWidth, buttonHeight), "Difficile", HardScenePath, HardSceneName, new Color(1f, 0.32f, 0.3f, 1f), "III", DifficultyWarningTransition.VoiceClip.Hard);
         DrawBackButton(new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap) * 3f, buttonWidth, buttonHeight));
     }
 
-    private void DrawLevelCard(Rect cardRect, string label, string scenePath, string sceneName, Color cardColor, string badge)
+    private void DrawLevelCard(Rect cardRect, string label, string scenePath, string sceneName, Color cardColor, string badge, DifficultyWarningTransition.VoiceClip voiceClip)
     {
         bool hovered = cardRect.Contains(Event.current.mousePosition);
         DrawButtonFrame(cardRect, cardColor, hovered, true);
@@ -134,7 +134,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         if (GUI.Button(cardRect, GUIContent.none, GUIStyle.none))
         {
-            ChooseLevel(scenePath, sceneName);
+            ChooseLevel(scenePath, sceneName, voiceClip);
         }
     }
 
@@ -150,7 +150,7 @@ public class LevelSelectBootstrap : MonoBehaviour
         }
     }
 
-    private void ChooseLevel(string scenePath, string sceneName)
+    private void ChooseLevel(string scenePath, string sceneName, DifficultyWarningTransition.VoiceClip voiceClip)
     {
         hasChosenLevel = true;
         showMenu = false;
@@ -158,7 +158,7 @@ public class LevelSelectBootstrap : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name != sceneName)
         {
-            LoadSceneExact(scenePath, sceneName);
+            DifficultyWarningTransition.PlayBeforeScene(scenePath, sceneName, voiceClip);
         }
     }
 

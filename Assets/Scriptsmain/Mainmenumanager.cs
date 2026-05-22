@@ -216,7 +216,8 @@ public class MainMenuManager : MonoBehaviour
             EasyScenePath,
             EasySceneName,
             new Color(0.25f, 0.88f, 0.56f, 1f),
-            "I"
+            "I",
+            DifficultyWarningTransition.VoiceClip.Easy
         );
 
         DrawLevelChoice(
@@ -225,7 +226,8 @@ public class MainMenuManager : MonoBehaviour
             MediumScenePath,
             MediumSceneName,
             new Color(0.42f, 0.72f, 1f, 1f),
-            "II"
+            "II",
+            DifficultyWarningTransition.VoiceClip.Medium
         );
 
         DrawLevelChoice(
@@ -234,7 +236,8 @@ public class MainMenuManager : MonoBehaviour
             HardScenePath,
             HardSceneName,
             new Color(1f, 0.32f, 0.3f, 1f),
-            "III"
+            "III",
+            DifficultyWarningTransition.VoiceClip.Hard
         );
 
         DrawLevelBackButton(
@@ -243,7 +246,7 @@ public class MainMenuManager : MonoBehaviour
         );
     }
 
-    private void DrawLevelChoice(Rect buttonRect, string title, string scenePath, string sceneName, Color accentColor, string badge)
+    private void DrawLevelChoice(Rect buttonRect, string title, string scenePath, string sceneName, Color accentColor, string badge, DifficultyWarningTransition.VoiceClip voiceClip)
     {
         string buttonId = sceneName;
         bool hovered = buttonRect.Contains(Event.current.mousePosition);
@@ -258,7 +261,9 @@ public class MainMenuManager : MonoBehaviour
         if (GUI.Button(buttonRect, title, levelButtonStyle))
         {
             PlayLevelClickSound();
-            LoadSceneExact(scenePath, sceneName);
+            showLevelSelect = false;
+            SetActiveSafe(zombie, false);
+            DifficultyWarningTransition.PlayBeforeScene(scenePath, sceneName, voiceClip);
         }
     }
 
