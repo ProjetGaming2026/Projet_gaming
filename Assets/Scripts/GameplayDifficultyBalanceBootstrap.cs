@@ -45,10 +45,10 @@ public static class GameplayDifficultyBalanceBootstrap
             player.ApplyMovementTuning(profile.playerWalkSpeed, profile.playerSprintSpeed);
         }
 
-        BasicMonsterController monster = Object.FindFirstObjectByType<BasicMonsterController>();
-        if (monster != null)
+        BasicMonsterController[] monsters = Object.FindObjectsByType<BasicMonsterController>(FindObjectsSortMode.None);
+        for (int i = 0; i < monsters.Length; i++)
         {
-            monster.ApplyMovementTuning(
+            monsters[i].ApplyMovementTuning(
                 profile.monsterChaseSpeed,
                 profile.monsterSlowedSpeed,
                 profile.monsterPatrolSpeed,
@@ -79,7 +79,7 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterInvestigationSpeed: 2.1f,
                     hardPatrolSpeedMultiplier: 1f,
                     requiredTasks: 5,
-                    levelDuration: 780f
+                    levelDuration: 1800f
                 );
                 return true;
 
@@ -94,7 +94,7 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterInvestigationSpeed: 2.45f,
                     hardPatrolSpeedMultiplier: 1.02f,
                     requiredTasks: 7,
-                    levelDuration: 600f
+                    levelDuration: 1800f
                 );
                 return true;
 
@@ -108,7 +108,7 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterInvestigationSpeed: 3f,
                     hardPatrolSpeedMultiplier: 1.1f,
                     requiredTasks: 9,
-                    levelDuration: 480f
+                    levelDuration: 1800f
                 );
                 return true;
 

@@ -69,7 +69,7 @@ public class BasicFirstPersonController : MonoBehaviour
             return;
         }
 
-        if (LevelSelectBootstrap.IsMenuOpen)
+        if (LevelSelectBootstrap.IsMenuOpen || GameplayPauseOptionsMenu.IsOpen)
         {
             IsSprinting = false;
             ApplyCursorState();
@@ -172,7 +172,7 @@ public class BasicFirstPersonController : MonoBehaviour
             return;
         }
 
-        if (LevelSelectBootstrap.IsMenuOpen)
+        if (LevelSelectBootstrap.IsMenuOpen || GameplayPauseOptionsMenu.IsOpen)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

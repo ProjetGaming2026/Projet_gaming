@@ -35,9 +35,10 @@ public class MainMenuManager : MonoBehaviour
     private bool showLevelSelect;
     private GUIStyle levelWindowStyle;
     private GUIStyle levelTitleStyle;
-    private GUIStyle levelDescriptionStyle;
     private GUIStyle levelButtonStyle;
     private GUIStyle levelBackButtonStyle;
+    private GUIStyle levelBadgeStyle;
+    private static Texture2D levelPixelTexture;
     private AudioSource levelSelectAudioSource;
     private AudioClip levelHoverSound;
     private AudioClip levelClickSound;
@@ -144,6 +145,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         PlayerPrefs.SetInt(LanguageKey, optionIndex);
+        PlayerPrefs.Save();
         ApplyLanguage();
     }
 
@@ -179,14 +181,12 @@ public class MainMenuManager : MonoBehaviour
 
         EnsureLevelStyles();
 
-        Rect overlay = new Rect(0f, 0f, Screen.width, Screen.height);
-        Color previousColor = GUI.color;
-        GUI.color = new Color(0f, 0f, 0f, 0.36f);
-        GUI.Box(overlay, GUIContent.none);
-        GUI.color = previousColor;
+        DrawSolidRect(new Rect(0f, 0f, Screen.width, Screen.height), new Color(0f, 0f, 0f, 0.44f));
+        DrawHorrorVignette(new Rect(0f, 0f, Screen.width, Screen.height));
 
-        float width = Mathf.Min(780f, Screen.width - 80f);
-        float height = Mathf.Min(610f, Screen.height - 80f);
+        float uiScale = Mathf.Clamp(Mathf.Min((Screen.width - 32f) / 700f, (Screen.height - 28f) / 500f), 0.58f, 1.18f);
+        float width = Mathf.Min(700f * uiScale, Screen.width - 32f);
+        float height = Mathf.Min(500f * uiScale, Screen.height - 28f);
         Rect windowRect = new Rect(
             (Screen.width - width) * 0.5f,
             (Screen.height - height) * 0.5f,
@@ -194,60 +194,87 @@ public class MainMenuManager : MonoBehaviour
             height
         );
 
-        GUILayout.BeginArea(windowRect, levelWindowStyle);
-        GUILayout.Space(26f);
-        GUILayout.Label(TextFor(GetCurrentLanguageIndex(), "Choose Level", "Choix Du Niveau", "Elegir Nivel"), levelTitleStyle);
-        GUILayout.Space(18f);
+        DrawLevelPanel(windowRect);
+
+        float titleHeight = 52f * uiScale;
+        float buttonWidth = Mathf.Min(520f * uiScale, width - 56f * uiScale);
+        float buttonHeight = 70f * uiScale;
+        float gap = 14f * uiScale;
+        float stackHeight = titleHeight + 34f * uiScale + buttonHeight * 4f + gap * 3f;
+        float startY = windowRect.y + (height - stackHeight) * 0.5f;
+        float buttonX = windowRect.x + (width - buttonWidth) * 0.5f;
+
+        DrawHorrorTitle(
+            new Rect(windowRect.x + 24f * uiScale, startY, width - 48f * uiScale, titleHeight),
+            TextFor(GetCurrentLanguageIndex(), "Choose Level", "Choix Du Niveau", "Elegir Nivel"),
+            uiScale
+        );
 
         DrawLevelChoice(
+            new Rect(buttonX, startY + titleHeight + 34f * uiScale, buttonWidth, buttonHeight),
             TextFor(GetCurrentLanguageIndex(), "Easy", "Facile", "Facil"),
-            TextFor(GetCurrentLanguageIndex(), "More time, slower zombie.", "Plus de temps, zombie plus lente.", "Mas tiempo, zombie mas lenta."),
             EasyScenePath,
-            EasySceneName
+            EasySceneName,
+            new Color(0.25f, 0.88f, 0.56f, 1f),
+            "I",
+            DifficultyWarningTransition.VoiceClip.Easy
         );
 
         DrawLevelChoice(
+            new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap), buttonWidth, buttonHeight),
             TextFor(GetCurrentLanguageIndex(), "Medium", "Moyen", "Medio"),
-            TextFor(GetCurrentLanguageIndex(), "Balanced exploration and danger.", "Equilibre entre exploration et danger.", "Equilibrio entre exploracion y peligro."),
             MediumScenePath,
-            MediumSceneName
+            MediumSceneName,
+            new Color(0.42f, 0.72f, 1f, 1f),
+            "II",
+            DifficultyWarningTransition.VoiceClip.Medium
         );
 
         DrawLevelChoice(
+            new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap) * 2f, buttonWidth, buttonHeight),
             TextFor(GetCurrentLanguageIndex(), "Hard", "Difficile", "Dificil"),
-            TextFor(GetCurrentLanguageIndex(), "Less time, more aggressive zombie.", "Moins de temps, zombie plus agressive.", "Menos tiempo, zombie mas agresiva."),
             HardScenePath,
-            HardSceneName
+            HardSceneName,
+            new Color(1f, 0.32f, 0.3f, 1f),
+            "III",
+            DifficultyWarningTransition.VoiceClip.Hard
         );
 
-        GUILayout.Space(14f);
-        DrawLevelBackButton(TextFor(GetCurrentLanguageIndex(), "BACK", "RETOUR", "VOLVER"));
-
-        GUILayout.EndArea();
+        DrawLevelBackButton(
+            new Rect(buttonX, startY + titleHeight + 34f * uiScale + (buttonHeight + gap) * 3f, buttonWidth, buttonHeight),
+            TextFor(GetCurrentLanguageIndex(), "BACK", "RETOUR", "VOLVER")
+        );
     }
 
-    private void DrawLevelChoice(string title, string description, string scenePath, string sceneName)
+    private void DrawLevelChoice(Rect buttonRect, string title, string scenePath, string sceneName, Color accentColor, string badge, DifficultyWarningTransition.VoiceClip voiceClip)
     {
-        GUILayout.BeginVertical(GUILayout.Height(112f));
         string buttonId = sceneName;
-        Rect buttonRect = GUILayoutUtility.GetRect(new GUIContent(title), levelButtonStyle, GUILayout.Height(58f), GUILayout.ExpandWidth(true));
+        bool hovered = buttonRect.Contains(Event.current.mousePosition);
         PlayLevelHoverSound(buttonId, buttonRect);
+        DrawModernButtonFrame(buttonRect, accentColor, hovered, false, true);
+
+        Rect badgeRect = new Rect(buttonRect.x + 14f, buttonRect.y + 12f, 48f, buttonRect.height - 24f);
+        DrawSolidRect(badgeRect, hovered ? new Color(0.62f, 0.02f, 0.02f, 0.95f) : new Color(0.2f, 0.015f, 0.015f, 0.86f));
+        DrawSolidRect(new Rect(badgeRect.x, badgeRect.y, badgeRect.width, 2f), new Color(accentColor.r, accentColor.g, accentColor.b, 0.75f));
+        GUI.Label(badgeRect, badge, levelBadgeStyle);
 
         if (GUI.Button(buttonRect, title, levelButtonStyle))
         {
             PlayLevelClickSound();
-            LoadSceneExact(scenePath, sceneName);
+            showLevelSelect = false;
+            SetActiveSafe(zombie, false);
+            DifficultyWarningTransition.PlayBeforeScene(scenePath, sceneName, voiceClip);
         }
-
-        GUILayout.Label(description, levelDescriptionStyle);
-        GUILayout.EndVertical();
-        GUILayout.Space(12f);
     }
 
-    private void DrawLevelBackButton(string title)
+    private void DrawLevelBackButton(Rect buttonRect, string title)
     {
-        Rect buttonRect = GUILayoutUtility.GetRect(new GUIContent(title), levelBackButtonStyle, GUILayout.Height(58f), GUILayout.ExpandWidth(true));
+        bool hovered = buttonRect.Contains(Event.current.mousePosition);
         PlayLevelHoverSound("back", buttonRect);
+        DrawModernButtonFrame(buttonRect, new Color(0.86f, 0.08f, 0.08f, 1f), hovered, true, false);
+
+        Rect arrowRect = new Rect(buttonRect.x + 18f, buttonRect.y + 12f, 44f, buttonRect.height - 24f);
+        GUI.Label(arrowRect, "<", levelBadgeStyle);
 
         if (GUI.Button(buttonRect, title, levelBackButtonStyle))
         {
@@ -344,40 +371,133 @@ public class MainMenuManager : MonoBehaviour
 
         levelWindowStyle = new GUIStyle(GUI.skin.window)
         {
-            padding = new RectOffset(32, 32, 22, 24)
+            padding = new RectOffset(0, 0, 0, 0),
+            normal = { background = null }
         };
 
         levelTitleStyle = new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
-            fontSize = 38,
+            fontSize = 40,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = new Color(0.96f, 0.94f, 0.9f, 1f) }
+        };
+
+        levelButtonStyle = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = 31,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = new Color(0.96f, 0.94f, 0.9f, 1f) },
+            hover = { textColor = new Color(1f, 0.38f, 0.34f) }
+        };
+
+        levelBackButtonStyle = new GUIStyle(levelButtonStyle)
+        {
+            fontSize = 25
+        };
+
+        levelBadgeStyle = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = 22,
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
+    }
 
-        levelDescriptionStyle = new GUIStyle(GUI.skin.label)
+    private static void DrawLevelPanel(Rect rect)
+    {
+        DrawSolidRect(rect, new Color(0.006f, 0.005f, 0.006f, 0.97f));
+        DrawSolidRect(new Rect(rect.x + 3f, rect.y + 3f, rect.width - 6f, rect.height - 6f), new Color(0.06f, 0.055f, 0.06f, 0.92f));
+        DrawSolidRect(new Rect(rect.x + 20f, rect.y + 18f, rect.width - 40f, 2f), new Color(0.8f, 0.03f, 0.025f, 0.62f));
+        DrawSolidRect(new Rect(rect.x + 20f, rect.y + rect.height - 20f, rect.width - 40f, 2f), new Color(0.8f, 0.03f, 0.025f, 0.5f));
+        DrawSolidRect(new Rect(rect.x, rect.y, 4f, rect.height), new Color(0.8f, 0.03f, 0.025f, 0.55f));
+        DrawSolidRect(new Rect(rect.x + rect.width - 4f, rect.y, 4f, rect.height), new Color(0.8f, 0.03f, 0.025f, 0.4f));
+        DrawSolidRect(new Rect(rect.x + 24f, rect.y + 24f, 86f, 2f), new Color(0.95f, 0.08f, 0.06f, 0.7f));
+        DrawSolidRect(new Rect(rect.x + rect.width - 110f, rect.y + rect.height - 26f, 86f, 2f), new Color(0.95f, 0.08f, 0.06f, 0.55f));
+        DrawHorrorScratches(rect);
+    }
+
+    private static void DrawModernButtonFrame(Rect rect, Color accentColor, bool hovered, bool subtle, bool hasBadge)
+    {
+        Color bodyColor = hovered
+            ? new Color(0.16f, 0.045f, 0.048f, 0.98f)
+            : new Color(0.035f, 0.028f, 0.032f, subtle ? 0.76f : 0.93f);
+
+        DrawSolidRect(rect, new Color(0f, 0f, 0f, 0.72f));
+        DrawSolidRect(new Rect(rect.x + 2f, rect.y + 2f, rect.width - 4f, rect.height - 4f), bodyColor);
+        DrawSolidRect(new Rect(rect.x, rect.y, rect.width, 2f), new Color(0.9f, 0.03f, 0.025f, hovered ? 0.9f : 0.44f));
+        DrawSolidRect(new Rect(rect.x, rect.y + rect.height - 2f, rect.width, 2f), new Color(accentColor.r, accentColor.g, accentColor.b, hovered ? 0.62f : 0.26f));
+        DrawSolidRect(new Rect(rect.x + rect.width - 6f, rect.y + 8f, 3f, rect.height - 16f), new Color(0.9f, 0.03f, 0.025f, hovered ? 0.84f : 0.34f));
+        if (hasBadge)
+        {
+            DrawSolidRect(new Rect(rect.x + 70f, rect.y + 10f, 1f, rect.height - 20f), new Color(0.9f, 0.03f, 0.025f, 0.42f));
+        }
+
+        DrawSolidRect(new Rect(rect.x + 18f, rect.y + rect.height - 9f, rect.width * 0.35f, 1f), new Color(0.9f, 0.03f, 0.025f, hovered ? 0.65f : 0.28f));
+        DrawSolidRect(new Rect(rect.x + rect.width * 0.7f, rect.y + 10f, rect.width * 0.2f, 1f), new Color(0.96f, 0.94f, 0.9f, hovered ? 0.22f : 0.08f));
+    }
+
+    private static void DrawHorrorTitle(Rect rect, string title, float uiScale)
+    {
+        float pulse = Mathf.Sin(Time.unscaledTime * 13.7f);
+        float glitch = Mathf.Abs(pulse) > 0.82f ? 3f * uiScale : 1f * uiScale;
+        GUIStyle style = new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
-            fontSize = 18,
-            wordWrap = true,
-            normal = { textColor = new Color(0.9f, 0.9f, 0.9f) }
+            fontSize = Mathf.RoundToInt(40f * uiScale),
+            fontStyle = FontStyle.Bold
         };
 
-        levelButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontSize = 30,
-            fontStyle = FontStyle.Bold,
-            normal = { textColor = Color.white },
-            hover = { textColor = new Color(1f, 0.82f, 0.38f) }
-        };
+        style.normal.textColor = new Color(0.55f, 0f, 0f, 0.68f);
+        GUI.Label(new Rect(rect.x - glitch, rect.y + 2f * uiScale, rect.width, rect.height), title, style);
+        style.normal.textColor = new Color(0.03f, 0.9f, 0.78f, 0.18f);
+        GUI.Label(new Rect(rect.x + glitch, rect.y - 1f * uiScale, rect.width, rect.height), title, style);
+        style.normal.textColor = new Color(0.96f, 0.94f, 0.9f, 1f);
+        GUI.Label(rect, title, style);
+        DrawSolidRect(new Rect(rect.x + rect.width * 0.26f, rect.y + rect.height - 4f * uiScale, rect.width * 0.48f, 2f * uiScale), new Color(0.82f, 0.02f, 0.02f, 0.72f));
+    }
 
-        levelBackButtonStyle = new GUIStyle(GUI.skin.button)
+    private static void DrawHorrorVignette(Rect rect)
+    {
+        DrawSolidRect(new Rect(rect.x, rect.y, rect.width, rect.height * 0.1f), new Color(0f, 0f, 0f, 0.28f));
+        DrawSolidRect(new Rect(rect.x, rect.y + rect.height * 0.9f, rect.width, rect.height * 0.1f), new Color(0f, 0f, 0f, 0.34f));
+        DrawSolidRect(new Rect(rect.x, rect.y, rect.width * 0.08f, rect.height), new Color(0f, 0f, 0f, 0.28f));
+        DrawSolidRect(new Rect(rect.x + rect.width * 0.92f, rect.y, rect.width * 0.08f, rect.height), new Color(0f, 0f, 0f, 0.32f));
+
+        for (int i = 0; i < 8; i++)
         {
-            fontSize = 24,
-            fontStyle = FontStyle.Bold,
-            normal = { textColor = Color.white },
-            hover = { textColor = new Color(1f, 0.82f, 0.38f) }
-        };
+            float y = rect.y + ((i * 73f + Time.unscaledTime * 18f) % rect.height);
+            DrawSolidRect(new Rect(rect.x, y, rect.width, 1f), new Color(0.8f, 0.02f, 0.02f, 0.045f));
+        }
+    }
+
+    private static void DrawHorrorScratches(Rect rect)
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            float x = rect.x + 34f + i * rect.width * 0.13f;
+            float y = rect.y + 58f + Mathf.Abs(Mathf.Sin(i * 12.4f)) * (rect.height - 116f);
+            float length = 24f + i * 5f;
+            DrawSolidRect(new Rect(x, y, 2f, length), new Color(0.9f, 0.03f, 0.025f, 0.09f));
+        }
+    }
+
+    private static void DrawSolidRect(Rect rect, Color color)
+    {
+        if (levelPixelTexture == null)
+        {
+            levelPixelTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            levelPixelTexture.hideFlags = HideFlags.HideAndDontSave;
+            levelPixelTexture.SetPixel(0, 0, Color.white);
+            levelPixelTexture.Apply();
+        }
+
+        Color previousColor = GUI.color;
+        GUI.color = color;
+        GUI.DrawTexture(rect, levelPixelTexture);
+        GUI.color = previousColor;
     }
 
     private void ResolveSceneReferences()

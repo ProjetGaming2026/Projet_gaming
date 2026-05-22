@@ -23,6 +23,7 @@ public class InventorySystem : MonoBehaviour
     private TMP_Text keyLabelText;
     private TMP_Text notificationText;
     private Coroutine notificationRoutine;
+    private int lastLanguageIndex = -1;
 
     private void Awake()
     {
@@ -43,6 +44,18 @@ public class InventorySystem : MonoBehaviour
         RefreshUi();
     }
 
+    private void Update()
+    {
+        int languageIndex = GameLocalization.CurrentLanguageIndex;
+        if (languageIndex == lastLanguageIndex)
+        {
+            return;
+        }
+
+        lastLanguageIndex = languageIndex;
+        RefreshUi();
+    }
+
     private void OnDestroy()
     {
         if (Instance == this)
@@ -60,7 +73,10 @@ public class InventorySystem : MonoBehaviour
     {
         hasLowerFloorRoomKey = true;
         RefreshUi();
-        ShowNotification("CLE DE CHAMBRE - ETAGE INFERIEUR AJOUTEE");
+        ShowNotification(GameLocalization.Text(
+            "LOWER FLOOR ROOM KEY ADDED",
+            "CLE DE CHAMBRE - ETAGE INFERIEUR AJOUTEE",
+            "LLAVE DE HABITACION - PISO INFERIOR ANADIDA"));
         Debug.Log("InventorySystem: lower floor room key picked up.");
     }
 
@@ -127,7 +143,7 @@ public class InventorySystem : MonoBehaviour
         Stretch(keyIconText.rectTransform);
         keyIconText.alignment = TextAlignmentOptions.Center;
 
-        keyLabelText = CreateText("KeyLabel", panelObject.transform, "CLE\nABSENTE", 20f, Color.white);
+        keyLabelText = CreateText("KeyLabel", panelObject.transform, GameLocalization.Text("NO\nKEY", "CLE\nABSENTE", "SIN\nLLAVE"), 20f, Color.white);
         RectTransform labelRect = keyLabelText.rectTransform;
         labelRect.anchorMin = new Vector2(0f, 0f);
         labelRect.anchorMax = new Vector2(1f, 1f);
@@ -154,8 +170,10 @@ public class InventorySystem : MonoBehaviour
         }
 
         keySlotImage.color = hasLowerFloorRoomKey ? slotFilledColor : slotEmptyColor;
-        keyIconText.text = hasLowerFloorRoomKey ? "ROOM" : "-";
-        keyLabelText.text = hasLowerFloorRoomKey ? "CLE CHAMBRE\nETAGE BAS" : "CLE\nABSENTE";
+        keyIconText.text = hasLowerFloorRoomKey ? GameLocalization.Text("ROOM", "CH.", "HAB.") : "-";
+        keyLabelText.text = hasLowerFloorRoomKey
+            ? GameLocalization.Text("ROOM KEY\nLOWER FLOOR", "CLE CHAMBRE\nETAGE BAS", "LLAVE HAB.\nPISO BAJO")
+            : GameLocalization.Text("NO\nKEY", "CLE\nABSENTE", "SIN\nLLAVE");
         keyLabelText.color = hasLowerFloorRoomKey ? accentColor : Color.white;
     }
 

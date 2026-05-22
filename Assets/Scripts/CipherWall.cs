@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CipherWall : MonoBehaviour
 {
+    private const string EasySceneName = "demoScene_Facile";
+
     [SerializeField] private TextMesh textMesh;
     [SerializeField] private Vector3 textLocalPosition = new Vector3(0f, 1.55f, 0.03f);
     [SerializeField] private Vector3 textLocalEulerAngles = new Vector3(0f, 0f, -10f);
@@ -16,11 +18,22 @@ public class CipherWall : MonoBehaviour
 
     private void Awake()
     {
+        if (!IsAllowedInCurrentScene())
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         EnsureTextMesh();
     }
 
     private void Reset()
     {
+        if (!IsAllowedInCurrentScene())
+        {
+            return;
+        }
+
         if (!IsSceneInstance())
         {
             return;
@@ -31,6 +44,11 @@ public class CipherWall : MonoBehaviour
 
     private void OnValidate()
     {
+        if (!IsAllowedInCurrentScene())
+        {
+            return;
+        }
+
         if (!IsSceneInstance())
         {
             return;
@@ -172,5 +190,12 @@ public class CipherWall : MonoBehaviour
     private bool IsSceneInstance()
     {
         return gameObject.scene.IsValid() && gameObject.scene.isLoaded;
+    }
+
+    private bool IsAllowedInCurrentScene()
+    {
+        return !gameObject.scene.IsValid() ||
+            !gameObject.scene.isLoaded ||
+            gameObject.scene.name == EasySceneName;
     }
 }

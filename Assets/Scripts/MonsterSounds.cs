@@ -112,7 +112,7 @@ public class MonsterSounds : MonoBehaviour
         }
 
         float proximity01 = Mathf.Clamp01(1f - (distance / Mathf.Max(nearLoopDistance, 0.1f)));
-        float targetVolume = proximityLoopVolume * proximity01;
+        float targetVolume = proximityLoopVolume * AudioManager.AmbienceVolume * proximity01;
         if (isThreatening)
         {
             targetVolume *= 1.35f;
@@ -155,7 +155,7 @@ public class MonsterSounds : MonoBehaviour
 
         float previousPitch = source.pitch;
         source.pitch = pitch;
-        source.PlayOneShot(clip, volume);
+        source.PlayOneShot(clip, volume * AudioManager.SfxVolume);
         source.pitch = previousPitch;
     }
 }

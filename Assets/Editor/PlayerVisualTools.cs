@@ -8,6 +8,7 @@ public static class PlayerVisualTools
 {
     private static readonly string[] SupportedModelPaths =
     {
+        "Assets/Characters/Man/source/man.fbx",
         "Assets/Characters/ip.Fbx",
         "Assets/Characters/ip.fbx",
         "Assets/Characters/ip.obj",
@@ -17,14 +18,14 @@ public static class PlayerVisualTools
     private const float TargetWorldHeight = 1.68f;
     private const float BackwardOffset = -0.45f;
 
-    [MenuItem("Tools/Gameplay/Replace Player Visual With Ip Man")]
-    public static void ReplacePlayerVisualWithIpMan()
+    [MenuItem("Tools/Gameplay/Replace Player Visual With Man")]
+    public static void ReplacePlayerVisualWithMan()
     {
         var player = FindRootByName("Player");
         if (player == null)
         {
             EditorUtility.DisplayDialog(
-                "Ip Man",
+                "Player Visual",
                 "Impossible de trouver l'objet 'Player' dans les scenes ouvertes.",
                 "OK");
             return;
@@ -35,20 +36,142 @@ public static class PlayerVisualTools
         if (modelPrefab == null)
         {
             EditorUtility.DisplayDialog(
-                "Ip Man",
-                "Unity n'a trouve aucun modele utilisable pour 'Ip Man'.\n\n" +
-                "Verifie que 'Assets/Characters/ip.Fbx' apparait bien comme un modele, puis relance l'outil.",
+                "Player Visual",
+                "Unity n'a trouve aucun modele utilisable pour le player.\n\n" +
+                "Verifie que 'Assets/Characters/Man/source/man.fbx' apparait bien comme un modele, puis relance l'outil.",
                 "OK");
             return;
         }
 
         Undo.IncrementCurrentGroup();
         Undo.SetCurrentGroupName("Replace Player Visual");
+        ReplaceVisual(player, modelPrefab, true);
+        EditorSceneManager.MarkSceneDirty(player.scene);
+        Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 
+        EditorUtility.DisplayDialog(
+            "Player Visual",
+            "Le visuel du 'Player' a ete remplace et sa taille a ete ajustee automatiquement.",
+            "OK");
+    }
+
+    [MenuItem("Tools/Gameplay/Replace Player Visual In Build Scenes")]
+    public static void ReplacePlayerVisualInBuildScenes()
+    {
+        ReplacePlayerVisualInBuildScenesInternal(true);
+    }
+
+    public static void ReplacePlayerVisualInBuildScenesCommandLine()
+    {
+        ReplacePlayerVisualInBuildScenesInternal(false);
+    }
+
+    [MenuItem("Tools/Gameplay/Adjust Player Visual Dimensions")]
+    public static void AdjustPlayerVisualDimensions()
+    {
+        var player = FindRootByName("Player");
+        if (player == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Player Visual",
+                "Impossible de trouver l'objet 'Player' dans les scenes ouvertes.",
+                "OK");
+            return;
+        }
+
+        var visual = player.transform.Find(VisualRootName);
+        if (visual == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Player Visual",
+                "Aucun visuel de joueur n'est actuellement attache. Lance d'abord 'Replace Player Visual With Man'.",
+                "OK");
+            return;
+        }
+
+        Undo.IncrementCurrentGroup();
+        Undo.SetCurrentGroupName("Adjust Player Visual Dimensions");
+        AdjustVisualDimensions(player, visual.gameObject);
+        EditorSceneManager.MarkSceneDirty(player.scene);
+        Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
+
+        EditorUtility.DisplayDialog(
+            "Player Visual",
+            "Les dimensions de 'PlayerVisualModel' ont ete reajustees.",
+            "OK");
+    }
+
+    private static void ReplacePlayerVisualInBuildScenesInternal(bool showDialog)
+    {
+        AssetDatabase.Refresh();
+
+        var chosenAssetPath = ResolveAvailableModelPath();
+        var modelPrefab = chosenAssetPath == null ? null : LoadModelPrefab(chosenAssetPath);
+        if (modelPrefab == null)
+        {
+            const string message =
+                "Unity n'a trouve aucun modele utilisable pour le player. " +
+                "Verifie que 'Assets/Characters/Man/source/man.fbx' est importe.";
+            if (showDialog)
+            {
+                EditorUtility.DisplayDialog("Player Visual", message, "OK");
+            }
+            else
+            {
+                Debug.LogError(message);
+                EditorApplication.Exit(1);
+            }
+
+            return;
+        }
+
+        var replacedCount = 0;
+        var originalScenePath = SceneManager.GetActiveScene().path;
+
+        foreach (var editorScene in EditorBuildSettings.scenes.Where(scene => scene.enabled))
+        {
+            var scene = EditorSceneManager.OpenScene(editorScene.path, OpenSceneMode.Single);
+            var player = FindRoot(scene, "Player");
+            if (player == null)
+            {
+                continue;
+            }
+
+            ReplaceVisual(player, modelPrefab, false);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            replacedCount++;
+        }
+
+        if (!string.IsNullOrEmpty(originalScenePath))
+        {
+            EditorSceneManager.OpenScene(originalScenePath, OpenSceneMode.Single);
+        }
+
+        var resultMessage = $"Visuel du player remplace dans {replacedCount} scene(s).";
+        if (showDialog)
+        {
+            EditorUtility.DisplayDialog("Player Visual", resultMessage, "OK");
+        }
+        else
+        {
+            Debug.Log(resultMessage);
+        }
+    }
+
+    private static void ReplaceVisual(GameObject player, GameObject modelPrefab, bool registerUndo)
+    {
         var previousVisual = player.transform.Find(VisualRootName);
         if (previousVisual != null)
         {
-            Undo.DestroyObjectImmediate(previousVisual.gameObject);
+            if (registerUndo)
+            {
+                Undo.DestroyObjectImmediate(previousVisual.gameObject);
+            }
+            else
+            {
+                Object.DestroyImmediate(previousVisual.gameObject);
+            }
         }
 
         GameObject visualInstance;
@@ -63,65 +186,35 @@ public static class PlayerVisualTools
             SceneManager.MoveGameObjectToScene(visualInstance, player.scene);
         }
 
-        Undo.RegisterCreatedObjectUndo(visualInstance, "Create Player Visual");
+        if (registerUndo)
+        {
+            Undo.RegisterCreatedObjectUndo(visualInstance, "Create Player Visual");
+        }
+
         visualInstance.name = VisualRootName;
         visualInstance.transform.SetParent(player.transform, false);
         visualInstance.transform.localPosition = Vector3.zero;
         visualInstance.transform.localRotation = Quaternion.identity;
         visualInstance.transform.localScale = Vector3.one;
 
-        ApplyLayer(visualInstance, player.layer);
-        DisableVisualColliders(visualInstance);
-        DisablePlaceholderRenderer(player);
-        AdjustVisualDimensions(player, visualInstance);
-
-        EditorSceneManager.MarkSceneDirty(player.scene);
-        Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
-
-        EditorUtility.DisplayDialog(
-            "Ip Man",
-            "Le visuel du 'Player' a ete remplace et sa taille a ete ajustee automatiquement.",
-            "OK");
-    }
-
-    [MenuItem("Tools/Gameplay/Adjust Player Visual Dimensions")]
-    public static void AdjustPlayerVisualDimensions()
-    {
-        var player = FindRootByName("Player");
-        if (player == null)
-        {
-            EditorUtility.DisplayDialog(
-                "Ip Man",
-                "Impossible de trouver l'objet 'Player' dans les scenes ouvertes.",
-                "OK");
-            return;
-        }
-
-        var visual = player.transform.Find(VisualRootName);
-        if (visual == null)
-        {
-            EditorUtility.DisplayDialog(
-                "Ip Man",
-                "Aucun visuel de joueur n'est actuellement attache. Lance d'abord 'Replace Player Visual With Ip Man'.",
-                "OK");
-            return;
-        }
-
-        Undo.IncrementCurrentGroup();
-        Undo.SetCurrentGroupName("Adjust Player Visual Dimensions");
-        AdjustVisualDimensions(player, visual.gameObject);
-        EditorSceneManager.MarkSceneDirty(player.scene);
-        Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
-
-        EditorUtility.DisplayDialog(
-            "Ip Man",
-            "Les dimensions de 'PlayerVisualModel' ont ete reajustees.",
-            "OK");
+        ApplyLayer(visualInstance, player.layer, registerUndo);
+        DisableVisualColliders(visualInstance, registerUndo);
+        DisablePlaceholderRenderer(player, registerUndo);
+        AdjustVisualDimensions(player, visualInstance, registerUndo);
     }
 
     private static void AdjustVisualDimensions(GameObject player, GameObject visualInstance)
     {
-        Undo.RecordObject(visualInstance.transform, "Adjust Player Visual");
+        AdjustVisualDimensions(player, visualInstance, true);
+    }
+
+    private static void AdjustVisualDimensions(GameObject player, GameObject visualInstance, bool registerUndo)
+    {
+        if (registerUndo)
+        {
+            Undo.RecordObject(visualInstance.transform, "Adjust Player Visual");
+        }
+
         visualInstance.transform.localPosition = Vector3.zero;
         visualInstance.transform.localRotation = Quaternion.identity;
         visualInstance.transform.localScale = Vector3.one;
@@ -164,6 +257,24 @@ public static class PlayerVisualTools
         return null;
     }
 
+    private static GameObject FindRoot(Scene scene, string rootName)
+    {
+        if (!scene.isLoaded)
+        {
+            return null;
+        }
+
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            if (root.name == rootName)
+            {
+                return root;
+            }
+        }
+
+        return null;
+    }
+
     private static string ResolveAvailableModelPath()
     {
         foreach (var assetPath in SupportedModelPaths)
@@ -193,37 +304,53 @@ public static class PlayerVisualTools
         return AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<GameObject>().FirstOrDefault();
     }
 
-    private static void DisablePlaceholderRenderer(GameObject root)
+    private static void DisablePlaceholderRenderer(GameObject root, bool registerUndo)
     {
         var renderer = root.GetComponent<MeshRenderer>();
         if (renderer != null)
         {
-            Undo.RecordObject(renderer, "Disable Player Placeholder");
+            if (registerUndo)
+            {
+                Undo.RecordObject(renderer, "Disable Player Placeholder");
+            }
+
             renderer.enabled = false;
         }
     }
 
-    private static void DisableVisualColliders(GameObject root)
+    private static void DisableVisualColliders(GameObject root, bool registerUndo)
     {
         foreach (var collider in root.GetComponentsInChildren<Collider>(true))
         {
-            Undo.RecordObject(collider, "Disable Player Visual Colliders");
+            if (registerUndo)
+            {
+                Undo.RecordObject(collider, "Disable Player Visual Colliders");
+            }
+
             collider.enabled = false;
         }
 
         var animator = root.GetComponentInChildren<Animator>(true);
         if (animator != null)
         {
-            Undo.RecordObject(animator, "Disable Imported Animator");
+            if (registerUndo)
+            {
+                Undo.RecordObject(animator, "Disable Imported Animator");
+            }
+
             animator.enabled = false;
         }
     }
 
-    private static void ApplyLayer(GameObject root, int layer)
+    private static void ApplyLayer(GameObject root, int layer, bool registerUndo)
     {
         foreach (var item in root.GetComponentsInChildren<Transform>(true))
         {
-            Undo.RecordObject(item.gameObject, "Apply Player Layer");
+            if (registerUndo)
+            {
+                Undo.RecordObject(item.gameObject, "Apply Player Layer");
+            }
+
             item.gameObject.layer = layer;
         }
     }

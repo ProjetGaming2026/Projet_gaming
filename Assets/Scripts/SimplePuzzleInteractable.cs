@@ -44,5 +44,6 @@ public class SimplePuzzleInteractable : MonoBehaviour, IInteractable
         }
 
         onFailure.Invoke();
+        PuzzleFailureMonsterAlert.Alert(transform);
     }
 }

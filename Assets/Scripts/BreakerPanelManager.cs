@@ -237,19 +237,7 @@ public class BreakerPanelManager : MonoBehaviour
 
     private void AlertMonster()
     {
-        if (monster == null)
-        {
-            Debug.Log("Pas de monstre assigne.");
-            return;
-        }
-
-        UnityEngine.AI.NavMeshAgent agent = monster.GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (agent != null)
-        {
-            Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-            agent.SetDestination(player.position);
-            Debug.Log("Monstre alerte.");
-        }
+        PuzzleFailureMonsterAlert.Alert(monster, transform);
     }
 
     private void LockAll(bool state)

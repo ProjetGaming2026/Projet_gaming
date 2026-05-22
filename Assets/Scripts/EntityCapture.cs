@@ -54,7 +54,10 @@ public class EntityCapture : MonoBehaviour
                 Debug.Log("Le joueur a ete capture par le monster.");
                 gameManager.TriggerLoss(
                     "L'Entite",
-                    "L'Entite t'a dechiquete. Tu n'as pas reussi a sortir vivant de l'hopital."
+                    GameLocalization.Text(
+                        "The entity tore you apart. You did not leave the hospital alive.",
+                        "L'Entite t'a dechiquete. Tu n'as pas reussi a sortir vivant de l'hopital.",
+                        "La entidad te destrozo. No lograste salir vivo del hospital.")
                 );
                 enabled = false;
             }
@@ -79,5 +82,19 @@ public class EntityCapture : MonoBehaviour
                 playerController.SetExternalControlLock(true);
             }
         }
+    }
+
+    public void AssignPlayerTarget(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        playerTarget = target;
+        playerController = target.GetComponent<BasicFirstPersonController>();
+        captureTriggered = false;
+        captureTimer = 0f;
+        enabled = true;
     }
 }
