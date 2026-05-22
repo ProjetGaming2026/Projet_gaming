@@ -51,17 +51,29 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     {
         InitializeIfNeeded();
 
+        if (!ExitDoorCodeLock.IsOpeningLinkedDoors &&
+            ExitDoorCodeLock.TryGetOrCreateDefaultLockForDoor(this, out ExitDoorCodeLock exitDoorLock))
+        {
+            Debug.Log("DoorInteractable: " + name + " is controlled by ExitDoorCodeLock.");
+            exitDoorLock.Interact();
+            return;
+        }
+
         if (interactionLocked)
         {
             Debug.Log("DoorInteractable: interaction locked on " + name + ".");
             return;
         }
 
+        ToggleDoor();
+    }
+
+    public void OpenDoor()
+    {
+        InitializeIfNeeded();
+
         if (isOpen)
         {
-            targetLocalRotation = closedLocalRotation;
-            isOpen = false;
-            PlaySound(closeSound);
             return;
         }
 
@@ -69,6 +81,20 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
         isOpen = true;
         PlaySound(openSound);
+    }
+
+    public void CloseDoor()
+    {
+        InitializeIfNeeded();
+
+        if (!isOpen)
+        {
+            return;
+        }
+
+        targetLocalRotation = closedLocalRotation;
+        isOpen = false;
+        PlaySound(closeSound);
     }
 
     public void SetInteractionLocked(bool locked)
@@ -81,6 +107,17 @@ public class DoorInteractable : MonoBehaviour, IInteractable
             targetLocalRotation = closedLocalRotation;
             isOpen = false;
         }
+    }
+
+    private void ToggleDoor()
+    {
+        if (isOpen)
+        {
+            CloseDoor();
+            return;
+        }
+
+        OpenDoor();
     }
 
     public void AssignAudioClips(AudioClip newOpenSound, AudioClip newCloseSound)

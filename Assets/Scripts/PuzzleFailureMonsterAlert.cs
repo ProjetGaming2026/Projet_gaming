@@ -33,11 +33,13 @@ public static class PuzzleFailureMonsterAlert
 
         if (monsterController != null)
         {
-            monsterController.HuntPlayerAfterPuzzleFailure(huntDuration);
-
             if (failureSource != null)
             {
-                monsterController.NotifySuspiciousActivity(failureSource.position, huntDuration, true);
+                monsterController.HuntPlayerAfterPuzzleFailure(huntDuration, failureSource.position);
+            }
+            else
+            {
+                monsterController.HuntPlayerAfterPuzzleFailure(huntDuration);
             }
 
             return;
