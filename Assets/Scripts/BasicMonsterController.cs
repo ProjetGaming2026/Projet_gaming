@@ -104,6 +104,11 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float hardPatrolSpeedMultiplier = 1.05f;
     [SerializeField] private float hardTurnSpeedMultiplier = 1.35f;
 
+    [Header("Exploration")]
+    [SerializeField] private bool expandPatrolRouteFromNavMesh = true;
+    [SerializeField] private float explorationPointSpacing = 6.5f;
+    [SerializeField] private int maxGeneratedExplorationPoints = 56;
+
     [Header("Search")]
     [SerializeField] private float maxPredictionTime = 1.1f;
     [SerializeField] private float predictionStrength = 0.9f;
@@ -380,6 +385,16 @@ public class BasicMonsterController : MonoBehaviour
 
     public void HuntPlayerAfterPuzzleFailure(float duration)
     {
+        HuntPlayerAfterPuzzleFailure(duration, Vector3.zero, false);
+    }
+
+    public void HuntPlayerAfterPuzzleFailure(float duration, Vector3 fallbackHuntPosition)
+    {
+        HuntPlayerAfterPuzzleFailure(duration, fallbackHuntPosition, true);
+    }
+
+    private void HuntPlayerAfterPuzzleFailure(float duration, Vector3 fallbackHuntPosition, bool hasFallbackHuntPosition)
+    {
         if (playerTarget == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -410,6 +425,12 @@ public class BasicMonsterController : MonoBehaviour
         {
             RememberPlayerPosition(playerTarget.position, effectiveDuration);
             investigationTarget = playerTarget.position;
+            hasInvestigationTarget = true;
+        }
+        else if (hasFallbackHuntPosition)
+        {
+            RememberPlayerPosition(fallbackHuntPosition, effectiveDuration);
+            investigationTarget = fallbackHuntPosition;
             hasInvestigationTarget = true;
         }
 
@@ -887,17 +908,17 @@ public class BasicMonsterController : MonoBehaviour
 
     private bool TryGetCurrentPatrolAnchorPosition(out Vector3 anchorPosition)
     {
-        Transform patrolAnchor = GetCurrentPatrolAnchor();
-        if (patrolAnchor != null)
-        {
-            anchorPosition = patrolAnchor.position;
-            return true;
-        }
-
         if (navigationRoute != null && navigationRoute.Length > 0)
         {
             patrolPointIndex = Mathf.Clamp(patrolPointIndex, 0, navigationRoute.Length - 1);
             anchorPosition = navigationRoute[patrolPointIndex];
+            return true;
+        }
+
+        Transform patrolAnchor = GetCurrentPatrolAnchor();
+        if (patrolAnchor != null)
+        {
+            anchorPosition = patrolAnchor.position;
             return true;
         }
 
@@ -1314,6 +1335,8 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         stuckTimer = 0f;
+        ClearCurrentNavMeshPath();
+
         Vector3 fallbackDirection = Vector3.Cross(Vector3.up, targetVelocity.normalized) * lastAvoidanceSign;
         if (fallbackDirection.sqrMagnitude < 0.001f)
         {
@@ -1360,14 +1383,7 @@ public class BasicMonsterController : MonoBehaviour
             return;
         }
 
-        if (patrolPoints != null && patrolPoints.Length > 0)
-        {
-            AdvancePatrolPoint();
-        }
-        else
-        {
-            hasRoamTarget = false;
-        }
+        AdvancePatrolPoint();
     }
 
     private void OnDrawGizmosSelected()
@@ -1701,24 +1717,143 @@ public class BasicMonsterController : MonoBehaviour
 
     private Vector3[] BuildNavigationRoute()
     {
+        List<Vector3> route = new List<Vector3>();
+
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
-            Vector3[] route = new Vector3[patrolPoints.Length];
             for (int i = 0; i < patrolPoints.Length; i++)
             {
-                route[i] = patrolPoints[i] != null ? patrolPoints[i].position : transform.position;
+                if (patrolPoints[i] != null)
+                {
+                    AddRoutePointIfUseful(route, patrolPoints[i].position, patrolStoppingDistance);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < DefaultHospitalRoute.Length; i++)
+            {
+                AddRoutePointIfUseful(route, DefaultHospitalRoute[i], patrolStoppingDistance);
+            }
+        }
+
+        AddGeneratedExplorationPoints(route);
+
+        if (route.Count == 0)
+        {
+            route.Add(transform.position);
+        }
+
+        return OrderRouteByNearestNeighbor(route);
+    }
+
+    private void AddGeneratedExplorationPoints(List<Vector3> route)
+    {
+        if (!expandPatrolRouteFromNavMesh || !runtimeNavMeshReady || maxGeneratedExplorationPoints <= 0)
+        {
+            return;
+        }
+
+        NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
+        if (triangulation.vertices == null ||
+            triangulation.indices == null ||
+            triangulation.vertices.Length == 0 ||
+            triangulation.indices.Length < 3)
+        {
+            return;
+        }
+
+        int triangleCount = triangulation.indices.Length / 3;
+        int addedCount = 0;
+        float minimumSpacing = Mathf.Max(explorationPointSpacing, patrolStoppingDistance * 2f);
+        int stride = Mathf.Max(1, triangleCount / Mathf.Max(1, maxGeneratedExplorationPoints));
+
+        for (int offset = 0; offset < stride && addedCount < maxGeneratedExplorationPoints; offset++)
+        {
+            for (int triangleIndex = offset; triangleIndex < triangleCount && addedCount < maxGeneratedExplorationPoints; triangleIndex += stride)
+            {
+                int index = triangleIndex * 3;
+                Vector3 candidate = (
+                    triangulation.vertices[triangulation.indices[index]] +
+                    triangulation.vertices[triangulation.indices[index + 1]] +
+                    triangulation.vertices[triangulation.indices[index + 2]]
+                ) / 3f;
+
+                int previousCount = route.Count;
+                AddRoutePointIfUseful(route, candidate, minimumSpacing);
+                if (route.Count > previousCount)
+                {
+                    addedCount++;
+                }
+            }
+        }
+    }
+
+    private void AddRoutePointIfUseful(List<Vector3> route, Vector3 candidate, float minimumSpacing)
+    {
+        if (runtimeNavMeshReady &&
+            NavMesh.SamplePosition(candidate, out NavMeshHit navMeshHit, navMeshSampleDistance, NavMesh.AllAreas))
+        {
+            candidate = navMeshHit.position;
+        }
+
+        if (!HasBodySpaceAt(candidate))
+        {
+            return;
+        }
+
+        float minimumSqrDistance = minimumSpacing * minimumSpacing;
+        for (int i = 0; i < route.Count; i++)
+        {
+            if (Vector3.SqrMagnitude(GetPlanarPosition(route[i]) - GetPlanarPosition(candidate)) < minimumSqrDistance)
+            {
+                return;
+            }
+        }
+
+        route.Add(candidate);
+    }
+
+    private Vector3[] OrderRouteByNearestNeighbor(List<Vector3> route)
+    {
+        Vector3[] orderedRoute = new Vector3[route.Count];
+        bool[] used = new bool[route.Count];
+        Vector3 currentPosition = transform.position;
+
+        for (int orderedIndex = 0; orderedIndex < orderedRoute.Length; orderedIndex++)
+        {
+            int bestIndex = -1;
+            float bestDistance = float.PositiveInfinity;
+
+            for (int candidateIndex = 0; candidateIndex < route.Count; candidateIndex++)
+            {
+                if (used[candidateIndex])
+                {
+                    continue;
+                }
+
+                float distance = Vector3.SqrMagnitude(
+                    GetPlanarPosition(route[candidateIndex]) - GetPlanarPosition(currentPosition)
+                );
+
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestIndex = candidateIndex;
+                }
             }
 
-            return route;
+            if (bestIndex < 0)
+            {
+                break;
+            }
+
+            used[bestIndex] = true;
+            orderedRoute[orderedIndex] = route[bestIndex];
+            currentPosition = route[bestIndex];
         }
 
-        Vector3[] fallbackRoute = new Vector3[DefaultHospitalRoute.Length];
-        for (int i = 0; i < DefaultHospitalRoute.Length; i++)
-        {
-            fallbackRoute[i] = DefaultHospitalRoute[i];
-        }
-
-        return fallbackRoute;
+        return orderedRoute;
     }
 
     private Vector3 GetIntelligentVelocityTo(Vector3 worldTarget, float speed, bool urgent, float targetStoppingDistance)
@@ -1776,7 +1911,7 @@ public class BasicMonsterController : MonoBehaviour
         float targetDelta = Vector3.Distance(GetPlanarPosition(currentNavMeshTarget), GetPlanarPosition(targetHit.position));
         bool shouldRepath =
             navMeshRepathTimer <= 0f ||
-            currentNavMeshPath.status == NavMeshPathStatus.PathInvalid ||
+            currentNavMeshPath.status != NavMeshPathStatus.PathComplete ||
             currentNavMeshPath.corners == null ||
             currentNavMeshPath.corners.Length == 0 ||
             targetDelta > 0.8f;
@@ -1784,7 +1919,7 @@ public class BasicMonsterController : MonoBehaviour
         if (shouldRepath)
         {
             if (!NavMesh.CalculatePath(startHit.position, targetHit.position, NavMesh.AllAreas, currentNavMeshPath) ||
-                currentNavMeshPath.status == NavMeshPathStatus.PathInvalid)
+                currentNavMeshPath.status != NavMeshPathStatus.PathComplete)
             {
                 return false;
             }
@@ -1967,6 +2102,12 @@ public class BasicMonsterController : MonoBehaviour
             }
 
             Vector3 candidate = transform.position + direction.normalized * Mathf.Min(clearance, stuckEscapeProbeDistance);
+            if (runtimeNavMeshReady &&
+                NavMesh.SamplePosition(candidate, out NavMeshHit navMeshHit, navMeshSampleDistance, NavMesh.AllAreas))
+            {
+                candidate = navMeshHit.position;
+            }
+
             if (!HasBodySpaceAt(candidate))
             {
                 continue;
@@ -2076,23 +2217,34 @@ public class BasicMonsterController : MonoBehaviour
 
     private void AdvancePatrolPoint()
     {
-        if (patrolPoints != null && patrolPoints.Length > 0)
+        if (navigationRoute != null && navigationRoute.Length > 0)
         {
-            patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
+            patrolPointIndex = (patrolPointIndex + 1) % navigationRoute.Length;
             patrolWaitTimer = 0f;
             roamRetargetTimer = 0f;
             hasRoamTarget = false;
             return;
         }
 
-        if (navigationRoute != null && navigationRoute.Length > 0)
+        if (patrolPoints != null && patrolPoints.Length > 0)
         {
-            patrolPointIndex = (patrolPointIndex + 1) % navigationRoute.Length;
+            patrolPointIndex = (patrolPointIndex + 1) % patrolPoints.Length;
         }
 
         patrolWaitTimer = 0f;
         roamRetargetTimer = 0f;
         hasRoamTarget = false;
+    }
+
+    private void ClearCurrentNavMeshPath()
+    {
+        if (currentNavMeshPath != null)
+        {
+            currentNavMeshPath.ClearCorners();
+        }
+
+        currentNavMeshTarget = Vector3.positiveInfinity;
+        navMeshRepathTimer = 0f;
     }
 
     private void UpdateVisualMotion()
