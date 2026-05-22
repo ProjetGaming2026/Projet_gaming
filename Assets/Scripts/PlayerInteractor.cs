@@ -199,6 +199,16 @@ public class PlayerInteractor : MonoBehaviour
             return keyPickup.GetInteractPrompt();
         }
 
+        if (interactable is OrganPickup organPickup)
+        {
+            return organPickup.GetInteractPrompt();
+        }
+
+        if (interactable is DocumentPickup documentPickup)
+        {
+            return documentPickup.GetInteractPrompt();
+        }
+
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
         return "Appuie sur E pour interagir avec " + targetName;
     }
