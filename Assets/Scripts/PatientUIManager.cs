@@ -68,6 +68,17 @@ public class PatientUIManager : MonoBehaviour
     {
         BuildUiIfNeeded();
 
+        PatientFolder[] folders = FindObjectsByType<PatientFolder>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (PatientFolder folder in folders)
+        {
+            if (folder != null)
+            {
+                folder.isRead = true;
+            }
+        }
+
+        XRayPuzzleManager.Instance?.MarkFoldersRead();
+
         for (int i = 0; i < patientCards.Length; i++)
         {
             patientCards[i].text = BuildPatientCardText(i + 1);
