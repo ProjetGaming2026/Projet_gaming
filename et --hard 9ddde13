@@ -1,0 +1,63 @@
+[33m0cf5f0a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mweam[m[33m)[m Merge remote-tracking branch 'origin/main' into weam
+[33m9ddde13[m RESOLVE CONFLICTS
+[33mddb2310[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #69 from ProjetGaming2026/missing-organs
+[33md7ce222[m[33m ([m[1;31morigin/missing-organs[m[33m)[m Merge main into missing-organs
+[33mc6d1240[m Merge pull request #70 from ProjetGaming2026/weam
+[33m074edb1[m[33m ([m[1;31morigin/weam[m[33m)[m Ajout du warning et son de la zombie quand elle s'approche
+[33mdc94165[m Add missing organs puzzle
+[33m1e8989a[m Merge pull request #68 from ProjetGaming2026/weam
+[33m6bc0740[m Porte sortie scene moyen et facile + reglage dans mainmenu + amelioration du IA du monstre
+[33m57a358b[m Merge pull request #66 from ProjetGaming2026/fatimaezzahraa
+[33m7b98fed[m[33m ([m[1;31morigin/fatimaezzahraa[m[33m)[m Merge branch 'main' into fatimaezzahraa
+[33m75bc48c[m Push de correction des portes
+[33m0ef7f08[m Merge pull request #65 from ProjetGaming2026/weam
+[33m15ef8a1[m Update main menu et ajout du monstre et ses animations - 2
+[33m19b0d69[m Merge pull request #64 from ProjetGaming2026/weam
+[33mbbe6dec[m Update main menu et ajout du monstre et ses animations
+[33medab66e[m Resolve conflicts - keep missing-organs changes in Moyen, main changes in Facile
+[33m7e424f3[m[33m ([m[1;32mmain[m[33m)[m Revert "Merge pull request #60 from ProjetGaming2026/UIinterface"
+[33m252e1b0[m Merge pull request #60 from ProjetGaming2026/UIinterface
+[33mafb617e[m Merge pull request #59 from ProjetGaming2026/weam
+[33m13352f6[m Improve menu options and gameplay scene setup
+[33m744f85b[m[33m ([m[1;31morigin/UIinterface[m[33m)[m Resolve merge conflicts
+[33m5a5be66[m UI updates before merge
+[33mcaf90e5[m Merge branch 'main' into UIinterface
+[33me7d587a[m Merge main into weam
+[33m475b55d[m Some updates
+[33m2ba90c3[m update level intro
+[33mbaeb2e1[m Merge pull request #56 from ProjetGaming2026/fatimaezzahraa
+[33m311e462[m Correction de quelques problèmes
+[33mfbfbbb4[m Correction de quelques problèmes
+[33m08b6e15[m Merge pull request #54 from ProjetGaming2026/UIinterface
+[33mc595867[m Resolve merge conflicts
+[33m4e8b3c5[m sauvegarde UIinterface
+[33m47a61ef[m  ajout mainmenu
+[33mf138570[m Merge pull request #48 from ProjetGaming2026/fatimaezzahraa
+[33m2833ade[m Merge origin/main into fatimaezzahraa
+[33mfe9c1c1[m 3 puzzles complet et liés pour le niveau facile
+[33m8481540[m Merge pull request #47 from ProjetGaming2026/puzzle-symbol_button
+[33m55bb5d6[m[33m ([m[1;31morigin/puzzle-symbol_button[m[33m)[m Fix interaction compile error and remove wall instruction text
+[33mded6894[m Merge branch 'main' of https://github.com/ProjetGaming2026/Projet_gaming into puzzle-symbol_button
+[33m6577716[m Ajout puzzle symbol button
+[33m8899785[m Merge pull request #46 from ProjetGaming2026/puzzle-cipher
+[33ma3e9f21[m[33m ([m[1;31morigin/puzzle-cipher[m[33m)[m Merge branch 'main' into puzzle-cipher
+[33mff34f04[m Amelioration puzzle cipher
+[33mcce01e5[m Ajout puzzle cipher terminal
+[33me1c08f0[m Merge pull request #45 from ProjetGaming2026/amelioration-du-gameplay
+[33m987b7b9[m amelioration de la logique du gameplay
+[33m2f0ee7a[m Reapply "Ajout puzzle horloge"
+[33m8ac6f84[m Revert "Ajout puzzle horloge"
+[33m86f2256[m Merge branch 'main' of https://github.com/ProjetGaming2026/Projet_gaming into puzzle-symbol_button
+[33m8f99103[m monster intelligence
+[33m9a6a784[m[33m ([m[1;31morigin/monstre_intelligent[m[33m)[m feat: improve monster intelligence and hospital doors
+[33mf9464b9[m Merge pull request #43 from ProjetGaming2026/MAP
+[33m36a75e1[m[33m ([m[1;31morigin/MAP[m[33m)[m Ajout de la map + monstre + joueur + ouverture et fermeture des portes
+[33maf2681c[m Ajout puzzle de symbol buton
+[33mf78307f[m Merge pull request #42 from ProjetGaming2026/audio-sounds
+[33ma1d8bb3[m[33m ([m[1;31morigin/audio-sounds[m[33m)[m Ajout puzzle horloge
+[33mecdd64a[m Merge audio-sounds to main
+[33mb522d09[m Ajout scripts audio et sons_salma
+[33m2b71874[m Update -weam
+[33m825a5f9[m Merge branch 'main' of https://github.com/ProjetGaming2026/Projet_gaming
+[33md3e87d1[m My first commit - Weam
+[33mddb4518[m Initial commit
