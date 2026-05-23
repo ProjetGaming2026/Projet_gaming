@@ -287,7 +287,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
 
         if (doorInteractable != null)
         {
-            if (!doorInteractable.IsOpen())
+            if (!doorInteractable.IsOpen)
             {
                 doorInteractable.Interact();
             }

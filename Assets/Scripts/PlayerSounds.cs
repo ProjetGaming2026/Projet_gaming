@@ -99,6 +99,6 @@ public class PlayerSounds : MonoBehaviour
     private void PlayClip(AudioSource source, AudioClip clip, float volume)
     {
         if (source == null || clip == null) return;
-        source.PlayOneShot(clip, volume);
+        source.PlayOneShot(clip, volume * AudioManager.SfxVolume);
     }
 }

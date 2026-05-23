@@ -7,15 +7,17 @@ using UnityEngine.SceneManagement;
 
 public static class EntityVisualTools
 {
-    private const string DesktopModelPath = @"C:\Users\pc\Desktop\CI 1\S2\Projet gaming\ghostly_woman.glb";
-    private const string ProjectModelPath = "Assets/Characters/ghostly_woman.glb";
+    private const string DesktopGlbPath = @"C:\Users\pc\Desktop\CI 1\S2\Projet gaming\ghostly_woman.glb";
+    private const string ProjectGlbPath = "Assets/Characters/ghostly_woman.glb";
+    private const string ZombieModelPath = "Assets/Characters/FemaleZombie1/zombie-1-Walking.fbx";
     private static readonly string[] SupportedModelPaths =
     {
         "Assets/Characters/Womann/Womann.obj",
         "Assets/Characters/Womann/Womann.fbx",
         "Assets/Characters/ghostly_woman.fbx",
         "Assets/Characters/ghostly_woman.obj",
-        ProjectModelPath,
+        ProjectGlbPath,
+        ZombieModelPath,
     };
     private const string VisualRootName = "EntityVisualModel";
     private const float TargetWorldHeight = 1.8f;
@@ -23,16 +25,16 @@ public static class EntityVisualTools
     [MenuItem("Tools/Gameplay/Import Ghostly Woman GLB")]
     public static void ImportGhostlyWomanGlb()
     {
-        if (!File.Exists(DesktopModelPath))
+        if (!File.Exists(DesktopGlbPath))
         {
             EditorUtility.DisplayDialog(
                 "Ghostly Woman",
-                "Le fichier source est introuvable sur le bureau.\n\n" + DesktopModelPath,
+                "Le fichier source est introuvable sur le bureau.\n\n" + DesktopGlbPath,
                 "OK");
             return;
         }
 
-        var projectDirectory = Path.GetDirectoryName(ProjectModelPath);
+        var projectDirectory = Path.GetDirectoryName(ProjectGlbPath);
         if (string.IsNullOrEmpty(projectDirectory))
         {
             EditorUtility.DisplayDialog(
@@ -43,7 +45,7 @@ public static class EntityVisualTools
         }
 
         Directory.CreateDirectory(projectDirectory);
-        File.Copy(DesktopModelPath, ProjectModelPath, overwrite: true);
+        File.Copy(DesktopGlbPath, ProjectGlbPath, overwrite: true);
         AssetDatabase.Refresh();
 
         EditorUtility.DisplayDialog(
@@ -55,27 +57,39 @@ public static class EntityVisualTools
     [MenuItem("Tools/Gameplay/Replace Entity Visual With Ghostly Woman")]
     public static void ReplaceEntityVisualWithGhostlyWoman()
     {
+        ReplaceEntityVisual("Ghostly Woman", null);
+    }
+
+    [MenuItem("Tools/Gameplay/Replace Entity Visual With Mixamo Zombie")]
+    public static void ReplaceEntityVisualWithMixamoZombie()
+    {
+        ReplaceEntityVisual("Mixamo Zombie", ZombieModelPath);
+    }
+
+    private static void ReplaceEntityVisual(string displayName, string preferredAssetPath)
+    {
         var entity = FindEntityInLoadedScenes();
         if (entity == null)
         {
             EditorUtility.DisplayDialog(
-                "Ghostly Woman",
+                displayName,
                 "Impossible de trouver l'objet 'Entity' dans les scenes ouvertes.",
                 "OK");
             return;
         }
 
-        var chosenAssetPath = ResolveAvailableModelPath();
+        var chosenAssetPath = ResolveAvailableModelPath(preferredAssetPath);
         var modelPrefab = chosenAssetPath == null ? null : LoadModelPrefab(chosenAssetPath);
         if (modelPrefab == null)
         {
             EditorUtility.DisplayDialog(
-                "Ghostly Woman",
-                "Unity n'a trouve aucun modele utilisable pour 'Ghostly Woman'.\n\n" +
+                displayName,
+                "Unity n'a trouve aucun modele utilisable pour ce monstre.\n\n" +
                 "Place un fichier importe comme modele dans l'un de ces chemins:\n" +
                 "- Assets/Characters/ghostly_woman.fbx\n" +
                 "- Assets/Characters/ghostly_woman.obj\n" +
-                "- Assets/Characters/ghostly_woman.glb (si un importeur glTF est installe)\n\n" +
+                "- Assets/Characters/ghostly_woman.glb (si un importeur glTF est installe)\n" +
+                "- Assets/Characters/FemaleZombie1/zombie-1-Walking.fbx\n\n" +
                 "Puis relance l'outil.",
                 "OK");
             return;
@@ -110,8 +124,9 @@ public static class EntityVisualTools
         visualInstance.transform.localScale = Vector3.one;
 
         ApplyEntityLayer(visualInstance, entity.layer);
-        DisableVisualColliders(visualInstance);
+        ConfigureVisualComponents(visualInstance);
         DisableEntityPlaceholderRenderer(entity);
+        AssignAnimatedVisualReference(entity, visualInstance.transform);
 
         if (TryGetCombinedRendererBounds(visualInstance, out var bounds) && bounds.size.y > 0.0001f)
         {
@@ -120,7 +135,7 @@ public static class EntityVisualTools
 
             if (TryGetCombinedRendererBounds(visualInstance, out bounds))
             {
-                var desiredGroundY = entity.transform.position.y - 1f;
+                var desiredGroundY = CalculateEntityGroundY(entity);
                 var offsetY = desiredGroundY - bounds.min.y;
                 visualInstance.transform.position += new Vector3(0f, offsetY, 0f);
             }
@@ -130,7 +145,7 @@ public static class EntityVisualTools
         Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 
         EditorUtility.DisplayDialog(
-            "Ghostly Woman",
+            displayName,
             "Le visuel de 'Entity' a ete remplace et sa taille a ete ajustee automatiquement.",
             "OK");
     }
@@ -168,8 +183,15 @@ public static class EntityVisualTools
         return AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<GameObject>().FirstOrDefault();
     }
 
-    private static string ResolveAvailableModelPath()
+    private static string ResolveAvailableModelPath(string preferredAssetPath)
     {
+        if (!string.IsNullOrWhiteSpace(preferredAssetPath) &&
+            (AssetDatabase.LoadAssetAtPath<GameObject>(preferredAssetPath) != null ||
+             AssetDatabase.LoadAllAssetsAtPath(preferredAssetPath).OfType<GameObject>().Any()))
+        {
+            return preferredAssetPath;
+        }
+
         foreach (var assetPath in SupportedModelPaths)
         {
             if (AssetDatabase.LoadAssetAtPath<GameObject>(assetPath) != null)
@@ -196,7 +218,7 @@ public static class EntityVisualTools
         }
     }
 
-    private static void DisableVisualColliders(GameObject root)
+    private static void ConfigureVisualComponents(GameObject root)
     {
         foreach (var collider in root.GetComponentsInChildren<Collider>(true))
         {
@@ -207,8 +229,10 @@ public static class EntityVisualTools
         var animator = root.GetComponentInChildren<Animator>(true);
         if (animator != null)
         {
-            Undo.RecordObject(animator, "Disable Imported Animator");
-            animator.enabled = false;
+            Undo.RecordObject(animator, "Configure Monster Animator");
+            animator.enabled = true;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         }
     }
 
@@ -219,6 +243,43 @@ public static class EntityVisualTools
             Undo.RecordObject(transform.gameObject, "Apply Entity Layer");
             transform.gameObject.layer = layer;
         }
+    }
+
+    private static void AssignAnimatedVisualReference(GameObject entity, Transform visualTransform)
+    {
+        var monsterController = entity.GetComponent<BasicMonsterController>();
+        if (monsterController == null)
+        {
+            return;
+        }
+
+        Undo.RecordObject(monsterController, "Assign Monster Animated Visual");
+        var serialized = new SerializedObject(monsterController);
+        var property = serialized.FindProperty("animatedVisual");
+        if (property != null)
+        {
+            property.objectReferenceValue = visualTransform;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+    }
+
+    private static float CalculateEntityGroundY(GameObject entity)
+    {
+        var controller = entity.GetComponent<CharacterController>();
+        if (controller == null)
+        {
+            return entity.transform.position.y;
+        }
+
+        var scaleY = Mathf.Abs(entity.transform.lossyScale.y);
+        if (scaleY <= 0.0001f)
+        {
+            scaleY = 1f;
+        }
+
+        return entity.transform.position.y +
+            controller.center.y * scaleY -
+            controller.height * 0.5f * scaleY;
     }
 
     private static bool TryGetCombinedRendererBounds(GameObject root, out Bounds bounds)

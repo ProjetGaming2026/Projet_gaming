@@ -69,6 +69,7 @@ public class XRayPuzzleManager : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
         RefreshReferences();
+        AlignXRaysNearPatientTable();
         EnsureXRayVisuals();
         EnsureAccentLight();
         BuildTimerUiIfNeeded();
@@ -105,6 +106,43 @@ public class XRayPuzzleManager : MonoBehaviour
         allXRays = FindObjectsByType<XRayItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
             .OrderBy(xray => xray.xrayID)
             .ToArray();
+    }
+
+    // Keep the XRay wall readable by aligning the existing quads relative to the
+    // patient files table that already sits inside the padded room.
+    private void AlignXRaysNearPatientTable()
+    {
+        RefreshReferences();
+        if (allXRays == null || allXRays.Length == 0)
+        {
+            return;
+        }
+
+        GameObject tableObject = GameObject.Find("PatientFilesTable");
+        if (tableObject == null)
+        {
+            return;
+        }
+
+        Vector3 gridOrigin = tableObject.transform.position + new Vector3(0.28f, 1.08f, -0.95f);
+        Vector3 horizontalStep = new Vector3(0.52f, 0f, 0f);
+        Vector3 verticalStep = new Vector3(0f, -0.62f, 0f);
+        Quaternion rotation = Quaternion.Euler(0f, 180f, 0f);
+
+        for (int i = 0; i < allXRays.Length; i++)
+        {
+            XRayItem xray = allXRays[i];
+            if (xray == null)
+            {
+                continue;
+            }
+
+            int row = i / 2;
+            int col = i % 2;
+            xray.transform.position = gridOrigin + horizontalStep * col + verticalStep * row;
+            xray.transform.rotation = rotation;
+            xray.transform.localScale = new Vector3(0.48f, 0.68f, 1f);
+        }
     }
 
     public bool HasAnyFolderBeenRead()
@@ -164,6 +202,16 @@ public class XRayPuzzleManager : MonoBehaviour
             if (runtimeMaterial.HasProperty("_Color"))
             {
                 runtimeMaterial.color = new Color(0.95f, 0.98f, 1f, 1f);
+            }
+
+            if (runtimeMaterial.HasProperty("_Cull"))
+            {
+                runtimeMaterial.SetFloat("_Cull", 0f);
+            }
+
+            if (runtimeMaterial.HasProperty("_CullMode"))
+            {
+                runtimeMaterial.SetFloat("_CullMode", 0f);
             }
 
             if (runtimeMaterial.HasProperty("_EmissionColor"))
@@ -229,7 +277,19 @@ public class XRayPuzzleManager : MonoBehaviour
 
     private Shader ResolveXRayShader(Shader currentShader)
     {
-        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+        Shader shader = Shader.Find("Unlit/Texture");
+        if (shader != null)
+        {
+            return shader;
+        }
+
+        shader = Shader.Find("Sprites/Default");
+        if (shader != null)
+        {
+            return shader;
+        }
+
+        shader = Shader.Find("Universal Render Pipeline/Lit");
         if (shader != null)
         {
             return shader;

@@ -64,6 +64,7 @@ public class BasicFirstPersonController : MonoBehaviour
     private float phaseTimer;
     private int phaseCharges;
     private int staticTrapCharges;
+    private bool externalControlLocked;
 
     private void Awake()
     {
@@ -92,7 +93,11 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void Update()
     {
-        if (LevelSelectBootstrap.IsMenuOpen || KeypadUIManager.IsUiOpen || PatientUIManager.IsUiOpen || XRayUIManager.IsUiOpen)
+        if (externalControlLocked ||
+            LevelSelectBootstrap.IsMenuOpen ||
+            KeypadUIManager.IsUiOpen ||
+            PatientUIManager.IsUiOpen ||
+            XRayUIManager.IsUiOpen)
         {
             IsSprinting = false;
             ApplyCursorState();
@@ -160,6 +165,30 @@ public class BasicFirstPersonController : MonoBehaviour
     {
         staticTrapCharges += amount;
         Debug.Log("Piege statique recu. Total : " + staticTrapCharges);
+    }
+
+    // Legacy compatibility entry point used by balance bootstrap code merged
+    // from main to tune movement values per difficulty.
+    public void ApplyMovementTuning(float newWalkSpeed, float newSprintSpeed)
+    {
+        walkSpeed = Mathf.Max(0.1f, newWalkSpeed);
+        sprintSpeed = Mathf.Max(walkSpeed, newSprintSpeed);
+    }
+
+    // Backward-compatible hook used by older gameplay scripts to temporarily
+    // freeze the player's movement/look during scripted events.
+    public void SetExternalControlLock(bool locked)
+    {
+        externalControlLocked = locked;
+
+        if (locked)
+        {
+            horizontalVelocity = Vector3.zero;
+            verticalVelocity = 0f;
+            IsSprinting = false;
+        }
+
+        ApplyCursorState();
     }
 
     public bool ConsumePhaseCharge()
@@ -323,7 +352,11 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void ApplyCursorState()
     {
-        if (LevelSelectBootstrap.IsMenuOpen || KeypadUIManager.IsUiOpen || PatientUIManager.IsUiOpen || XRayUIManager.IsUiOpen)
+        if (externalControlLocked ||
+            LevelSelectBootstrap.IsMenuOpen ||
+            KeypadUIManager.IsUiOpen ||
+            PatientUIManager.IsUiOpen ||
+            XRayUIManager.IsUiOpen)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

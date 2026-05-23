@@ -2,7 +2,21 @@ using UnityEngine;
 
 public class PrototypeHUD : MonoBehaviour
 {
+    public enum FeedbackTone
+    {
+        Info,
+        Warning,
+        Danger,
+        Success,
+        Failure
+    }
+
     [SerializeField] private PrototypeGameManager gameManager;
+
+    private static PrototypeHUD activeInstance;
+    private static string feedbackMessage = string.Empty;
+    private static FeedbackTone feedbackTone = FeedbackTone.Info;
+    private static float feedbackUntilTime;
 
     private BasicFirstPersonController playerController;
     private BasicMonsterController monsterController;
@@ -16,6 +30,8 @@ public class PrototypeHUD : MonoBehaviour
 
     private void Awake()
     {
+        activeInstance = this;
+
         if (gameManager == null)
         {
             gameManager = FindFirstObjectByType<PrototypeGameManager>();
@@ -100,7 +116,16 @@ public class PrototypeHUD : MonoBehaviour
         }
 
         DrawDangerWarning();
+        DrawFeedback();
         DrawEndMessage();
+    }
+
+    private void OnDestroy()
+    {
+        if (activeInstance == this)
+        {
+            activeInstance = null;
+        }
     }
 
     private void InitializeStyles()
@@ -163,6 +188,70 @@ public class PrototypeHUD : MonoBehaviour
                 dangerStyle
             );
         }
+    }
+
+    private void DrawFeedback()
+    {
+        if (string.IsNullOrEmpty(feedbackMessage) || Time.unscaledTime > feedbackUntilTime)
+        {
+            return;
+        }
+
+        Color color = Color.white;
+        switch (feedbackTone)
+        {
+            case FeedbackTone.Warning:
+                color = Color.yellow;
+                break;
+            case FeedbackTone.Success:
+                color = Color.green;
+                break;
+            case FeedbackTone.Failure:
+            case FeedbackTone.Danger:
+                color = Color.red;
+                break;
+        }
+
+        dangerStyle.normal.textColor = color;
+        GUI.Label(
+            new Rect(Screen.width / 2 - 360, Screen.height - 180, 720, 44),
+            feedbackMessage,
+            dangerStyle
+        );
+    }
+
+    // Compatibility API used by older gameplay systems merged from main.
+    public static void ShowFeedback(string message, FeedbackTone tone, float duration)
+    {
+        feedbackMessage = message;
+        feedbackTone = tone;
+        feedbackUntilTime = Time.unscaledTime + Mathf.Max(0.1f, duration);
+
+        if (activeInstance != null)
+        {
+            Debug.Log("[PrototypeHUD] " + message);
+        }
+    }
+
+    // Backward-compatible helper for puzzles that still pass an explicit color.
+    public void ShowTemporaryStatus(string message, Color color, float duration)
+    {
+        FeedbackTone tone = FeedbackTone.Info;
+
+        if (color == Color.red)
+        {
+            tone = FeedbackTone.Failure;
+        }
+        else if (color == Color.green)
+        {
+            tone = FeedbackTone.Success;
+        }
+        else if (color == Color.yellow)
+        {
+            tone = FeedbackTone.Warning;
+        }
+
+        ShowFeedback(message, tone, duration);
     }
 
     private void DrawEndMessage()

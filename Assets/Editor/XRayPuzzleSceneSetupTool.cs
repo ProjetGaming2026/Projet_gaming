@@ -69,17 +69,30 @@ public static class XRayPuzzleSceneSetupTool
     // Places the radiographies on the inner wall of the padded room behind the keypad door.
     private static void CreateXRays(Transform parent, Transform keypadTransform)
     {
-        // Visible on the right-side wall once the player enters the padded room.
-        Vector3 basePosition = keypadTransform.position + new Vector3(-1.30f, 0.22f, -1.18f);
-        Vector3 horizontalStep = new Vector3(0f, 0f, 0.52f);
-        Vector3 verticalStep = new Vector3(0f, 0.58f, 0f);
-        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+        GameObject tableObject = GameObject.Find("PatientFilesTable");
+        Vector3 basePosition;
+        Vector3 horizontalStep;
+        Vector3 verticalStep = new Vector3(0f, -0.62f, 0f);
+        Quaternion rotation = Quaternion.Euler(0f, 180f, 0f);
+
+        if (tableObject != null)
+        {
+            // Visible on the back wall after entering the room.
+            basePosition = tableObject.transform.position + new Vector3(0.28f, 1.08f, -0.95f);
+            horizontalStep = new Vector3(0.52f, 0f, 0f);
+        }
+        else
+        {
+            // Fallback if the table has not been placed yet.
+            basePosition = keypadTransform.position + new Vector3(-1.10f, 1.08f, -2.25f);
+            horizontalStep = new Vector3(0.52f, 0f, 0f);
+        }
 
         for (int i = 0; i < XRayDefinitions.Length; i++)
         {
             int row = i / 2;
             int col = i % 2;
-            Vector3 position = basePosition + horizontalStep * col - verticalStep * row;
+            Vector3 position = basePosition + horizontalStep * col + verticalStep * row;
 
             GameObject xrayObject = FindChild(parent, XRayDefinitions[i].ObjectName);
             if (xrayObject == null)
@@ -91,7 +104,7 @@ public static class XRayPuzzleSceneSetupTool
 
             xrayObject.transform.position = position;
             xrayObject.transform.rotation = rotation;
-            xrayObject.transform.localScale = new Vector3(0.24f, 0.34f, 1f);
+            xrayObject.transform.localScale = new Vector3(0.48f, 0.68f, 1f);
 
             EnsureCollider(xrayObject);
             ApplyTextureToRenderer(xrayObject, XRayDefinitions[i].TexturePath);
@@ -144,10 +157,15 @@ public static class XRayPuzzleSceneSetupTool
         Material material = renderer.sharedMaterial;
         if (material == null)
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            Shader shader = Shader.Find("Unlit/Texture");
             if (shader == null)
             {
-                shader = Shader.Find("Unlit/Texture");
+                shader = Shader.Find("Sprites/Default");
+            }
+
+            if (shader == null)
+            {
+                shader = Shader.Find("Universal Render Pipeline/Unlit");
             }
 
             material = new Material(shader);
@@ -168,6 +186,16 @@ public static class XRayPuzzleSceneSetupTool
         if (material.HasProperty("_Color"))
         {
             material.color = new Color(0.95f, 0.98f, 1f, 1f);
+        }
+
+        if (material.HasProperty("_Cull"))
+        {
+            material.SetFloat("_Cull", 0f);
+        }
+
+        if (material.HasProperty("_CullMode"))
+        {
+            material.SetFloat("_CullMode", 0f);
         }
 
         if (material.HasProperty("_EmissionColor"))

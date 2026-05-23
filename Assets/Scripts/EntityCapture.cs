@@ -4,12 +4,19 @@ public class EntityCapture : MonoBehaviour
 {
     [SerializeField] private Transform playerTarget;
     [SerializeField] private float captureDistance = 1.5f;
+    [SerializeField] private float captureDelay = 0.95f;
+    [SerializeField] private bool lockPlayerDuringCapture = true;
 
     private PrototypeGameManager gameManager;
+    private BasicMonsterController monsterController;
+    private BasicFirstPersonController playerController;
+    private bool captureTriggered;
+    private float captureTimer;
 
     private void Awake()
     {
         gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        monsterController = GetComponent<BasicMonsterController>();
 
         if (playerTarget == null)
         {
@@ -18,6 +25,11 @@ public class EntityCapture : MonoBehaviour
             {
                 playerTarget = player.transform;
             }
+        }
+
+        if (playerController == null)
+        {
+            playerController = FindFirstObjectByType<BasicFirstPersonController>();
         }
     }
 
@@ -34,13 +46,55 @@ public class EntityCapture : MonoBehaviour
             return;
         }
 
+        if (captureTriggered)
+        {
+            captureTimer -= Time.deltaTime;
+            if (captureTimer <= 0f)
+            {
+                Debug.Log("Le joueur a ete capture par le monster.");
+                gameManager.TriggerLoss(
+                    "L'Entite",
+                    GameLocalization.Text(
+                        "The entity tore you apart. You did not leave the hospital alive.",
+                        "L'Entite t'a dechiquete. Tu n'as pas reussi a sortir vivant de l'hopital.",
+                        "La entidad te destrozo. No lograste salir vivo del hospital.")
+                );
+                enabled = false;
+            }
+
+            return;
+        }
+
         float distance = Vector3.Distance(transform.position, playerTarget.position);
 
         if (distance <= captureDistance)
         {
-            Debug.Log("Le joueur a ete capture par le monster.");
-            gameManager.TriggerLoss();
-            enabled = false;
+            captureTriggered = true;
+            captureTimer = captureDelay;
+
+            if (monsterController != null)
+            {
+                monsterController.BeginCapture(playerTarget);
+            }
+
+            if (lockPlayerDuringCapture && playerController != null)
+            {
+                playerController.SetExternalControlLock(true);
+            }
         }
+    }
+
+    public void AssignPlayerTarget(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        playerTarget = target;
+        playerController = target.GetComponent<BasicFirstPersonController>();
+        captureTriggered = false;
+        captureTimer = 0f;
+        enabled = true;
     }
 }

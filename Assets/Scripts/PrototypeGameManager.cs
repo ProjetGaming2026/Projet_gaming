@@ -14,25 +14,49 @@ public class PrototypeGameManager : MonoBehaviour
     [Header("Phase Settings")]
     [SerializeField] private float incubationDuration = 60f;
 
+    [Header("Session")]
+    [SerializeField] private float totalLevelDuration;
+
     [Header("Objectives")]
     [SerializeField] private int requiredTasks = 5;
     [SerializeField] private ExitZone[] exitZones;
+
+    [Header("End State")]
+    [SerializeField] private bool freezeTimeOnEnd = true;
 
     public GamePhase CurrentPhase { get; private set; }
     public int CompletedTasks { get; private set; }
     public int RequiredTasks => requiredTasks;
     public ExitZone ActiveExitZone { get; private set; }
+    public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
+    public bool HasTimeLimit => totalLevelDuration > 0f;
+    public float TimeRemaining => Mathf.Max(0f, levelTimer);
+    public bool HasConfiguredExitZones => exitZones != null && exitZones.Length > 0;
+    public string LastLossKillerName { get; private set; } = "L'Entite";
+    public string LastLossMessage { get; private set; } = "";
+    public string LastWinMessage { get; private set; } = "";
 
     private float phaseTimer;
+    private float levelTimer;
+    private BasicFirstPersonController playerController;
+
+    private void Awake()
+    {
+        Time.timeScale = 1f;
+        playerController = FindFirstObjectByType<BasicFirstPersonController>();
+    }
 
     private void Start()
     {
+        levelTimer = totalLevelDuration;
         DisableAllExits();
         SetPhase(GamePhase.Incubation);
     }
 
     private void Update()
     {
+        UpdateLevelTimer();
+
         if (CurrentPhase == GamePhase.Incubation)
         {
             phaseTimer -= Time.deltaTime;
@@ -44,36 +68,80 @@ public class PrototypeGameManager : MonoBehaviour
         }
     }
 
+    public void ApplyLevelTimeLimit(float duration)
+    {
+        totalLevelDuration = Mathf.Max(0f, duration);
+        levelTimer = totalLevelDuration;
+    }
+
+    public void ApplyRequiredTasks(int taskCount)
+    {
+        requiredTasks = Mathf.Max(1, taskCount);
+    }
+
+    public void AssignExitZones(ExitZone[] newExitZones)
+    {
+        exitZones = newExitZones;
+    }
+
+    public void AssignPlayerController(BasicFirstPersonController player)
+    {
+        if (player != null)
+        {
+            playerController = player;
+        }
+    }
+
     public void RegisterTaskSuccess()
     {
-        if (CurrentPhase != GamePhase.Chase)
+        if (CurrentPhase == GamePhase.Escape ||
+            CurrentPhase == GamePhase.Win ||
+            CurrentPhase == GamePhase.Lose)
         {
             return;
         }
 
-        CompletedTasks++;
-        Debug.Log("Tâches réussies : " + CompletedTasks + " / " + requiredTasks);
+        CompletedTasks = Mathf.Min(requiredTasks, CompletedTasks + 1);
+        Debug.Log("Taches reussies : " + CompletedTasks + " / " + requiredTasks);
 
-        if (CompletedTasks >= requiredTasks)
+        if (CurrentPhase == GamePhase.Chase && CompletedTasks >= requiredTasks)
         {
             ActivateRandomExit();
             SetPhase(GamePhase.Escape);
         }
     }
 
-    public void TriggerLoss()
+    public void TriggerLoss(string killerName = "L'Entite", string message = null)
     {
+        LastLossKillerName = string.IsNullOrWhiteSpace(killerName) ? "L'Entite" : killerName;
+        LastLossMessage = string.IsNullOrWhiteSpace(message)
+            ? GameLocalization.Text(
+                LastLossKillerName + " slaughtered you in the hospital.",
+                LastLossKillerName + " t'a massacre dans l'hopital.",
+                LastLossKillerName + " te masacro en el hospital.")
+            : message;
         SetPhase(GamePhase.Lose);
     }
 
-    public void TriggerWin()
+    public void TriggerWin(string message = null)
     {
+        LastWinMessage = string.IsNullOrWhiteSpace(message)
+            ? GameLocalization.Text(
+                "You survived. Evacuation complete.",
+                "Tu as survecu. L'evacuation est reussie.",
+                "Has sobrevivido. Evacuacion completada.")
+            : message;
         SetPhase(GamePhase.Win);
     }
 
     public void SetPhase(GamePhase newPhase)
     {
         CurrentPhase = newPhase;
+        ApplyEndStateLock(false);
+        if (CurrentPhase != GamePhase.Win && CurrentPhase != GamePhase.Lose)
+        {
+            Time.timeScale = 1f;
+        }
 
         switch (CurrentPhase)
         {
@@ -84,6 +152,12 @@ public class PrototypeGameManager : MonoBehaviour
 
             case GamePhase.Chase:
                 Debug.Log("Phase actuelle : CHASE");
+                if (CompletedTasks >= requiredTasks)
+                {
+                    ActivateRandomExit();
+                    SetPhase(GamePhase.Escape);
+                    return;
+                }
                 break;
 
             case GamePhase.Escape:
@@ -92,12 +166,39 @@ public class PrototypeGameManager : MonoBehaviour
 
             case GamePhase.Win:
                 Debug.Log("Phase actuelle : WIN");
+                ApplyEndStateLock(true);
                 break;
 
             case GamePhase.Lose:
                 Debug.Log("Phase actuelle : LOSE");
+                ApplyEndStateLock(true);
                 break;
         }
+    }
+
+    private void UpdateLevelTimer()
+    {
+        if (!HasTimeLimit || CurrentPhase == GamePhase.Win || CurrentPhase == GamePhase.Lose)
+        {
+            return;
+        }
+
+        levelTimer -= Time.deltaTime;
+        if (levelTimer > 0f)
+        {
+            return;
+        }
+
+        levelTimer = 0f;
+        Debug.Log("Temps ecoule. Partie perdue.");
+        PrototypeHUD.ShowFeedback(GameLocalization.Text(
+            "Time is up. The entity catches you.",
+            "Temps ecoule. L'entite te rattrape.",
+            "Tiempo agotado. La entidad te alcanza."), PrototypeHUD.FeedbackTone.Failure, 3f);
+        TriggerLoss("L'Entite", GameLocalization.Text(
+            "Time is up. The entity found you and finished you.",
+            "Le temps est ecoule. L'Entite t'a retrouve et t'a acheve.",
+            "El tiempo se agoto. La Entidad te encontro y acabo contigo."));
     }
 
     private void ActivateRandomExit()
@@ -106,7 +207,7 @@ public class PrototypeGameManager : MonoBehaviour
 
         if (exitZones == null || exitZones.Length == 0)
         {
-            Debug.LogWarning("Aucune sortie assignée au GameManager.");
+            Debug.LogWarning("Aucune sortie assignee au GameManager.");
             return;
         }
 
@@ -114,7 +215,7 @@ public class PrototypeGameManager : MonoBehaviour
         ActiveExitZone = exitZones[randomIndex];
         ActiveExitZone.ActivateExit();
 
-        Debug.Log("Une sortie aléatoire a été activée : " + ActiveExitZone.name);
+        Debug.Log("Une sortie aleatoire a ete activee : " + ActiveExitZone.name);
     }
 
     private void DisableAllExits()
@@ -133,5 +234,23 @@ public class PrototypeGameManager : MonoBehaviour
         }
 
         ActiveExitZone = null;
+    }
+
+    private void ApplyEndStateLock(bool isEnding)
+    {
+        if (playerController == null)
+        {
+            playerController = FindFirstObjectByType<BasicFirstPersonController>();
+        }
+
+        if (playerController != null)
+        {
+            playerController.SetExternalControlLock(isEnding);
+        }
+
+        if (freezeTimeOnEnd)
+        {
+            Time.timeScale = isEnding ? 0f : 1f;
+        }
     }
 }

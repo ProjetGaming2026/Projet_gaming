@@ -94,6 +94,28 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         isLocked = locked;
     }
 
+    // Compatibility wrapper for older systems that still use the previous
+    // interaction-lock API name.
+    public void SetInteractionLocked(bool locked)
+    {
+        SetLocked(locked);
+    }
+
+    // Legacy compatibility helper for runtime bootstrap scripts that wire
+    // existing door audio at scene load.
+    public void AssignAudioClips(AudioClip openClip, AudioClip closeClip)
+    {
+        if (openClip != null)
+        {
+            openSound = openClip;
+        }
+
+        if (closeClip != null)
+        {
+            closeSound = closeClip;
+        }
+    }
+
     public void ForceClosed()
     {
         if (hinge == null)
@@ -106,9 +128,17 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         isOpen = false;
     }
 
-    public bool IsOpen()
+    // Compatibility property for legacy callers that expect a property.
+    public bool IsOpen => isOpen;
+
+    // Compatibility helper for legacy systems that want to force the door open
+    // through an explicit method call.
+    public void OpenDoor()
     {
-        return isOpen;
+        if (!isOpen)
+        {
+            Interact();
+        }
     }
 
     private int ResolveOpenDirection()
