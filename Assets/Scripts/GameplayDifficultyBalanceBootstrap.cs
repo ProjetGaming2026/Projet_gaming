@@ -55,6 +55,17 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile.monsterInvestigationSpeed,
                 profile.hardPatrolSpeedMultiplier
             );
+            monsters[i].ApplyBehaviorTuning(
+                profile.monsterDetectionRadius,
+                profile.monsterHearingRadius,
+                profile.monsterSprintHearingRadius,
+                profile.monsterMemoryDuration,
+                profile.monsterForcedSearchDuration,
+                profile.monsterPuzzleAlertDuration,
+                profile.monsterPuzzleAlertSpeedMultiplier,
+                profile.monsterSearchRadius,
+                profile.monsterRouteRevisitDelay
+            );
         }
 
         PrototypeGameManager gameManager = Object.FindFirstObjectByType<PrototypeGameManager>();
@@ -78,6 +89,15 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.45f,
                     monsterInvestigationSpeed: 2.1f,
                     hardPatrolSpeedMultiplier: 1f,
+                    monsterDetectionRadius: 9f,
+                    monsterHearingRadius: 0f,
+                    monsterSprintHearingRadius: 0f,
+                    monsterMemoryDuration: 4f,
+                    monsterForcedSearchDuration: 3f,
+                    monsterPuzzleAlertDuration: 35f,
+                    monsterPuzzleAlertSpeedMultiplier: 1.08f,
+                    monsterSearchRadius: 3.8f,
+                    monsterRouteRevisitDelay: 65f,
                     requiredTasks: 5,
                     levelDuration: 1800f
                 );
@@ -93,6 +113,15 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.65f,
                     monsterInvestigationSpeed: 2.45f,
                     hardPatrolSpeedMultiplier: 1.02f,
+                    monsterDetectionRadius: 13f,
+                    monsterHearingRadius: 7f,
+                    monsterSprintHearingRadius: 11f,
+                    monsterMemoryDuration: 8f,
+                    monsterForcedSearchDuration: 5f,
+                    monsterPuzzleAlertDuration: 50f,
+                    monsterPuzzleAlertSpeedMultiplier: 1.16f,
+                    monsterSearchRadius: 5.5f,
+                    monsterRouteRevisitDelay: 45f,
                     requiredTasks: 7,
                     levelDuration: 1800f
                 );
@@ -107,6 +136,15 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterPatrolSpeed: 1.9f,
                     monsterInvestigationSpeed: 3f,
                     hardPatrolSpeedMultiplier: 1.1f,
+                    monsterDetectionRadius: 17f,
+                    monsterHearingRadius: 9f,
+                    monsterSprintHearingRadius: 14f,
+                    monsterMemoryDuration: 12f,
+                    monsterForcedSearchDuration: 7f,
+                    monsterPuzzleAlertDuration: 70f,
+                    monsterPuzzleAlertSpeedMultiplier: 1.28f,
+                    monsterSearchRadius: 7f,
+                    monsterRouteRevisitDelay: 30f,
                     requiredTasks: 9,
                     levelDuration: 1800f
                 );
@@ -127,6 +165,15 @@ public static class GameplayDifficultyBalanceBootstrap
         public readonly float monsterPatrolSpeed;
         public readonly float monsterInvestigationSpeed;
         public readonly float hardPatrolSpeedMultiplier;
+        public readonly float monsterDetectionRadius;
+        public readonly float monsterHearingRadius;
+        public readonly float monsterSprintHearingRadius;
+        public readonly float monsterMemoryDuration;
+        public readonly float monsterForcedSearchDuration;
+        public readonly float monsterPuzzleAlertDuration;
+        public readonly float monsterPuzzleAlertSpeedMultiplier;
+        public readonly float monsterSearchRadius;
+        public readonly float monsterRouteRevisitDelay;
         public readonly int requiredTasks;
         public readonly float levelDuration;
 
@@ -138,6 +185,15 @@ public static class GameplayDifficultyBalanceBootstrap
             float monsterPatrolSpeed,
             float monsterInvestigationSpeed,
             float hardPatrolSpeedMultiplier,
+            float monsterDetectionRadius,
+            float monsterHearingRadius,
+            float monsterSprintHearingRadius,
+            float monsterMemoryDuration,
+            float monsterForcedSearchDuration,
+            float monsterPuzzleAlertDuration,
+            float monsterPuzzleAlertSpeedMultiplier,
+            float monsterSearchRadius,
+            float monsterRouteRevisitDelay,
             int requiredTasks,
             float levelDuration)
         {
@@ -148,6 +204,15 @@ public static class GameplayDifficultyBalanceBootstrap
             this.monsterPatrolSpeed = monsterPatrolSpeed;
             this.monsterInvestigationSpeed = monsterInvestigationSpeed;
             this.hardPatrolSpeedMultiplier = hardPatrolSpeedMultiplier;
+            this.monsterDetectionRadius = monsterDetectionRadius;
+            this.monsterHearingRadius = monsterHearingRadius;
+            this.monsterSprintHearingRadius = monsterSprintHearingRadius;
+            this.monsterMemoryDuration = monsterMemoryDuration;
+            this.monsterForcedSearchDuration = monsterForcedSearchDuration;
+            this.monsterPuzzleAlertDuration = monsterPuzzleAlertDuration;
+            this.monsterPuzzleAlertSpeedMultiplier = monsterPuzzleAlertSpeedMultiplier;
+            this.monsterSearchRadius = monsterSearchRadius;
+            this.monsterRouteRevisitDelay = monsterRouteRevisitDelay;
             this.requiredTasks = requiredTasks;
             this.levelDuration = levelDuration;
         }
