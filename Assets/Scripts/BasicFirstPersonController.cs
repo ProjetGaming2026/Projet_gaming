@@ -33,6 +33,9 @@ public class BasicFirstPersonController : MonoBehaviour
     private float pitch;
     private float currentPitch;
     private float pitchSmoothVelocity;
+    private Vector3 defaultCameraLocalPosition;
+    private Quaternion defaultCameraLocalRotation;
+    private bool hasDefaultCameraPose;
 
     private void Awake()
     {
@@ -42,6 +45,8 @@ public class BasicFirstPersonController : MonoBehaviour
         {
             cameraHolder = Camera.main.transform;
         }
+
+        CacheDefaultCameraPose();
     }
 
     private void Start()
@@ -105,6 +110,134 @@ public class BasicFirstPersonController : MonoBehaviour
         }
     }
 
+    public void ForceLookAt(Vector3 worldPoint)
+    {
+        Vector3 lookOrigin = cameraHolder != null ? cameraHolder.position : transform.position;
+        Vector3 direction = worldPoint - lookOrigin;
+
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        direction.Normalize();
+        yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        pitch = -Mathf.Asin(Mathf.Clamp(direction.y, -1f, 1f)) * Mathf.Rad2Deg;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        currentPitch = pitch;
+        pitchSmoothVelocity = 0f;
+
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        if (cameraHolder != null)
+        {
+            cameraHolder.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
+        }
+    }
+
+    public void ForceViewPose(Vector3 worldPosition, float viewYaw, float viewPitch)
+    {
+        bool hadController = controller != null;
+
+        if (hadController)
+        {
+            controller.enabled = false;
+        }
+
+        transform.position = worldPosition;
+        yaw = viewYaw;
+        pitch = Mathf.Clamp(viewPitch, minPitch, maxPitch);
+        currentPitch = pitch;
+        pitchSmoothVelocity = 0f;
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        if (cameraHolder != null)
+        {
+            cameraHolder.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
+        }
+
+        if (hadController)
+        {
+            controller.enabled = true;
+        }
+    }
+
+    public void ForceCameraWorldPose(Vector3 worldPosition, Vector3 worldEulerAngles)
+    {
+        if (cameraHolder == null)
+        {
+            return;
+        }
+
+        CacheDefaultCameraPose();
+
+        yaw = worldEulerAngles.y;
+        pitch = Mathf.Clamp(NormalizeAngle(worldEulerAngles.x), minPitch, maxPitch);
+        currentPitch = pitch;
+        pitchSmoothVelocity = 0f;
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+        cameraHolder.SetPositionAndRotation(worldPosition, Quaternion.Euler(pitch, yaw, worldEulerAngles.z));
+    }
+
+    public void ForceCameraLookAtWorldPose(Vector3 worldPosition, Vector3 worldLookTarget, float roll = 0f)
+    {
+        if (cameraHolder == null)
+        {
+            return;
+        }
+
+        Vector3 direction = worldLookTarget - worldPosition;
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        direction.Normalize();
+        float targetYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        float targetPitch = -Mathf.Asin(Mathf.Clamp(direction.y, -1f, 1f)) * Mathf.Rad2Deg;
+
+        ForceCameraWorldPose(worldPosition, new Vector3(targetPitch, targetYaw, roll));
+    }
+
+    public void ForceCameraLocalPose(Vector3 localPosition, Vector3 localEulerAngles)
+    {
+        if (cameraHolder == null)
+        {
+            return;
+        }
+
+        CacheDefaultCameraPose();
+
+        pitch = Mathf.Clamp(NormalizeAngle(localEulerAngles.x), minPitch, maxPitch);
+        currentPitch = pitch;
+        pitchSmoothVelocity = 0f;
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+
+        cameraHolder.localPosition = localPosition;
+        cameraHolder.localRotation = Quaternion.Euler(pitch, localEulerAngles.y, localEulerAngles.z);
+    }
+
+    public void RestoreDefaultCameraLocalPose()
+    {
+        if (cameraHolder == null || !hasDefaultCameraPose)
+        {
+            return;
+        }
+
+        cameraHolder.localPosition = defaultCameraLocalPosition;
+        cameraHolder.localRotation = defaultCameraLocalRotation;
+        pitch = NormalizeAngle(cameraHolder.localEulerAngles.x);
+        currentPitch = pitch;
+        pitchSmoothVelocity = 0f;
+    }
+
     private void HandleLook()
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
@@ -161,6 +294,34 @@ public class BasicFirstPersonController : MonoBehaviour
     private void OnDisable()
     {
         IsSprinting = false;
+    }
+
+    private void CacheDefaultCameraPose()
+    {
+        if (cameraHolder == null || hasDefaultCameraPose)
+        {
+            return;
+        }
+
+        defaultCameraLocalPosition = cameraHolder.localPosition;
+        defaultCameraLocalRotation = cameraHolder.localRotation;
+        hasDefaultCameraPose = true;
+    }
+
+    private static float NormalizeAngle(float angle)
+    {
+        angle %= 360f;
+        if (angle > 180f)
+        {
+            angle -= 360f;
+        }
+
+        if (angle < -180f)
+        {
+            angle += 360f;
+        }
+
+        return angle;
     }
 
     private void ApplyCursorState()
