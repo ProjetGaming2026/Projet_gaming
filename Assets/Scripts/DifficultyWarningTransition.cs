@@ -25,9 +25,12 @@ public class DifficultyWarningTransition : MonoBehaviour
     private Texture2D warningTexture;
     private AudioSource voiceSource;
     private AudioSource ambienceSource;
+    private AsyncOperation sceneLoadOperation;
+    private GUIStyle loadingStyle;
     private string scenePath;
     private string sceneName;
     private float remainingTime;
+    private bool activationRequested;
 
     public static void PlayBeforeScene(string targetScenePath, string targetSceneName, VoiceClip voiceClip)
     {
@@ -66,6 +69,7 @@ public class DifficultyWarningTransition : MonoBehaviour
 
         PlayClip(voiceSource, voiceAudioClip);
         PlayClip(ambienceSource, ambienceAudioClip);
+        PreloadTargetScene();
     }
 
     private AudioSource CreateAudioSource(float volume)
@@ -96,12 +100,13 @@ public class DifficultyWarningTransition : MonoBehaviour
             return;
         }
 
-        LoadSceneExact(scenePath, sceneName);
-        Destroy(gameObject);
+        ActivatePreloadedScene();
     }
 
     private void OnDestroy()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
         if (activeTransition == this)
         {
             activeTransition = null;
@@ -119,6 +124,44 @@ public class DifficultyWarningTransition : MonoBehaviour
 
         Rect targetRect = GetCoverRect(warningTexture.width, warningTexture.height);
         GUI.DrawTexture(targetRect, warningTexture, ScaleMode.StretchToFill, false);
+        DrawLoadingDots();
+    }
+
+    private void DrawLoadingDots()
+    {
+        if (loadingStyle == null)
+        {
+            loadingStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                fontSize = Mathf.RoundToInt(Mathf.Clamp(Screen.height * 0.055f, 28f, 58f))
+            };
+        }
+
+        int dotCount = 1 + (Mathf.FloorToInt(Time.unscaledTime * 2.5f) % 3);
+        string dots = dotCount == 1 ? "." : dotCount == 2 ? ". ." : ". . .";
+        float height = Mathf.Clamp(Screen.height * 0.12f, 70f, 130f);
+        Rect rect = new Rect(0f, Screen.height - height, Screen.width, height * 0.55f);
+        float pulse = Mathf.Abs(Mathf.Sin(Time.unscaledTime * 7.5f));
+        float jitterX = Mathf.Sin(Time.unscaledTime * 31f) * 2.5f;
+        float jitterY = Mathf.Cos(Time.unscaledTime * 23f) * 1.5f;
+        float glitchOffset = pulse > 0.72f ? Mathf.Lerp(2f, 7f, pulse) : 1f;
+
+        GUIStyle shadowStyle = new GUIStyle(loadingStyle);
+        shadowStyle.normal.textColor = new Color(0f, 0f, 0f, 0.82f);
+        GUI.Label(new Rect(rect.x + 4f + jitterX, rect.y + 4f + jitterY, rect.width, rect.height), dots, shadowStyle);
+
+        GUIStyle redGhostStyle = new GUIStyle(loadingStyle);
+        redGhostStyle.normal.textColor = new Color(0.85f, 0.02f, 0.015f, 0.48f);
+        GUI.Label(new Rect(rect.x - glitchOffset, rect.y + jitterY, rect.width, rect.height), dots, redGhostStyle);
+
+        GUIStyle coldGhostStyle = new GUIStyle(loadingStyle);
+        coldGhostStyle.normal.textColor = new Color(0.18f, 0.88f, 0.78f, 0.14f);
+        GUI.Label(new Rect(rect.x + glitchOffset, rect.y - 1f, rect.width, rect.height), dots, coldGhostStyle);
+
+        loadingStyle.normal.textColor = new Color(0.95f, 0.07f, 0.045f, Mathf.Lerp(0.76f, 1f, pulse));
+        GUI.Label(new Rect(rect.x + jitterX, rect.y + jitterY, rect.width, rect.height), dots, loadingStyle);
     }
 
     private static string GetVoicePath(VoiceClip voiceClip)
@@ -162,16 +205,51 @@ public class DifficultyWarningTransition : MonoBehaviour
         GUI.color = previousColor;
     }
 
-    private static void LoadSceneExact(string targetScenePath, string targetSceneName)
+    private void PreloadTargetScene()
     {
-        int buildIndex = SceneUtility.GetBuildIndexByScenePath(targetScenePath);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        int buildIndex = SceneUtility.GetBuildIndexByScenePath(scenePath);
         if (buildIndex >= 0)
         {
-            SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+            sceneLoadOperation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
+        }
+        else
+        {
+            Debug.LogWarning("DifficultyWarningTransition: scene absente des Build Settings: " + scenePath + ". Fallback par nom: " + sceneName);
+            sceneLoadOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        }
+
+        if (sceneLoadOperation != null)
+        {
+            sceneLoadOperation.allowSceneActivation = false;
+        }
+    }
+
+    private void ActivatePreloadedScene()
+    {
+        if (activationRequested)
+        {
             return;
         }
 
-        Debug.LogWarning("DifficultyWarningTransition: scene absente des Build Settings: " + targetScenePath + ". Fallback par nom: " + targetSceneName);
-        SceneManager.LoadScene(targetSceneName, LoadSceneMode.Single);
+        activationRequested = true;
+
+        if (sceneLoadOperation != null)
+        {
+            sceneLoadOperation.allowSceneActivation = true;
+            return;
+        }
+
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        Destroy(gameObject);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == sceneName)
+        {
+            Destroy(gameObject);
+        }
     }
 }
