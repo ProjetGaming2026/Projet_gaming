@@ -1544,7 +1544,7 @@ GameObject:
   - component: {fileID: 21268720}
   - component: {fileID: 21268719}
   m_Layer: 0
-  m_Name: glassBroken
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3905,7 +3905,7 @@ GameObject:
   - component: {fileID: 60389827}
   - component: {fileID: 60389826}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5604,6 +5604,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2054301351}
     m_Modifications:
+    - target: {fileID: 100000, guid: 8c5172c4c83314f66b05758aa6d5eb1c, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 8c5172c4c83314f66b05758aa6d5eb1c, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
@@ -8339,6 +8343,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 77438357}
     m_Modifications:
+    - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
@@ -13948,7 +13956,7 @@ GameObject:
   - component: {fileID: 198104366}
   - component: {fileID: 198104365}
   m_Layer: 0
-  m_Name: glass2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14181,7 +14189,7 @@ GameObject:
   - component: {fileID: 198360730}
   - component: {fileID: 198360729}
   m_Layer: 0
-  m_Name: door2wing
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17488,6 +17496,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 102834956}
     m_Modifications:
     - target: {fileID: 100000, guid: 8c5172c4c83314f66b05758aa6d5eb1c, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 8c5172c4c83314f66b05758aa6d5eb1c, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -17815,7 +17827,7 @@ GameObject:
   - component: {fileID: 236203898}
   - component: {fileID: 236203897}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18685,6 +18697,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -19206,7 +19222,7 @@ GameObject:
   - component: {fileID: 253283103}
   - component: {fileID: 253283102}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22425,6 +22441,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1515825262}
     m_Modifications:
+    - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
@@ -30778,7 +30798,7 @@ GameObject:
   - component: {fileID: 395703642}
   - component: {fileID: 395703641}
   m_Layer: 0
-  m_Name: glassBroken
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35435,8 +35455,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -35475,12 +35503,24 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -38848,7 +38888,7 @@ GameObject:
   - component: {fileID: 501058535}
   - component: {fileID: 501058534}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39099,7 +39139,7 @@ PrefabInstance:
     - target: {fileID: -6796009744405785935, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 1156638289}
+      objectReference: {fileID: 965446429}
     - target: {fileID: 919132149155446097, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: m_Name
       value: NurseSceneVisual
@@ -39107,7 +39147,7 @@ PrefabInstance:
     - target: {fileID: 2772105478904033430, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 975693802}
+      objectReference: {fileID: 1835684676}
     - target: {fileID: 5866666021909216657, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: m_CullingMode
       value: 0
@@ -42181,6 +42221,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -42195,6 +42239,10 @@ PrefabInstance:
     - target: {fileID: 100012, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -43000,7 +43048,7 @@ GameObject:
   - component: {fileID: 554586940}
   - component: {fileID: 554586939}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43685,8 +43733,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -43705,8 +43761,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_IsActive
@@ -44622,6 +44686,10 @@ PrefabInstance:
     - target: {fileID: 100002, guid: fc06aa51725e54aabb26ec0ff83eba2c, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: fc06aa51725e54aabb26ec0ff83eba2c, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: fc06aa51725e54aabb26ec0ff83eba2c, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -50791,7 +50859,7 @@ GameObject:
   - component: {fileID: 631952097}
   - component: {fileID: 631952096}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51095,7 +51163,7 @@ GameObject:
   - component: {fileID: 633567210}
   - component: {fileID: 633567209}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54478,8 +54546,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -54518,12 +54594,24 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -64641,6 +64729,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -71951,7 +72043,7 @@ GameObject:
   - component: {fileID: 900673708}
   - component: {fileID: 900673707}
   m_Layer: 0
-  m_Name: glass1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76969,6 +77061,91 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
   m_PrefabInstance: {fileID: 804572455}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &965446429
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: body (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: ddf6b315d28eec34eb20cfc8d3a5d58b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!4 &965571896 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400012, guid: 8b43b12a68bcc4ce283f46bd1f4d8cdc, type: 3}
@@ -77403,6 +77580,10 @@ PrefabInstance:
     - target: {fileID: 100012, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -77968,90 +78149,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e02c7a6cd9cc543c698d4a099b5b616c, type: 3}
   m_PrefabInstance: {fileID: 1438816737}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &975693802
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: head (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance)
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: cabf09f76f3388a4bb575e17b9b6ef12, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.4472136
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _UVSec: 0
-    - _ZWrite: 1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &975809023
 GameObject:
   m_ObjectHideFlags: 0
@@ -88731,7 +88828,7 @@ GameObject:
   - component: {fileID: 1100347068}
   - component: {fileID: 1100347067}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92606,6 +92703,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100014, guid: 58e443828692b4f0dae64fbb653300c6, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -94377,90 +94478,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b9eb9017da144810a07772604148fec, type: 3}
---- !u!21 &1156638289
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: body (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance)
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ddf6b315d28eec34eb20cfc8d3a5d58b, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.4472136
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _UVSec: 0
-    - _ZWrite: 1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &1156678022
 GameObject:
   m_ObjectHideFlags: 0
@@ -94627,6 +94644,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100022, guid: 0d01a98b495474a188c0ec28761ee874, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100022, guid: 0d01a98b495474a188c0ec28761ee874, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -94637,6 +94658,10 @@ PrefabInstance:
     - target: {fileID: 100026, guid: 0d01a98b495474a188c0ec28761ee874, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100028, guid: 0d01a98b495474a188c0ec28761ee874, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100028, guid: 0d01a98b495474a188c0ec28761ee874, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -96587,6 +96612,10 @@ PrefabInstance:
     - target: {fileID: 100016, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -101844,6 +101873,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 77438357}
     m_Modifications:
     - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -105351,7 +105384,7 @@ GameObject:
   - component: {fileID: 1300130029}
   - component: {fileID: 1300130028}
   m_Layer: 0
-  m_Name: door3_frame
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109556,8 +109589,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -109596,12 +109637,24 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -111149,7 +111202,7 @@ GameObject:
   - component: {fileID: 1382041739}
   - component: {fileID: 1382041738}
   m_Layer: 0
-  m_Name: glass1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -115390,8 +115443,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -115410,8 +115471,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -117084,7 +117153,7 @@ GameObject:
   - component: {fileID: 1454961504}
   - component: {fileID: 1454961503}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118186,8 +118255,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c75273e32f69644da96a68dce3736cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExitDoorCodeLock
-  exitCode: 1234
-  codeLength: 4
+  exitCode: 739412
+  codeLength: 6
   countAsTask: 1
   linkedDoorInteractables:
   - {fileID: 1466010572}
@@ -126852,7 +126921,7 @@ GameObject:
   - component: {fileID: 1574975993}
   - component: {fileID: 1574975992}
   m_Layer: 0
-  m_Name: wing2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130071,6 +130140,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 77438357}
     m_Modifications:
+    - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 61ebb976e23714d1a88c35fa34c595c3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
@@ -133755,7 +133828,7 @@ GameObject:
   - component: {fileID: 1664176427}
   - component: {fileID: 1664176426}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137185,7 +137258,7 @@ GameObject:
   - component: {fileID: 1704131725}
   - component: {fileID: 1704131724}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138837,6 +138910,10 @@ PrefabInstance:
     - target: {fileID: 100016, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100018, guid: a6f19142775f84f969aa9c46757159d2, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -140933,8 +141010,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_IsActive
@@ -140977,12 +141062,24 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100022, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100024, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: 97f778e2b01d14238870303d77703229, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -146699,7 +146796,7 @@ GameObject:
   - component: {fileID: 1803061890}
   - component: {fileID: 1803061889}
   m_Layer: 0
-  m_Name: glassBroken
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147606,6 +147703,10 @@ PrefabInstance:
     - target: {fileID: 100004, guid: 5557ab00a875b4d4e8cb03f8df6bc8be, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 5557ab00a875b4d4e8cb03f8df6bc8be, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 5557ab00a875b4d4e8cb03f8df6bc8be, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -148755,7 +148856,7 @@ GameObject:
   - component: {fileID: 1831413022}
   - component: {fileID: 1831413021}
   m_Layer: 0
-  m_Name: glass1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149300,6 +149401,91 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 201609025}
   m_SourcePrefab: {fileID: 100100000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
+--- !u!21 &1835684676
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: head (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: cabf09f76f3388a4bb575e17b9b6ef12, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!4 &1836291785 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: de335e7c97e8142919b1d89d5bb9d124, type: 3}
@@ -153277,7 +153463,7 @@ GameObject:
   - component: {fileID: 1902007740}
   - component: {fileID: 1902007739}
   m_Layer: 0
-  m_Name: glass2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155463,6 +155649,10 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100016, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -157575,7 +157765,7 @@ GameObject:
   - component: {fileID: 1957428097}
   - component: {fileID: 1957428096}
   m_Layer: 0
-  m_Name: door2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159035,7 +159225,7 @@ GameObject:
   - component: {fileID: 1980751517}
   - component: {fileID: 1980751516}
   m_Layer: 0
-  m_Name: glass2
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161836,6 +162026,10 @@ PrefabInstance:
     - target: {fileID: 100014, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100016, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -164670,8 +164864,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100032, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100034, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -164690,8 +164892,16 @@ PrefabInstance:
       value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
+      objectReference: {fileID: 0}
+    - target: {fileID: 100042, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
+      propertyPath: m_Name
+      value: bab
       objectReference: {fileID: 0}
     - target: {fileID: 100044, guid: d310c67c1887d45ca861a88def5db297, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -172982,7 +173192,7 @@ GameObject:
   - component: {fileID: 2131272241}
   - component: {fileID: 2131272240}
   m_Layer: 0
-  m_Name: wing1
+  m_Name: bab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

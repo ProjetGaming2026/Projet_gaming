@@ -22,7 +22,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     private const string MediumExitDoorName = "porte1";
     private const string MediumExitDoorSecondLeafName = "porte2";
     private const string MediumExitDoorSectionName = "asylumLevel";
-    private const string MediumExitCode = "1234";
+    private const string MediumExitCode = "739412";
 
     private static readonly ExitDoorProfile[] ExitDoorProfiles =
     {
@@ -232,7 +232,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         }
 
         exitCode = profile.ExitCode;
-        codeLength = 4;
+        codeLength = Mathf.Max(1, exitCode.Length);
         countAsTask = true;
         autoFindSiblingDoorLeaves = true;
         createVictoryTrigger = true;

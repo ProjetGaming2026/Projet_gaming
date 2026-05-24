@@ -27,7 +27,7 @@ public static class GameplayDifficultyBalanceBootstrap
         ApplyForScene(scene);
     }
 
-    private static void ApplyForScene(Scene scene)
+    public static void ApplyForScene(Scene scene)
     {
         if (!scene.IsValid() || !scene.isLoaded)
         {
