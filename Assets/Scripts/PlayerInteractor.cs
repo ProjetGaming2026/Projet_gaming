@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerInteractor : MonoBehaviour
 {
+    private const string NonInteractiveObjectName = "bab";
+
     [Header("References")]
     [SerializeField] private Transform interactionOrigin;
 
@@ -123,14 +125,20 @@ public class PlayerInteractor : MonoBehaviour
 
         for (int i = 0; i < hits.Length; i++)
         {
-            IInteractable interactable = ResolveInteractable(hits[i].collider);
+            Collider hitCollider = hits[i].collider;
+            if (IsNonInteractiveNamedObjectCollider(hitCollider))
+            {
+                return;
+            }
+
+            IInteractable interactable = ResolveInteractable(hitCollider);
             if (interactable == null || !IsInteractableUsable(interactable))
             {
                 continue;
             }
 
             currentInteractable = interactable;
-            currentInteractableCollider = hits[i].collider;
+            currentInteractableCollider = hitCollider;
             currentPromptText = BuildPromptText(interactable, currentInteractableCollider);
             return;
         }
@@ -365,5 +373,26 @@ public class PlayerInteractor : MonoBehaviour
         }
 
         return hitCollider.GetComponentInChildren<IInteractable>();
+    }
+
+    private static bool IsNonInteractiveNamedObjectCollider(Collider hitCollider)
+    {
+        return hitCollider != null && HasAncestorNamed(hitCollider.transform, NonInteractiveObjectName);
+    }
+
+    private static bool HasAncestorNamed(Transform transformToCheck, string ancestorName)
+    {
+        Transform current = transformToCheck;
+        while (current != null)
+        {
+            if (string.Equals(current.name, ancestorName, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
     }
 }

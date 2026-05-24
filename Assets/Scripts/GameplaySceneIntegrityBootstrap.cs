@@ -44,6 +44,7 @@ public static class GameplaySceneIntegrityBootstrap
         }
 
         EnsureGameplayObjects(scene);
+        GameplayDifficultyBalanceBootstrap.ApplyForScene(scene);
     }
 
     private static void EnsurePlayerAndCameraTags(Scene scene)
