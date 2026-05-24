@@ -1923,10 +1923,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &21694041
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5077,10 +5077,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &68182375 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 790d1a7f4e44c491bb2a21e4d64d370f, type: 3}
@@ -11134,10 +11134,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &157770399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14822,10 +14822,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &198360724
 GameObject:
   m_ObjectHideFlags: 0
@@ -15055,10 +15055,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &198907417
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17341,10 +17341,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &222502189
 GameObject:
   m_ObjectHideFlags: 0
@@ -19526,10 +19526,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &249136161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e900ff9e8f48146f8be8c8da7ffde386, type: 3}
@@ -20144,10 +20144,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &253497458 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: f6c0b98c7c5e243a5b63e25f53da627c, type: 3}
@@ -29393,10 +29393,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 1
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &369777362
 AudioSource:
   m_ObjectHideFlags: 0
@@ -29512,10 +29512,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 1
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &369777364 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400012, guid: 42c1e20bfd60247f88062407be10f602, type: 3}
@@ -29868,10 +29868,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &371152731 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e02c7a6cd9cc543c698d4a099b5b616c, type: 3}
@@ -30398,10 +30398,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &379236148 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 9993c16a05aed4087883667c3ed0cb6c, type: 3}
@@ -32660,6 +32660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicFirstPersonController
   cameraHolder: {fileID: 1907421088}
+  staticTrapPrefab: {fileID: 0}
   walkSpeed: 5
   sprintSpeed: 8
   acceleration: 12
@@ -32669,6 +32670,10 @@ MonoBehaviour:
   minPitch: -80
   maxPitch: 80
   cameraSmoothTime: 0.05
+  overclockSpeed: 12
+  phaseKey: 102
+  phaseDuration: 0.75
+  trapKey: 103
 --- !u!114 &406199570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32707,7 +32712,6 @@ MonoBehaviour:
   interactionOrigin: {fileID: 1907421088}
   interactKey: 101
   interactDistance: 3
-  interactRadius: 0.16
 --- !u!143 &406199572
 CharacterController:
   m_ObjectHideFlags: 0
@@ -33529,10 +33533,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 1
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!114 &418876019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35851,10 +35855,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &452303850
 GameObject:
   m_ObjectHideFlags: 0
@@ -37022,10 +37026,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &461123770
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -37162,10 +37166,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &463188228 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: c3a3afff08d4049479d038044774c76c, type: 3}
@@ -43711,10 +43715,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &546286280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44482,10 +44486,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &554598399 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: c3a3afff08d4049479d038044774c76c, type: 3}
@@ -45351,10 +45355,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &556235392
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45491,10 +45495,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &556904133 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
@@ -46168,10 +46172,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &563181991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46866,10 +46870,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &568245150 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 3cb70c0a8bfe24ec8b17c084a18fb4bb, type: 3}
@@ -48420,10 +48424,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &590778163 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 29b29ac01f6364019bc030ff38a2655b, type: 3}
@@ -52735,10 +52739,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &633923599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 5f5d01224d42f493598c626537b1ae8c, type: 3}
@@ -56369,10 +56373,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &675719362
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56509,10 +56513,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &676356506
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58177,7 +58181,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692367557}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -58229,7 +58233,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 1
+  m_ShapeRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -68733,10 +68737,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &847746265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -73294,10 +73298,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &900868527
 GameObject:
   m_ObjectHideFlags: 0
@@ -73576,10 +73580,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &903542051
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78818,10 +78822,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &973318759
 GameObject:
   m_ObjectHideFlags: 0
@@ -81182,10 +81186,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1003421312
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84816,10 +84820,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &1043939865
 AudioSource:
   m_ObjectHideFlags: 0
@@ -84935,10 +84939,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1045744385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86904,7 +86908,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070017391}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -86956,7 +86960,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 1
+  m_ShapeRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -90089,10 +90093,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1100347062
 GameObject:
   m_ObjectHideFlags: 0
@@ -90322,10 +90326,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1101745488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -91276,10 +91280,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1108989209
 GameObject:
   m_ObjectHideFlags: 0
@@ -91989,10 +91993,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &1112238986
 AudioSource:
   m_ObjectHideFlags: 0
@@ -92108,10 +92112,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1112358178
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94342,10 +94346,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1140907437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 6193a12247a344d83bb1fd4c61315b63, type: 3}
@@ -95667,7 +95671,6 @@ MonoBehaviour:
   interactionOrigin: {fileID: 37764452}
   interactKey: 101
   interactDistance: 3
-  interactRadius: 0.16
 --- !u!114 &1152713067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95681,6 +95684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicFirstPersonController
   cameraHolder: {fileID: 37764452}
+  staticTrapPrefab: {fileID: 0}
   walkSpeed: 5
   sprintSpeed: 8
   acceleration: 12
@@ -95690,6 +95694,10 @@ MonoBehaviour:
   minPitch: -80
   maxPitch: 80
   cameraSmoothTime: 0.05
+  overclockSpeed: 12
+  phaseKey: 102
+  phaseDuration: 0.75
+  trapKey: 103
 --- !u!143 &1152713068
 CharacterController:
   m_ObjectHideFlags: 0
@@ -96644,10 +96652,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &1156929243
 AudioSource:
   m_ObjectHideFlags: 0
@@ -96763,10 +96771,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1156934768
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97139,10 +97147,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1161966929
 GameObject:
   m_ObjectHideFlags: 0
@@ -98643,10 +98651,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1178701567 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
@@ -99953,10 +99961,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1201499567
 GameObject:
   m_ObjectHideFlags: 0
@@ -105649,10 +105657,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1271195508 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
@@ -112036,10 +112044,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &1368386577
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -112176,10 +112184,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1369963627
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -113417,10 +113425,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1384250178
 GameObject:
   m_ObjectHideFlags: 0
@@ -117877,10 +117885,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &1441065600
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -118017,10 +118025,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1441549878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -120308,10 +120316,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &1466010571
 AudioSource:
   m_ObjectHideFlags: 0
@@ -120427,10 +120435,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1466040934 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: d5d373237bc534ebc9e05434dbfb3216, type: 3}
@@ -126177,10 +126185,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1533105731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -128251,10 +128259,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &1563439767
 AudioSource:
   m_ObjectHideFlags: 0
@@ -128370,10 +128378,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1563849605
 GameObject:
   m_ObjectHideFlags: 0
@@ -130729,10 +130737,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1596072882
 GameObject:
   m_ObjectHideFlags: 0
@@ -136520,10 +136528,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1664382573
 GameObject:
   m_ObjectHideFlags: 0
@@ -138673,10 +138681,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1685873364 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: f865215938e0c45f7beabf3a5a301737, type: 3}
@@ -141708,10 +141716,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1717875329
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143792,10 +143800,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &1745736335
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -143932,10 +143940,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1745751346 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 6dc914dcb371345ccb072162240fe853, type: 3}
@@ -145272,10 +145280,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 1
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1756341563
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -149309,10 +149317,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1805491622 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 6193a12247a344d83bb1fd4c61315b63, type: 3}
@@ -150327,10 +150335,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1816735405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -151478,10 +151486,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1833108784
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -155816,10 +155824,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1897982311
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156182,10 +156190,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1902125610
 GameObject:
   m_ObjectHideFlags: 0
@@ -158370,10 +158378,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1929680468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159646,10 +159654,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1946372738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 314f2d30f467d413f80a2f0ea5ead23e, type: 3}
@@ -159919,10 +159927,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &1947071650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160571,10 +160579,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &1957454846 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: c5c58d447d41347b0b4d3e5a72f6e0a4, type: 3}
@@ -162130,10 +162138,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &1981501861
 GameObject:
   m_ObjectHideFlags: 0
@@ -164888,10 +164896,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &2020382784 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
@@ -167834,10 +167842,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!65 &2053732606
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -167974,10 +167982,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &2054301350
 GameObject:
   m_ObjectHideFlags: 0
@@ -168382,10 +168390,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!82 &2054427152
 AudioSource:
   m_ObjectHideFlags: 0
@@ -168501,10 +168509,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1 &2054591663
 GameObject:
   m_ObjectHideFlags: 0
@@ -171918,10 +171926,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &2093446517
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -172813,10 +172821,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &2099079331 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e02c7a6cd9cc543c698d4a099b5b616c, type: 3}
@@ -173654,10 +173662,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!1001 &2107888985
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176715,10 +176723,10 @@ MonoBehaviour:
   openSpeed: 6
   invertOpenDirection: 0
   startsOpen: 0
-  interactionLocked: 0
   openSound: {fileID: 8300000, guid: 10fb96dc81e35c446927c2605252dcd2, type: 3}
   closeSound: {fileID: 8300000, guid: b46c78b1402b970469dea4566dfcd6b9, type: 3}
   soundVolume: 0.8
+  isLocked: 0
 --- !u!4 &2141423750 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 3cb70c0a8bfe24ec8b17c084a18fb4bb, type: 3}
@@ -177101,6 +177109,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
