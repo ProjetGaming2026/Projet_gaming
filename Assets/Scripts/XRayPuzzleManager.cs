@@ -69,7 +69,9 @@ public class XRayPuzzleManager : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
         RefreshReferences();
-        AlignXRaysNearPatientTable();
+        // Keep the XRay transforms exactly as placed in the scene.
+        // The setup tool is responsible for editor-time placement;
+        // runtime must not move them when Play starts.
         EnsureXRayVisuals();
         EnsureAccentLight();
         BuildTimerUiIfNeeded();
@@ -106,43 +108,6 @@ public class XRayPuzzleManager : MonoBehaviour
         allXRays = FindObjectsByType<XRayItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
             .OrderBy(xray => xray.xrayID)
             .ToArray();
-    }
-
-    // Keep the XRay wall readable by aligning the existing quads relative to the
-    // patient files table that already sits inside the padded room.
-    private void AlignXRaysNearPatientTable()
-    {
-        RefreshReferences();
-        if (allXRays == null || allXRays.Length == 0)
-        {
-            return;
-        }
-
-        GameObject tableObject = GameObject.Find("PatientFilesTable");
-        if (tableObject == null)
-        {
-            return;
-        }
-
-        Vector3 gridOrigin = tableObject.transform.position + new Vector3(0.28f, 1.08f, -0.95f);
-        Vector3 horizontalStep = new Vector3(0.52f, 0f, 0f);
-        Vector3 verticalStep = new Vector3(0f, -0.62f, 0f);
-        Quaternion rotation = Quaternion.Euler(0f, 180f, 0f);
-
-        for (int i = 0; i < allXRays.Length; i++)
-        {
-            XRayItem xray = allXRays[i];
-            if (xray == null)
-            {
-                continue;
-            }
-
-            int row = i / 2;
-            int col = i % 2;
-            xray.transform.position = gridOrigin + horizontalStep * col + verticalStep * row;
-            xray.transform.rotation = rotation;
-            xray.transform.localScale = new Vector3(0.48f, 0.68f, 1f);
-        }
     }
 
     public bool HasAnyFolderBeenRead()
