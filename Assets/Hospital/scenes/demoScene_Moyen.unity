@@ -32080,6 +32080,7 @@ MonoBehaviour:
   interactionOrigin: {fileID: 1907421088}
   interactKey: 101
   interactDistance: 3
+  interactRadius: 0.16
 --- !u!143 &406199572
 CharacterController:
   m_ObjectHideFlags: 0

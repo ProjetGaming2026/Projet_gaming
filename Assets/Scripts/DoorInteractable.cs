@@ -131,6 +131,10 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     // Compatibility property for legacy callers that expect a property.
     public bool IsOpen => isOpen;
 
+    // Compatibility property for scripts that still query the previous
+    // interaction-lock state name.
+    public bool IsInteractionLocked => isLocked;
+
     // Compatibility helper for legacy systems that want to force the door open
     // through an explicit method call.
     public void OpenDoor()
