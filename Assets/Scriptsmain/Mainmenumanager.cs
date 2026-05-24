@@ -762,7 +762,7 @@ public class MainMenuManager : MonoBehaviour
             label.fontSizeMax = 40f;
             label.alignment = TextAlignmentOptions.MidlineLeft;
             label.overflowMode = TextOverflowModes.Overflow;
-            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.enableWordWrapping = false;
             label.margin = Vector4.zero;
             label.ForceMeshUpdate();
             return;

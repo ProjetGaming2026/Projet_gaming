@@ -217,7 +217,7 @@ public class InventorySystem : MonoBehaviour
         label.fontSize = fontSize;
         label.fontStyle = FontStyles.Bold;
         label.color = color;
-        label.textWrappingMode = TextWrappingModes.NoWrap;
+        label.enableWordWrapping = false;
         return label;
     }
 
