@@ -566,7 +566,7 @@ internal static class RoomKeyDoorHud
         text.fontSize = size;
         text.fontStyle = style;
         text.alignment = TextAlignmentOptions.MidlineLeft;
-        text.enableWordWrapping = false;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
         return text;
     }
 }

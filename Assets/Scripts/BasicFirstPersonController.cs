@@ -3,18 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class BasicFirstPersonController : MonoBehaviour
 {
-    public enum GlitchType
-    {
-        None,
-        Overclock,
-        Hidden,
-        PhaseCharge,
-        StaticTrap
-    }
-
     [Header("References")]
     [SerializeField] private Transform cameraHolder;
-    [SerializeField] private GameObject staticTrapPrefab;
 
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 5f;
@@ -31,26 +21,10 @@ public class BasicFirstPersonController : MonoBehaviour
     [Header("Smoothing")]
     [SerializeField] private float cameraSmoothTime = 0.05f;
 
-    [Header("Glitch Bonus")]
-    [SerializeField] private float overclockSpeed = 12f;
-    [SerializeField] private KeyCode phaseKey = KeyCode.F;
-    [SerializeField] private float phaseDuration = 0.75f;
-    [SerializeField] private KeyCode trapKey = KeyCode.G;
-
-    public bool IsOverclockActive => overclockTimer > 0f;
-    public bool IsHiddenActive => hiddenTimer > 0f;
-    public bool HasPhaseCharge => phaseCharges > 0;
-    public bool IsPhaseActive => phaseTimer > 0f;
-    public bool HasStaticTrap => staticTrapCharges > 0;
-    public float OverclockTimeRemaining => Mathf.Max(0f, overclockTimer);
-    public float HiddenTimeRemaining => Mathf.Max(0f, hiddenTimer);
-    public float PhaseTimeRemaining => Mathf.Max(0f, phaseTimer);
-    public int PhaseChargeCount => phaseCharges;
-    public int StaticTrapCount => staticTrapCharges;
     public Vector3 PlanarVelocity => new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z);
     public float CurrentPlanarSpeed => PlanarVelocity.magnitude;
     public bool IsSprinting { get; private set; }
-    public GlitchType LastReceivedGlitch { get; private set; } = GlitchType.None;
+    public bool IsControlLocked { get; private set; }
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -59,12 +33,6 @@ public class BasicFirstPersonController : MonoBehaviour
     private float pitch;
     private float currentPitch;
     private float pitchSmoothVelocity;
-    private float overclockTimer;
-    private float hiddenTimer;
-    private float phaseTimer;
-    private int phaseCharges;
-    private int staticTrapCharges;
-    private bool externalControlLocked;
 
     private void Awake()
     {
@@ -93,199 +61,48 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void Update()
     {
-        if (externalControlLocked ||
-            LevelSelectBootstrap.IsMenuOpen ||
-            KeypadUIManager.IsUiOpen ||
-            PatientUIManager.IsUiOpen ||
-            XRayUIManager.IsUiOpen)
+        if (IsControlLocked)
+        {
+            IsSprinting = false;
+            horizontalVelocity = Vector3.zero;
+            ApplyCursorState();
+            return;
+        }
+
+        if (LevelSelectBootstrap.IsMenuOpen || GameplayPauseOptionsMenu.IsOpen)
         {
             IsSprinting = false;
             ApplyCursorState();
             return;
         }
 
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            IsSprinting = false;
+            return;
+        }
+
         ApplyCursorState();
-        UpdateTimers();
-        HandleGlitchInput();
         HandleLook();
         HandleMovement();
     }
 
-    public void GiveRandomGlitch(float overclockDuration, float hiddenDuration)
-    {
-        int randomIndex = Random.Range(0, 4);
-
-        switch (randomIndex)
-        {
-            case 0:
-                ActivateOverclock(overclockDuration);
-                LastReceivedGlitch = GlitchType.Overclock;
-                Debug.Log("Glitch obtenu : Overclock");
-                break;
-
-            case 1:
-                ActivateHidden(hiddenDuration);
-                LastReceivedGlitch = GlitchType.Hidden;
-                Debug.Log("Glitch obtenu : Hidden");
-                break;
-
-            case 2:
-                AddPhaseCharge(1);
-                LastReceivedGlitch = GlitchType.PhaseCharge;
-                Debug.Log("Glitch obtenu : PhaseCharge");
-                break;
-
-            case 3:
-                AddStaticTrap(1);
-                LastReceivedGlitch = GlitchType.StaticTrap;
-                Debug.Log("Glitch obtenu : StaticTrap");
-                break;
-        }
-    }
-
-    public void ActivateOverclock(float duration)
-    {
-        overclockTimer = Mathf.Max(overclockTimer, duration);
-        Debug.Log("Overclock actif pendant " + duration + " secondes.");
-    }
-
-    public void ActivateHidden(float duration)
-    {
-        hiddenTimer = Mathf.Max(hiddenTimer, duration);
-        Debug.Log("Hidden actif pendant " + duration + " secondes.");
-    }
-
-    public void AddPhaseCharge(int amount)
-    {
-        phaseCharges += amount;
-        Debug.Log("Charge de Phase recue. Total : " + phaseCharges);
-    }
-
-    public void AddStaticTrap(int amount)
-    {
-        staticTrapCharges += amount;
-        Debug.Log("Piege statique recu. Total : " + staticTrapCharges);
-    }
-
-    // Legacy compatibility entry point used by balance bootstrap code merged
-    // from main to tune movement values per difficulty.
     public void ApplyMovementTuning(float newWalkSpeed, float newSprintSpeed)
     {
         walkSpeed = Mathf.Max(0.1f, newWalkSpeed);
         sprintSpeed = Mathf.Max(walkSpeed, newSprintSpeed);
     }
 
-    // Backward-compatible hook used by older gameplay scripts to temporarily
-    // freeze the player's movement/look during scripted events.
-    public void SetExternalControlLock(bool locked)
+    public void SetExternalControlLock(bool isLocked)
     {
-        externalControlLocked = locked;
+        IsControlLocked = isLocked;
+        IsSprinting = false;
 
-        if (locked)
+        if (isLocked)
         {
             horizontalVelocity = Vector3.zero;
             verticalVelocity = 0f;
-            IsSprinting = false;
         }
-
-        ApplyCursorState();
-    }
-
-    public bool ConsumePhaseCharge()
-    {
-        if (phaseCharges <= 0)
-        {
-            return false;
-        }
-
-        phaseCharges--;
-        return true;
-    }
-
-    public bool ConsumeStaticTrap()
-    {
-        if (staticTrapCharges <= 0)
-        {
-            return false;
-        }
-
-        staticTrapCharges--;
-        return true;
-    }
-
-    private void UpdateTimers()
-    {
-        if (overclockTimer > 0f)
-        {
-            overclockTimer -= Time.deltaTime;
-        }
-
-        if (hiddenTimer > 0f)
-        {
-            hiddenTimer -= Time.deltaTime;
-        }
-
-        if (phaseTimer > 0f)
-        {
-            phaseTimer -= Time.deltaTime;
-
-            if (phaseTimer <= 0f)
-            {
-                EndPhaseMode();
-            }
-        }
-    }
-
-    private void HandleGlitchInput()
-    {
-        if (Input.GetKeyDown(phaseKey) && HasPhaseCharge && !IsPhaseActive)
-        {
-            StartPhaseMode();
-        }
-
-        if (Input.GetKeyDown(trapKey) && HasStaticTrap)
-        {
-            PlaceStaticTrap();
-        }
-    }
-
-    private void StartPhaseMode()
-    {
-        if (!ConsumePhaseCharge())
-        {
-            return;
-        }
-
-        phaseTimer = phaseDuration;
-        controller.detectCollisions = false;
-        Debug.Log("PhaseCharge utilise. Traversee temporaire active.");
-    }
-
-    private void EndPhaseMode()
-    {
-        phaseTimer = 0f;
-        controller.detectCollisions = true;
-        Debug.Log("PhaseCharge termine.");
-    }
-
-    private void PlaceStaticTrap()
-    {
-        if (!ConsumeStaticTrap())
-        {
-            return;
-        }
-
-        if (staticTrapPrefab == null)
-        {
-            Debug.LogWarning("Aucun prefab de piege statique assigne.");
-            return;
-        }
-
-        Vector3 spawnPosition = transform.position + transform.forward * 1.2f;
-        spawnPosition.y = 0.15f;
-
-        Instantiate(staticTrapPrefab, spawnPosition, Quaternion.identity);
-        Debug.Log("Piege statique pose.");
     }
 
     private void HandleLook()
@@ -310,7 +127,7 @@ public class BasicFirstPersonController : MonoBehaviour
 
     private void HandleMovement()
     {
-        bool isGrounded = controller.isGrounded || IsPhaseActive;
+        bool isGrounded = controller.isGrounded;
 
         if (isGrounded && verticalVelocity < 0f)
         {
@@ -320,13 +137,10 @@ public class BasicFirstPersonController : MonoBehaviour
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputZ = Input.GetAxisRaw("Vertical");
         Vector3 inputDirection = new Vector3(inputX, 0f, inputZ).normalized;
-        bool wantsSprint = inputDirection.sqrMagnitude > 0.001f && Input.GetKey(KeyCode.LeftShift) && !IsOverclockActive;
+        bool wantsSprint = inputDirection.sqrMagnitude > 0.001f && Input.GetKey(KeyCode.LeftShift);
         IsSprinting = wantsSprint;
 
-        float targetSpeed = IsOverclockActive
-            ? overclockSpeed
-            : (wantsSprint ? sprintSpeed : walkSpeed);
-
+        float targetSpeed = wantsSprint ? sprintSpeed : walkSpeed;
         Vector3 targetVelocity = transform.TransformDirection(inputDirection) * targetSpeed;
 
         horizontalVelocity = Vector3.Lerp(horizontalVelocity, targetVelocity, acceleration * Time.deltaTime);
@@ -347,16 +161,18 @@ public class BasicFirstPersonController : MonoBehaviour
     private void OnDisable()
     {
         IsSprinting = false;
-        controller.detectCollisions = true;
     }
 
     private void ApplyCursorState()
     {
-        if (externalControlLocked ||
-            LevelSelectBootstrap.IsMenuOpen ||
-            KeypadUIManager.IsUiOpen ||
-            PatientUIManager.IsUiOpen ||
-            XRayUIManager.IsUiOpen)
+        if (IsControlLocked)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            return;
+        }
+
+        if (LevelSelectBootstrap.IsMenuOpen || GameplayPauseOptionsMenu.IsOpen)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

@@ -1820,9 +1820,7 @@ public class BasicMonsterController : MonoBehaviour
                 continue;
             }
 
-            // In edit mode, use sharedMaterials to avoid Unity 6000 instantiating
-            // hidden scene materials through renderer.material / renderer.materials.
-            Material[] materials = renderer.sharedMaterials;
+            Material[] materials = renderer.materials;
             for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
             {
                 Material material = materials[materialIndex];

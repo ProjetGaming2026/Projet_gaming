@@ -272,7 +272,7 @@ public class PadlockController : MonoBehaviour, IInteractable
         text.alignment = TextAlignmentOptions.Center;
         text.fontSize = fontSize;
         text.fontStyle = FontStyles.Bold;
-        text.enableWordWrapping = false;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
         text.color = idleTextColor;
         text.alpha = 1f;
         text.enableCulling = false;

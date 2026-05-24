@@ -1,11 +1,8 @@
 {
   "dependencies": {
-    "com.unity.2d.sprite": "1.0.0",
-    "com.unity.2d.tilemap": "1.0.0",
-    "com.unity.ide.rider": "3.0.40",
+    "com.unity.cloud.gltfast": "6.18.0",
     "com.unity.multiplayer.center": "1.0.1",
-    "com.unity.postprocessing": "3.5.4",
-    "com.unity.test-framework": "1.6.0",
+    "com.unity.postprocessing": "3.4.0",
     "com.unity.ugui": "2.0.0",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.adaptiveperformance": "1.0.0",

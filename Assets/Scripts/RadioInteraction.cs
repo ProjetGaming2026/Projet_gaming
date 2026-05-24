@@ -180,7 +180,7 @@ public class RadioInteraction : MonoBehaviour, IInteractable
         text.fontStyle = FontStyles.Bold;
         text.color = new Color(0.95f, 0.92f, 0.84f, 1f);
         text.alignment = TextAlignmentOptions.Center;
-        text.enableWordWrapping = false;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
 
         RectTransform rect = text.rectTransform;
         rect.anchorMin = new Vector2(0.5f, 0f);

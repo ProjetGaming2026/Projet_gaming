@@ -1048,7 +1048,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         label.fontSize = fontSize;
         label.fontStyle = FontStyles.Bold;
         label.color = color;
-        label.enableWordWrapping = false;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
         return label;
     }
 
