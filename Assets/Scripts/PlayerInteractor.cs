@@ -1,5 +1,5 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 public class PlayerInteractor : MonoBehaviour
 {
@@ -8,19 +8,49 @@ public class PlayerInteractor : MonoBehaviour
 
     [Header("Interaction")]
     [SerializeField] private KeyCode interactKey = KeyCode.E;
-    [SerializeField] private float interactDistance = 2.5f;
+    [SerializeField] private float interactDistance = 3f;
+    [SerializeField] private float interactRadius = 0.16f;
+
+    public bool HasInteractableTarget => currentInteractable != null;
+    public string CurrentPromptText => currentPromptText;
+
+    private IInteractable currentInteractable;
+    private Collider currentInteractableCollider;
+    private string currentPromptText;
 
     private void Awake()
     {
-        if (interactionOrigin == null && Camera.main != null)
-        {
-            interactionOrigin = Camera.main.transform;
-        }
+        RefreshInteractionOrigin();
     }
 
     private void Update()
     {
-        if (KeypadUIManager.IsUiOpen || PatientUIManager.IsUiOpen || XRayUIManager.IsUiOpen)
+        if (CipherTerminal.IsAnyTerminalOpen)
+        {
+            currentInteractable = null;
+            currentInteractableCollider = null;
+            currentPromptText = string.Empty;
+            return;
+        }
+
+        UpdateCurrentInteractable();
+
+        if (currentInteractable is ExitDoorCodeLock)
+        {
+            if (Input.GetKeyDown(interactKey))
+            {
+                TryInteract();
+            }
+
+            return;
+        }
+
+        if (currentInteractable is PadlockButton padlockButton && padlockButton.TryHandlePromptKeyDown())
+        {
+            return;
+        }
+
+        if (currentInteractable is PadlockController padlockController && padlockController.TryHandleKeyboardInput())
         {
             return;
         }
@@ -33,69 +63,238 @@ public class PlayerInteractor : MonoBehaviour
 
     private void TryInteract()
     {
+        UpdateCurrentInteractable();
+        if (currentInteractable == null)
+        {
+            return;
+        }
+
+        currentInteractable.Interact();
+    }
+
+    private void RefreshInteractionOrigin()
+    {
+        if (interactionOrigin != null)
+        {
+            return;
+        }
+
+        if (Camera.main != null)
+        {
+            interactionOrigin = Camera.main.transform;
+            return;
+        }
+
+        Camera fallbackCamera = GetComponentInChildren<Camera>(true);
+        if (fallbackCamera != null)
+        {
+            interactionOrigin = fallbackCamera.transform;
+        }
+    }
+
+    private void UpdateCurrentInteractable()
+    {
+        RefreshInteractionOrigin();
+        currentInteractable = null;
+        currentInteractableCollider = null;
+        currentPromptText = string.Empty;
+
         if (interactionOrigin == null)
         {
-            Debug.LogWarning("[PlayerInteractor] Missing interaction origin.");
             return;
         }
 
         Ray ray = new Ray(interactionOrigin.position, interactionOrigin.forward);
-        RaycastHit[] hits = Physics.SphereCastAll(ray, 0.18f, interactDistance);
-        Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+        RaycastHit[] hits = Physics.SphereCastAll(
+            ray,
+            interactRadius,
+            interactDistance,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Collide
+        );
 
-        foreach (RaycastHit hit in hits)
+        if (hits == null || hits.Length == 0)
         {
-            PatientFolder patientFolder = hit.collider.GetComponentInParent<PatientFolder>();
-            if (patientFolder != null)
-            {
-                Debug.Log($"[PlayerInteractor] Interacting with hit patient folder {hit.collider.name}.");
-                patientFolder.Interact();
-                return;
-            }
-
-            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
-            if (interactable != null)
-            {
-                Debug.Log($"[PlayerInteractor] Interacting with {hit.collider.name}.");
-                interactable.Interact();
-                return;
-            }
+            return;
         }
 
-        Vector3 overlapCenter = interactionOrigin.position + interactionOrigin.forward * (interactDistance * 0.65f);
-        Collider[] nearbyColliders = Physics.OverlapSphere(overlapCenter, 0.85f);
-        Array.Sort(nearbyColliders, (left, right) =>
-        {
-            float leftDot = Vector3.Dot(interactionOrigin.forward, (left.bounds.center - interactionOrigin.position).normalized);
-            float rightDot = Vector3.Dot(interactionOrigin.forward, (right.bounds.center - interactionOrigin.position).normalized);
-            return rightDot.CompareTo(leftDot);
-        });
+        Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
 
-        foreach (Collider nearbyCollider in nearbyColliders)
+        for (int i = 0; i < hits.Length; i++)
         {
-            Vector3 toCollider = (nearbyCollider.bounds.center - interactionOrigin.position).normalized;
-            if (Vector3.Dot(interactionOrigin.forward, toCollider) < 0.72f)
+            IInteractable interactable = ResolveInteractable(hits[i].collider);
+            if (interactable == null || !IsInteractableUsable(interactable))
             {
                 continue;
             }
 
-            PatientFolder patientFolder = nearbyCollider.GetComponentInParent<PatientFolder>();
-            if (patientFolder != null)
-            {
-                Debug.Log($"[PlayerInteractor] Interacting with nearby patient folder collider {nearbyCollider.name}.");
-                patientFolder.Interact();
-                return;
-            }
+            currentInteractable = interactable;
+            currentInteractableCollider = hits[i].collider;
+            currentPromptText = BuildPromptText(interactable, currentInteractableCollider);
+            return;
+        }
+    }
 
-            IInteractable interactable = nearbyCollider.GetComponentInParent<IInteractable>();
-            if (interactable != null)
-            {
-                Debug.Log($"[PlayerInteractor] Interacting with nearby object {nearbyCollider.name}.");
-                interactable.Interact();
-                return;
-            }
+    private static bool IsInteractableUsable(IInteractable interactable)
+    {
+        if (interactable is Behaviour behaviour)
+        {
+            return behaviour.isActiveAndEnabled;
         }
 
-        Debug.Log("[PlayerInteractor] No interactable found in range.");
+        return true;
+    }
+
+    private static string BuildPromptText(IInteractable interactable, Collider sourceCollider)
+    {
+        if (interactable is ExitDoorCodeLock exitDoorCodeLock)
+        {
+            return exitDoorCodeLock.GetInteractPrompt();
+        }
+
+        if (interactable is KeyDoor keyDoor)
+        {
+            return keyDoor.GetInteractPrompt();
+        }
+
+        if (interactable is DoorInteractable door)
+        {
+            if (door.IsInteractionLocked)
+            {
+                return GameLocalization.Text("Press E to enter the exit code", "Appuie sur E pour entrer le code de sortie", "Pulsa E para introducir el codigo de salida");
+            }
+
+            return door.IsOpen
+                ? GameLocalization.Text("Press E to close", "Appuie sur E pour fermer", "Pulsa E para cerrar")
+                : GameLocalization.Text("Press E to open", "Appuie sur E pour ouvrir", "Pulsa E para abrir");
+        }
+
+        if (interactable is TaskTerminal)
+        {
+            return GameLocalization.Text("Press E to use the terminal", "Appuie sur E pour utiliser le terminal", "Pulsa E para usar el terminal");
+        }
+
+        if (interactable is PadlockButton padlockButton)
+        {
+            return padlockButton.GetInteractPrompt();
+        }
+
+        if (interactable is PadlockController padlockController)
+        {
+            return padlockController.GetInteractPrompt();
+        }
+
+        if (interactable is PadlockPuzzle)
+        {
+            return GameLocalization.Text("Press E to interact with the padlock", "Appuie sur E pour interagir avec le cadenas", "Pulsa E para interactuar con el candado");
+        }
+
+        if (interactable is RadioInteraction)
+        {
+            return GameLocalization.Text("Press E to activate the radio", "Appuie sur E pour activer la radio", "Pulsa E para activar la radio");
+        }
+
+        if (interactable is KeyPickup keyPickup)
+        {
+            return keyPickup.GetInteractPrompt();
+        }
+
+        string targetName = sourceCollider != null ? sourceCollider.name : "objet";
+        return GameLocalization.Text(
+            "Press E to interact with " + targetName,
+            "Appuie sur E pour interagir avec " + targetName,
+            "Pulsa E para interactuar con " + targetName);
+    }
+
+    private static IInteractable ResolveInteractable(Collider hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return null;
+        }
+
+        KeyDoor keyDoor = hitCollider.GetComponent<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        keyDoor = hitCollider.GetComponentInParent<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        keyDoor = hitCollider.GetComponentInChildren<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        ExitDoorCodeLock exitDoorLock = hitCollider.GetComponent<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        exitDoorLock = hitCollider.GetComponentInParent<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        exitDoorLock = hitCollider.GetComponentInChildren<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        DoorInteractable linkedDoor = hitCollider.GetComponent<DoorInteractable>();
+        if (linkedDoor == null)
+        {
+            linkedDoor = hitCollider.GetComponentInParent<DoorInteractable>();
+        }
+
+        if (linkedDoor == null)
+        {
+            linkedDoor = hitCollider.GetComponentInChildren<DoorInteractable>();
+        }
+
+        if (ExitDoorCodeLock.TryGetOrCreateDefaultLockForDoor(linkedDoor, out exitDoorLock))
+        {
+            return exitDoorLock;
+        }
+
+        PadlockPuzzle padlockPuzzle = hitCollider.GetComponent<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        padlockPuzzle = hitCollider.GetComponentInParent<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        padlockPuzzle = hitCollider.GetComponentInChildren<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        IInteractable interactable = hitCollider.GetComponent<IInteractable>();
+        if (interactable != null)
+        {
+            return interactable;
+        }
+
+        interactable = hitCollider.GetComponentInParent<IInteractable>();
+        if (interactable != null)
+        {
+            return interactable;
+        }
+
+        return hitCollider.GetComponentInChildren<IInteractable>();
     }
 }
