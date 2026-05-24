@@ -1626,7 +1626,7 @@ public class BasicMonsterController : MonoBehaviour
                 continue;
             }
 
-            Material[] materials = renderer.materials;
+            Material[] materials = renderer.sharedMaterials;
             for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
             {
                 Material material = materials[materialIndex];
