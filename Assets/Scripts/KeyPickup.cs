@@ -48,7 +48,10 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
     public string GetInteractPrompt()
     {
-        return "Appuie sur E pour ramasser la cle de chambre";
+        return GameLocalization.Text(
+            "Press E to pick up the room key",
+            "Appuie sur E pour ramasser la cle de chambre",
+            "Pulsa E para recoger la llave de habitacion");
     }
 
     public void ShowPrompt()

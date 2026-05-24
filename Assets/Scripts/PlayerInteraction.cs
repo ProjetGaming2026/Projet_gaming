@@ -158,7 +158,7 @@ public class PlayerInteraction : MonoBehaviour
             linkedDoor = hitCollider.GetComponentInChildren<DoorInteractable>();
         }
 
-        if (ExitDoorCodeLock.TryGetLockForDoor(linkedDoor, out exitDoorLock))
+        if (ExitDoorCodeLock.TryGetOrCreateDefaultLockForDoor(linkedDoor, out exitDoorLock))
         {
             return exitDoorLock;
         }

@@ -36,6 +36,12 @@ public class CipherPuzzle : MonoBehaviour
 
     private void Awake()
     {
+        if (!IsEasyScene())
+        {
+            enabled = false;
+            return;
+        }
+
         if (terminal == null)
         {
             terminal = FindFirstObjectByType<CipherTerminal>();
