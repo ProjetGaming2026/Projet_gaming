@@ -353,7 +353,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
         targetSequence = BuildRecipeSequence(recipe);
 
         if (bookRenderer != null && recipe.bookMaterial != null)
-            bookRenderer.material = recipe.bookMaterial;
+            SetRendererMaterial(bookRenderer, recipe.bookMaterial);
 
         ApplyBookColor(recipe.resultColor);
         ShowRecipePoints(targetSequence);
@@ -374,7 +374,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
             activeRecipe = CreateRuntimeRecipe("Serum A", targetRed, targetBlue, targetGreen, targetWhite, targetBlack, bookPinkMaterial, new Color(0.7f, 0.55f, 0.75f), FlaskColor.Red, FlaskColor.White, FlaskColor.Green, FlaskColor.Blue);
 
             if (bookRenderer != null && bookPinkMaterial != null)
-                bookRenderer.material = bookPinkMaterial;
+                SetRendererMaterial(bookRenderer, bookPinkMaterial);
 
             ApplyBookColor(activeRecipe.resultColor);
             targetSequence = BuildRecipeSequence(activeRecipe);
@@ -391,7 +391,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
             activeRecipe = CreateRuntimeRecipe("Serum B", targetRed, targetBlue, targetGreen, targetWhite, targetBlack, bookVioletMaterial, new Color(0.45f, 0.55f, 0.35f), FlaskColor.Black, FlaskColor.Green, FlaskColor.White, FlaskColor.Red);
 
             if (bookRenderer != null && bookVioletMaterial != null)
-                bookRenderer.material = bookVioletMaterial;
+                SetRendererMaterial(bookRenderer, bookVioletMaterial);
 
             ApplyBookColor(activeRecipe.resultColor);
             targetSequence = BuildRecipeSequence(activeRecipe);
@@ -435,7 +435,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
             return;
         }
 
-        bookRenderer.material.color = color;
+        SetRendererColor(bookRenderer, color);
     }
 
     private FlaskColor[] BuildRecipeSequence(ChemistryRecipe recipe)
@@ -529,6 +529,44 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
         }
     }
 
+    private void SetRendererMaterial(Renderer targetRenderer, Material material)
+    {
+        if (targetRenderer == null || material == null)
+        {
+            return;
+        }
+
+        if (Application.isPlaying)
+        {
+            targetRenderer.material = material;
+        }
+        else
+        {
+            targetRenderer.sharedMaterial = material;
+        }
+    }
+
+    private void SetRendererColor(Renderer targetRenderer, Color color)
+    {
+        Material material = GetEditableMaterial(targetRenderer);
+        if (material != null)
+        {
+            material.color = color;
+        }
+    }
+
+    private Material GetEditableMaterial(Renderer targetRenderer)
+    {
+        if (targetRenderer == null)
+        {
+            return null;
+        }
+
+        return Application.isPlaying
+            ? targetRenderer.material
+            : targetRenderer.sharedMaterial;
+    }
+
     private void ShowPoint(GameObject point, Material material, Color fallbackColor)
     {
         if (point == null) return;
@@ -543,9 +581,9 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
             return;
 
         if (material != null)
-            pointRenderer.material = material;
+            SetRendererMaterial(pointRenderer, material);
         else
-            pointRenderer.material.color = fallbackColor;
+            SetRendererColor(pointRenderer, fallbackColor);
     }
 
     private void HidePoint(GameObject point)
@@ -604,7 +642,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
         enteredSequence.Clear();
 
         if (testTubeRenderer != null)
-            testTubeRenderer.material.color = Color.white;
+            SetRendererColor(testTubeRenderer, Color.white);
     }
 
     public void Interact()
@@ -828,32 +866,32 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
 
         if (totalDoses == 0)
         {
-            testTubeRenderer.material.color = Color.white;
+            SetRendererColor(testTubeRenderer, Color.white);
             return;
         }
 
         ChemistryRecipe matchingRecipe = FindMatchingRecipe(redDose, blueDose, greenDose, whiteDose, blackDose);
         if (matchingRecipe != null)
         {
-            testTubeRenderer.material.color = matchingRecipe.resultColor;
+            SetRendererColor(testTubeRenderer, matchingRecipe.resultColor);
             return;
         }
 
         if (activeRecipe != null && MatchesRecipe(activeRecipe, redDose, blueDose, greenDose, whiteDose, blackDose))
         {
-            testTubeRenderer.material.color = activeRecipe.resultColor;
+            SetRendererColor(testTubeRenderer, activeRecipe.resultColor);
             return;
         }
 
         if (redDose == 1 && whiteDose == 1 && blueDose == 0 && greenDose == 0 && blackDose == 0)
         {
-            testTubeRenderer.material.color = new Color(1f, 0.35f, 0.7f);
+            SetRendererColor(testTubeRenderer, new Color(1f, 0.35f, 0.7f));
             return;
         }
 
         if (redDose == 2 && blueDose == 1 && blackDose == 1 && greenDose == 0 && whiteDose == 0)
         {
-            testTubeRenderer.material.color = new Color(0.35f, 0f, 0.55f);
+            SetRendererColor(testTubeRenderer, new Color(0.35f, 0f, 0.55f));
             return;
         }
 
@@ -865,7 +903,7 @@ public class ChemistryPuzzleManager : MonoBehaviour, IInteractable
         mixedColor += Color.black * blackDose;
         mixedColor /= totalDoses;
 
-        testTubeRenderer.material.color = mixedColor;
+        SetRendererColor(testTubeRenderer, mixedColor);
     }
 
     private ChemistryRecipe FindMatchingRecipe(int red, int blue, int green, int white, int black)
