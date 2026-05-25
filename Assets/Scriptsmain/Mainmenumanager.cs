@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -51,6 +52,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
+        PrepareMenuInput();
         ResolveSceneReferences();
         WireMenuButtons();
         SyncMenuButtonSounds();
@@ -151,6 +153,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void ShowMainPanel()
     {
+        PrepareMenuInput();
         showLevelSelect = false;
         hoveredLevelButton = null;
         SetActiveSafe(mainPanel, true);
@@ -162,6 +165,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void OpenLevelSelect()
     {
+        PrepareMenuInput();
         showLevelSelect = true;
         hoveredLevelButton = null;
         PrepareLevelSelectSounds();
@@ -520,6 +524,29 @@ public class MainMenuManager : MonoBehaviour
         if (titleText2 == null)
         {
             titleText2 = FindGameObjectInScene("Text (TMP)");
+        }
+    }
+
+    private void PrepareMenuInput()
+    {
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (EventSystem.current == null)
+        {
+            GameObject eventSystemObject = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            eventSystemObject.transform.SetAsLastSibling();
+        }
+
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas != null && canvas.GetComponent<GraphicRaycaster>() == null)
+            {
+                canvas.gameObject.AddComponent<GraphicRaycaster>();
+            }
         }
     }
 
@@ -939,7 +966,13 @@ public class MainMenuManager : MonoBehaviour
         TMP_Text[] labels = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < labels.Length; i++)
         {
-            string current = labels[i].text.Trim();
+            TMP_Text label = labels[i];
+            if (label == null)
+            {
+                continue;
+            }
+
+            string current = (label.text ?? string.Empty).Trim();
             bool isOptionsTitle = originalValue == "Options Menu" &&
                 (current == "Options Menu" ||
                  current == "Parametres" ||
@@ -953,7 +986,7 @@ public class MainMenuManager : MonoBehaviour
 
             if (isOptionsTitle || isGameTitle)
             {
-                ApplyText(labels[i], text, arabic);
+                ApplyText(label, text, arabic);
             }
         }
     }

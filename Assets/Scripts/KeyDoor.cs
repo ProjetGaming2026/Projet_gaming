@@ -280,6 +280,11 @@ public static class LowerFloorRoomDoorBootstrap
             return;
         }
 
+        if (!string.Equals(scene.name, TargetSceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
         Transform targetDoorRoot = FindTargetDoorRoot(scene);
         if (targetDoorRoot == null)
         {
@@ -308,11 +313,6 @@ public static class LowerFloorRoomDoorBootstrap
 
     private static Transform FindTargetDoorRoot(Scene scene)
     {
-        if (!string.Equals(scene.name, TargetSceneName, StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-
         GameObject[] roots = scene.GetRootGameObjects();
         for (int i = 0; i < roots.Length; i++)
         {
