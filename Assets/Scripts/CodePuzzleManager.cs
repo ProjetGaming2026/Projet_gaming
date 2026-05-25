@@ -522,7 +522,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         {
             if (targetDoor != null)
             {
-                targetDoor.ForceClosed();
+                targetDoor.CloseDoor();
             }
         }
 
@@ -555,10 +555,10 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
                 continue;
             }
 
-            targetDoor.SetLocked(locked);
+            targetDoor.SetInteractionLocked(locked);
             if (locked)
             {
-                targetDoor.ForceClosed();
+                targetDoor.CloseDoor();
             }
         }
     }

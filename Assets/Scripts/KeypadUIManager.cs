@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Assets.Plugins.ButtonSoundsEditor;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -480,14 +480,14 @@ public class KeypadUIManager : MonoBehaviour
             return;
         }
 
-        ButtonClickSound clickSound = buttonObject.GetComponent<ButtonClickSound>();
-        if (clickSound == null)
+        //ButtonClickSound clickSound = buttonObject.GetComponent<ButtonClickSound>();
+        //if (clickSound == null)
         {
-            clickSound = buttonObject.AddComponent<ButtonClickSound>();
+            //clickSound = buttonObject.AddComponent<ButtonClickSound>();
         }
 
-        clickSound.AudioSource = buttonAudioSource;
-        clickSound.ClickSound = keypadClickClip != null ? keypadClickClip : GetFallbackClickClip();
+        //clickSound.AudioSource = buttonAudioSource;
+        //clickSound.ClickSound = keypadClickClip != null ? keypadClickClip : GetFallbackClickClip();
     }
 
     private void PlayKeypadClickSound()
