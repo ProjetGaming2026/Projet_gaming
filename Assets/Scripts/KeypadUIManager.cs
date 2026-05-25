@@ -383,7 +383,7 @@ public class KeypadUIManager : MonoBehaviour
         text.fontSize = fontSize;
         text.color = Color.white;
         text.alignment = alignment;
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.overflowMode = TextOverflowModes.Ellipsis;
         return text;
     }
@@ -420,7 +420,7 @@ public class KeypadUIManager : MonoBehaviour
         text.fontSize = fontSize;
         text.color = Color.white;
         text.alignment = alignment;
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.overflowMode = TextOverflowModes.Ellipsis;
         return text;
     }

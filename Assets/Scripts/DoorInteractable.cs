@@ -97,6 +97,24 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         PlaySound(closeSound);
     }
 
+    public void ForceClosed()
+    {
+        InitializeIfNeeded();
+
+        targetLocalRotation = closedLocalRotation;
+        isOpen = false;
+
+        if (hinge != null)
+        {
+            hinge.localRotation = closedLocalRotation;
+        }
+    }
+
+    public void SetLocked(bool locked)
+    {
+        SetInteractionLocked(locked);
+    }
+
     public void SetInteractionLocked(bool locked)
     {
         InitializeIfNeeded();
