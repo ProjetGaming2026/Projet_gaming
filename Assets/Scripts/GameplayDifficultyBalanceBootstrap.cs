@@ -146,7 +146,7 @@ public static class GameplayDifficultyBalanceBootstrap
                     monsterSearchRadius: 7f,
                     monsterRouteRevisitDelay: 30f,
                     requiredTasks: 9,
-                    levelDuration: 1800f
+                    levelDuration: 2400f
                 );
                 return true;
 

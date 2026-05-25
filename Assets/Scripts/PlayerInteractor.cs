@@ -27,15 +27,36 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (PhonePuzzleUI.IsReadableOverlayOpen)
+        {
+            PhonePuzzleUI.Instance?.TryCloseReadableTextFromKeyboard();
+            currentInteractable = null;
+            currentInteractableCollider = null;
+            currentPromptText = string.Empty;
+            SetPromptVisible(string.Empty);
+            return;
+        }
+
+        if (NotebookPickup.IsAnyNotebookOpen || TVCodePuzzleController.IsAnyCodeUiOpen || PatientDossier.BlocksInteraction || PhoneAnswerInput.IsAnyAnswerInputOpen)
+        {
+            currentInteractable = null;
+            currentInteractableCollider = null;
+            currentPromptText = string.Empty;
+            SetPromptVisible(string.Empty);
+            return;
+        }
+
         if (CipherTerminal.IsAnyTerminalOpen)
         {
             currentInteractable = null;
             currentInteractableCollider = null;
             currentPromptText = string.Empty;
+            SetPromptVisible(string.Empty);
             return;
         }
 
         UpdateCurrentInteractable();
+        SetPromptVisible(currentPromptText);
 
         if (currentInteractable is ExitDoorCodeLock)
         {
@@ -120,7 +141,14 @@ public class PlayerInteractor : MonoBehaviour
             return;
         }
 
-        Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+        if (TrySelectReadableWallList(ray, hits))
+        {
+            return;
+        }
+
+        IInteractable bestInteractable = null;
+        Collider bestCollider = null;
+        float bestScore = float.PositiveInfinity;
 
         for (int i = 0; i < hits.Length; i++)
         {
@@ -136,21 +164,121 @@ public class PlayerInteractor : MonoBehaviour
                 continue;
             }
 
-            currentInteractable = interactable;
-            currentInteractableCollider = hitCollider;
-            currentPromptText = BuildPromptText(interactable, currentInteractableCollider);
+            float score = CalculateInteractionScore(ray, hits[i], interactable);
+            if (score >= bestScore)
+            {
+                continue;
+            }
+
+            bestScore = score;
+            bestInteractable = interactable;
+            bestCollider = hits[i].collider;
+        }
+
+        if (bestInteractable == null)
+        {
             return;
         }
+
+        currentInteractable = bestInteractable;
+        currentInteractableCollider = bestCollider;
+        currentPromptText = BuildPromptText(bestInteractable, currentInteractableCollider);
+    }
+
+    private bool TrySelectReadableWallList(Ray ray, RaycastHit[] hits)
+    {
+        ReadableWallList bestList = null;
+        Collider bestCollider = null;
+        float bestScore = float.PositiveInfinity;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            ReadableWallList list = ResolveReadableWallList(hits[i].collider);
+            if (list == null || !IsInteractableUsable(list))
+            {
+                continue;
+            }
+
+            Vector3 targetPoint = hits[i].collider.bounds.center;
+            float distanceFromViewCenter = Vector3.Cross(ray.direction, targetPoint - ray.origin).magnitude;
+            float score = distanceFromViewCenter * 10f + hits[i].distance * 0.01f;
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestList = list;
+                bestCollider = hits[i].collider;
+            }
+        }
+
+        if (bestList == null)
+        {
+            return false;
+        }
+
+        currentInteractable = bestList;
+        currentInteractableCollider = bestCollider;
+        currentPromptText = BuildPromptText(bestList, bestCollider);
+        return true;
+    }
+
+    private static ReadableWallList ResolveReadableWallList(Collider hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return null;
+        }
+
+        ReadableWallList list = hitCollider.GetComponent<ReadableWallList>();
+        if (list != null)
+        {
+            return list;
+        }
+
+        return hitCollider.GetComponentInParent<ReadableWallList>();
     }
 
     private static bool IsInteractableUsable(IInteractable interactable)
     {
+        if (interactable is Interactable baseInteractable && !baseInteractable.CanInteract)
+        {
+            return false;
+        }
+
         if (interactable is Behaviour behaviour)
         {
             return behaviour.isActiveAndEnabled;
         }
 
         return true;
+    }
+
+    private static float CalculateInteractionScore(Ray ray, RaycastHit hit, IInteractable interactable)
+    {
+        if (interactable is SurgicalInstrumentInteractable instrument)
+        {
+            if (!instrument.CanInspectFrom(ray.origin))
+            {
+                return float.PositiveInfinity;
+            }
+
+            return instrument.GetInteractionScore(ray, hit);
+        }
+
+        if (hit.collider == null)
+        {
+            return hit.distance;
+        }
+
+        Bounds bounds = hit.collider.bounds;
+        Vector3 closestPointOnRay = ClosestPointOnRay(ray, bounds.center);
+        float rayToBounds = Mathf.Sqrt(bounds.SqrDistance(closestPointOnRay));
+        return rayToBounds * 12f + hit.distance;
+    }
+
+    private static Vector3 ClosestPointOnRay(Ray ray, Vector3 point)
+    {
+        float distance = Vector3.Dot(point - ray.origin, ray.direction);
+        return ray.origin + ray.direction * Mathf.Max(0f, distance);
     }
 
     private static string BuildPromptText(IInteractable interactable, Collider sourceCollider)
@@ -217,11 +345,56 @@ public class PlayerInteractor : MonoBehaviour
             return patientPuzzlePickup.GetInteractPrompt();
         }
 
+        if (interactable is TVCodePuzzleController tvCodePuzzle)
+        {
+            return tvCodePuzzle.GetInteractPrompt();
+        }
+
+        if (interactable is BedtableFlashlightController bedtableFlashlight)
+        {
+            return bedtableFlashlight.GetInteractPrompt();
+        }
+
+        if (interactable is OldFlashlightPickup oldFlashlight)
+        {
+            return oldFlashlight.GetInteractPrompt();
+        }
+
+        if (interactable is NotebookPickup notebookPickup)
+        {
+            return notebookPickup.GetInteractPrompt();
+        }
+
+        if (interactable is PatientDossier patientDossier)
+        {
+            return patientDossier.GetInteractPrompt();
+        }
+
+        if (interactable is Interactable baseInteractable)
+        {
+            return baseInteractable.GetInteractPrompt();
+        }
+
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
         return GameLocalization.Text(
             "Press E to interact with " + targetName,
             "Appuie sur E pour interagir avec " + targetName,
             "Pulsa E para interactuar con " + targetName);
+    }
+
+    private static void SetPromptVisible(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            if (InteractionPromptUI.Instance != null)
+            {
+                InteractionPromptUI.Instance.Hide();
+            }
+
+            return;
+        }
+
+        PhonePuzzleUI.EnsureExists().Prompt.Show(message);
     }
 
     private static IInteractable ResolveInteractable(Collider hitCollider)
@@ -283,6 +456,24 @@ public class PlayerInteractor : MonoBehaviour
             return exitDoorLock;
         }
 
+        KeypadBoxCode keypadBox = hitCollider.GetComponent<KeypadBoxCode>();
+        if (keypadBox != null)
+        {
+            return keypadBox;
+        }
+
+        keypadBox = hitCollider.GetComponentInParent<KeypadBoxCode>();
+        if (keypadBox != null)
+        {
+            return keypadBox;
+        }
+
+        keypadBox = hitCollider.GetComponentInChildren<KeypadBoxCode>();
+        if (keypadBox != null)
+        {
+            return keypadBox;
+        }
+
         PadlockPuzzle padlockPuzzle = hitCollider.GetComponent<PadlockPuzzle>();
         if (padlockPuzzle != null)
         {
@@ -313,7 +504,7 @@ public class PlayerInteractor : MonoBehaviour
             return interactable;
         }
 
-        return hitCollider.GetComponentInChildren<IInteractable>();
+        return null;
     }
 
     private static bool IsNonInteractiveNamedObjectCollider(Collider hitCollider)

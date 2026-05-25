@@ -31,8 +31,8 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     };
 
     [Header("Access Code")]
-    [SerializeField] private string exitCode = "1946";
-    [SerializeField] private int codeLength = 4;
+    [SerializeField] private string exitCode = "739412";
+    [SerializeField] private int codeLength = 6;
 
     [Header("Task Progression")]
     [SerializeField] private bool countAsTask = true;
