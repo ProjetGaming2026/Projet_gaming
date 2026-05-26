@@ -264,7 +264,7 @@ public class XRayUIManager : MonoBehaviour
         text.fontStyle = style;
         text.color = Color.white;
         text.alignment = alignment;
-        text.textWrappingMode = TextWrappingModes.Normal;
+        text.enableWordWrapping = true;
         return text;
     }
 

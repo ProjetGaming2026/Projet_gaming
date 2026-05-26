@@ -260,7 +260,7 @@ public class PatientUIManager : MonoBehaviour
         text.fontStyle = FontStyles.Normal;
         text.color = Color.white;
         text.alignment = TextAlignmentOptions.TopLeft;
-        text.textWrappingMode = TextWrappingModes.Normal;
+        text.enableWordWrapping = true;
         text.overflowMode = TextOverflowModes.Ellipsis;
         return text;
     }
@@ -289,7 +289,7 @@ public class PatientUIManager : MonoBehaviour
         text.fontStyle = style;
         text.color = Color.white;
         text.alignment = alignment;
-        text.textWrappingMode = TextWrappingModes.Normal;
+        text.enableWordWrapping = true;
         return text;
     }
 
