@@ -24,12 +24,16 @@ public class XRayPuzzleManager : MonoBehaviour
     public GameObject monsterPrefab;
     public Transform monsterSpawnPoint;
 
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     public int solvedCount = 0;
     public bool horrorActive = false;
     public bool puzzleSolved = false;
     public bool foldersRead = false;
 
     private AudioSource audioSource;
+    private bool taskRegistered;
     private readonly List<int> selectionOrder = new List<int>(4);
     private static readonly int[] ExpectedOrder = { 2, 3, 1, 4 };
     private const float PuzzleDurationSeconds = 60f;
@@ -81,22 +85,6 @@ public class XRayPuzzleManager : MonoBehaviour
     private void Update()
     {
         RefreshReferences();
-
-        if (!puzzleSolved && CodePuzzleManager.Instance != null && CodePuzzleManager.Instance.IsPuzzleSolved)
-        {
-            TryStartTimerWhenPlayerEntersRoom();
-        }
-
-        if (timerRunning)
-        {
-            timeRemaining -= Time.deltaTime;
-            UpdateTimerDisplay();
-
-            if (timeRemaining <= 0f)
-            {
-                HandleTimeExpired();
-            }
-        }
     }
 
     public void RefreshReferences()
@@ -282,19 +270,6 @@ public class XRayPuzzleManager : MonoBehaviour
             return;
         }
 
-        if (!timerRunning)
-        {
-            if (CodePuzzleManager.Instance != null && CodePuzzleManager.Instance.IsPuzzleSolved)
-            {
-                StartXRayTimer();
-            }
-            else
-            {
-                XRayUIManager.Instance?.ShowToast("Ouvrez d'abord la chambre.", new Color(1f, 0.35f, 0.35f, 1f), 2f);
-                return;
-            }
-        }
-
         RefreshReferences();
 
         if (xray.isSolved)
@@ -391,6 +366,7 @@ public class XRayPuzzleManager : MonoBehaviour
     public IEnumerator SuccessSequence()
     {
         puzzleSolved = true;
+        RegisterTaskProgress();
         timerRunning = false;
         timerPrimed = false;
         HideTimer();
@@ -417,6 +393,49 @@ public class XRayPuzzleManager : MonoBehaviour
         {
             exitDoorAnimator.SetTrigger("Open");
         }
+    }
+
+    private void RegisterTaskProgress()
+    {
+        if (!countAsTask || taskRegistered)
+        {
+            return;
+        }
+
+        Component gameManager = FindPrototypeGameManagerComponent();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[XRayPuzzleManager] PrototypeGameManager not found, XRay task progress was not registered.", this);
+            return;
+        }
+
+        System.Reflection.MethodInfo registerMethod = gameManager.GetType().GetMethod(
+            "RegisterTaskSuccess",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        if (registerMethod == null)
+        {
+            Debug.LogWarning("[XRayPuzzleManager] PrototypeGameManager has no RegisterTaskSuccess method.", gameManager);
+            return;
+        }
+
+        registerMethod.Invoke(gameManager, null);
+        taskRegistered = true;
+        XRayUIManager.Instance?.ShowToast("Tache reussie. Progression mise a jour.", new Color(0.35f, 1f, 0.4f, 1f), 2.8f);
+    }
+
+    private Component FindPrototypeGameManagerComponent()
+    {
+        MonoBehaviour[] behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            MonoBehaviour behaviour = behaviours[i];
+            if (behaviour != null && behaviour.GetType().Name == "PrototypeGameManager")
+            {
+                return behaviour;
+            }
+        }
+
+        return null;
     }
 
     public IEnumerator HorrorSequence()

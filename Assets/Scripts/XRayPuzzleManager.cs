@@ -24,12 +24,16 @@ public class XRayPuzzleManager : MonoBehaviour
     public GameObject monsterPrefab;
     public Transform monsterSpawnPoint;
 
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     public int solvedCount = 0;
     public bool horrorActive = false;
     public bool puzzleSolved = false;
     public bool foldersRead = false;
 
     private AudioSource audioSource;
+    private bool taskRegistered;
     private readonly List<int> selectionOrder = new List<int>(4);
     private static readonly int[] ExpectedOrder = { 2, 3, 1, 4 };
     private const float PuzzleDurationSeconds = 60f;
@@ -81,22 +85,6 @@ public class XRayPuzzleManager : MonoBehaviour
     private void Update()
     {
         RefreshReferences();
-
-        if (!puzzleSolved && CodePuzzleManager.Instance != null && CodePuzzleManager.Instance.IsPuzzleSolved)
-        {
-            TryStartTimerWhenPlayerEntersRoom();
-        }
-
-        if (timerRunning)
-        {
-            timeRemaining -= Time.deltaTime;
-            UpdateTimerDisplay();
-
-            if (timeRemaining <= 0f)
-            {
-                HandleTimeExpired();
-            }
-        }
     }
 
     public void RefreshReferences()
@@ -277,7 +265,7 @@ public class XRayPuzzleManager : MonoBehaviour
 
     public void SelectXRay(XRayItem xray)
     {
-        if (xray == null || puzzleSolved || horrorActive || !timerRunning)
+        if (xray == null || puzzleSolved || horrorActive)
         {
             return;
         }
@@ -378,6 +366,7 @@ public class XRayPuzzleManager : MonoBehaviour
     public IEnumerator SuccessSequence()
     {
         puzzleSolved = true;
+        RegisterTaskProgress();
         timerRunning = false;
         timerPrimed = false;
         HideTimer();
@@ -404,6 +393,31 @@ public class XRayPuzzleManager : MonoBehaviour
         {
             exitDoorAnimator.SetTrigger("Open");
         }
+    }
+
+    private void RegisterTaskProgress()
+    {
+        if (!countAsTask || taskRegistered)
+        {
+            return;
+        }
+
+        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[XRayPuzzleManager] PrototypeGameManager not found, XRay task progress was not registered.", this);
+            return;
+        }
+
+        gameManager.RegisterTaskSuccess();
+        taskRegistered = true;
+        PrototypeHUD.ShowFeedback(
+            GameLocalization.Text(
+                "Task complete. Progress updated.",
+                "Tache reussie. Progression mise a jour.",
+                "Tarea completada. Progreso actualizado."),
+            PrototypeHUD.FeedbackTone.Success,
+            2.8f);
     }
 
     public IEnumerator HorrorSequence()

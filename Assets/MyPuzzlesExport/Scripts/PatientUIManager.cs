@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class PatientUIManager : MonoBehaviour
 {
+    private static readonly Vector2 PanelSize = new Vector2(1120f, 680f);
+    private static readonly Vector2 CardSize = new Vector2(490f, 210f);
+    private const float CardTextSize = 24f;
+    private const float HeaderTextSize = 34f;
+
     public static PatientUIManager Instance { get; private set; }
     public static bool IsUiOpen => Instance != null && Instance.panel != null && Instance.panel.activeSelf;
 
@@ -132,7 +137,11 @@ public class PatientUIManager : MonoBehaviour
 
         if (panel == null)
         {
-            panel = CreatePanel(rootCanvas.transform, "PatientPanel", new Vector2(780f, 480f));
+            panel = CreatePanel(rootCanvas.transform, "PatientPanel", PanelSize);
+        }
+        else
+        {
+            panel.GetComponent<RectTransform>().sizeDelta = PanelSize;
         }
 
         if (headerText == null)
@@ -140,12 +149,16 @@ public class PatientUIManager : MonoBehaviour
             headerText = CreateText(
                 panel.transform,
                 "HeaderText",
-                22f,
+                HeaderTextSize,
                 FontStyles.Bold,
-                new Vector2(24f, -18f),
-                new Vector2(-24f, -58f),
+                new Vector2(32f, -24f),
+                new Vector2(-32f, -78f),
                 TextAlignmentOptions.Center);
             headerText.text = "DOSSIERS PATIENTS";
+        }
+        else
+        {
+            headerText.fontSize = HeaderTextSize;
         }
 
         EnsurePatientCards(panel.transform);
@@ -158,40 +171,45 @@ public class PatientUIManager : MonoBehaviour
                 "FERMER",
                 new Vector2(0.5f, 0f),
                 new Vector2(0.5f, 0f),
-                new Vector2(180f, 46f),
-                new Vector2(0f, 24f));
+                new Vector2(220f, 56f),
+                new Vector2(0f, 34f));
         }
     }
 
     private void EnsurePatientCards(Transform parent)
     {
-        float panelWidth = 300f;
-        float panelHeight = 130f;
         Vector2[] positions =
         {
-            new Vector2(-160f, 78f),
-            new Vector2(160f, 78f),
-            new Vector2(-160f, -62f),
-            new Vector2(160f, -62f),
+            new Vector2(-260f, 120f),
+            new Vector2(260f, 120f),
+            new Vector2(-260f, -115f),
+            new Vector2(260f, -115f),
         };
 
         for (int i = 0; i < patientCards.Length; i++)
         {
             string cardName = $"PatientCard_{i + 1:00}";
             Transform existing = parent.Find(cardName);
-            GameObject cardPanel = existing != null ? existing.gameObject : CreateCardPanel(parent, cardName, new Vector2(panelWidth, panelHeight), positions[i]);
+            GameObject cardPanel = existing != null ? existing.gameObject : CreateCardPanel(parent, cardName, CardSize, positions[i]);
 
             RectTransform cardRect = cardPanel.GetComponent<RectTransform>();
             cardRect.anchorMin = new Vector2(0.5f, 0.5f);
             cardRect.anchorMax = new Vector2(0.5f, 0.5f);
             cardRect.pivot = new Vector2(0.5f, 0.5f);
-            cardRect.sizeDelta = new Vector2(panelWidth, panelHeight);
+            cardRect.sizeDelta = CardSize;
             cardRect.anchoredPosition = positions[i];
 
             TextMeshProUGUI cardText = cardPanel.GetComponentInChildren<TextMeshProUGUI>(true);
             if (cardText == null)
             {
                 cardText = CreateCardText(cardPanel.transform, $"{cardName}_Text");
+            }
+            else
+            {
+                cardText.fontSize = CardTextSize;
+                RectTransform textRect = cardText.GetComponent<RectTransform>();
+                textRect.offsetMin = new Vector2(28f, 24f);
+                textRect.offsetMax = new Vector2(-28f, -24f);
             }
 
             patientCards[i] = cardText;
@@ -252,11 +270,11 @@ public class PatientUIManager : MonoBehaviour
         RectTransform rect = textObject.GetComponent<RectTransform>();
         rect.anchorMin = Vector2.zero;
         rect.anchorMax = Vector2.one;
-        rect.offsetMin = new Vector2(18f, 16f);
-        rect.offsetMax = new Vector2(-18f, -16f);
+        rect.offsetMin = new Vector2(28f, 24f);
+        rect.offsetMax = new Vector2(-28f, -24f);
 
         TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-        text.fontSize = 11f;
+        text.fontSize = CardTextSize;
         text.fontStyle = FontStyles.Normal;
         text.color = Color.white;
         text.alignment = TextAlignmentOptions.TopLeft;
