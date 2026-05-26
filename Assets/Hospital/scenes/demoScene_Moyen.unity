@@ -345,7 +345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -845,7 +845,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -933,7 +933,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37a933b5e272bfc46b4d090809dee0d1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldTextOcclusion
   visibilityTarget: {fileID: 12961458}
   occlusionLayers:
@@ -1016,7 +1016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1750,7 +1750,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -1824,7 +1824,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3281,7 +3281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3781,7 +3781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4032,8 +4032,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   sharedProfile: {fileID: 11400000, guid: a2cd0dbd4d8226949a3d08a1e32778c5, type: 2}
   isGlobal: 1
   blendDistance: 0
@@ -4780,7 +4780,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -5259,7 +5259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5337,7 +5337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5990,7 +5990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6606,7 +6606,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7837,7 +7837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8064,7 +8064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8690,7 +8690,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8860,7 +8860,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8998,7 +8998,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2373d5a3117a744f7a85804104e49171, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9692,7 +9692,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d2570f1ed6f1004897d2cbc7c9ea209, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbientSoundManager
   musicSource: {fileID: 973318760}
   ambianceSource: {fileID: 339178145}
@@ -10458,11 +10458,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3300008, guid: 3094432ef8c9d455f8232d04b2a4fc31, type: 3}
       propertyPath: m_Mesh
-      value:
+      value: 
       objectReference: {fileID: 4300002, guid: 2870bdc81e89f4e8d99bd74220116559, type: 3}
     - target: {fileID: 3300010, guid: 3094432ef8c9d455f8232d04b2a4fc31, type: 3}
       propertyPath: m_Mesh
-      value:
+      value: 
       objectReference: {fileID: 4300010, guid: b9d0ebad485c34288afeebe9373bc4ea, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10587,7 +10587,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -12220,7 +12220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12607,7 +12607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14162,7 +14162,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -14395,7 +14395,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -14798,7 +14798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15417,7 +15417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2040d31b2bff14d5d90cc6f794a3dc36, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 4ad399e4625d743a1952dc6e72083da8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15474,7 +15474,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d05c03a066b0ef848afbef5cac057591, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotController
   expectedOrganTag: Heart
   slotNumber: 1
@@ -15959,7 +15959,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16741,7 +16741,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -17807,7 +17807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18939,7 +18939,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -19428,7 +19428,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -20260,7 +20260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20829,7 +20829,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 498b1ad1bf1d430987c1daa915079e95, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PatientPuzzleController
   openingDialogue:
   - speaker: 0
@@ -21317,7 +21317,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23502,7 +23502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23637,7 +23637,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24358,7 +24358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26602,7 +26602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26755,7 +26755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26856,7 +26856,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d05c03a066b0ef848afbef5cac057591, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotController
   expectedOrganTag: liver
   slotNumber: 3
@@ -28009,6 +28009,92 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb200a2448a2348468913e26fcf44904, type: 3}
+--- !u!21 &367627035
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: body (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: ddf6b315d28eec34eb20cfc8d3a5d58b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1001 &368225135
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28075,7 +28161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -28507,7 +28593,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -28716,7 +28802,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -28835,7 +28921,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -29150,7 +29236,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -29532,7 +29618,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -29680,7 +29766,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -30233,7 +30319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -31741,7 +31827,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -31800,7 +31886,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2fd84969d5805244b03700b7fd6fc73, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicFirstPersonController
   cameraHolder: {fileID: 1907421088}
   walkSpeed: 5
@@ -31822,7 +31908,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7ecfa8243ff6974c99fd193a42b378b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSounds
   footstepSource: {fileID: 420870906}
   actionSource: {fileID: 1754252569}
@@ -31845,7 +31931,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35ee99aa3f4765d4a8b778d7ca554691, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   interactionOrigin: {fileID: 1907421088}
   interactKey: 101
@@ -32595,7 +32681,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -33402,7 +33488,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25d9382f2eb848b3b1bb425540953209, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PatientPuzzlePickup
   itemId: blanket
   itemLabel: couverture
@@ -33761,7 +33847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34268,7 +34354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34827,11 +34913,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3300008, guid: 3094432ef8c9d455f8232d04b2a4fc31, type: 3}
       propertyPath: m_Mesh
-      value:
+      value: 
       objectReference: {fileID: 4300002, guid: 2870bdc81e89f4e8d99bd74220116559, type: 3}
     - target: {fileID: 3300010, guid: 3094432ef8c9d455f8232d04b2a4fc31, type: 3}
       propertyPath: m_Mesh
-      value:
+      value: 
       objectReference: {fileID: 4300010, guid: b9d0ebad485c34288afeebe9373bc4ea, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34956,7 +35042,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -35484,7 +35570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36147,7 +36233,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -36287,7 +36373,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -36384,7 +36470,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25d9382f2eb848b3b1bb425540953209, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PatientPuzzlePickup
   itemId: oxygen
   itemLabel: oxygen mask
@@ -36785,7 +36871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36932,7 +37018,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37165,7 +37251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37424,7 +37510,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37496,7 +37582,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39508,16 +39594,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6796009744405785935, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
-      objectReference: {fileID: 1576346910}
+      value: 
+      objectReference: {fileID: 367627035}
     - target: {fileID: 919132149155446097, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: m_Name
       value: NurseSceneVisual
       objectReference: {fileID: 0}
     - target: {fileID: 2772105478904033430, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
-      objectReference: {fileID: 2067971006}
+      value: 
+      objectReference: {fileID: 1365133345}
     - target: {fileID: 5866666021909216657, guid: b6ddbc0abfcff6f4da64372d1ee3a34b, type: 3}
       propertyPath: m_CullingMode
       value: 0
@@ -40567,7 +40653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41195,7 +41281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42279,7 +42365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42362,7 +42448,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42853,7 +42939,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -43624,7 +43710,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -44491,7 +44577,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -44631,7 +44717,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -45312,7 +45398,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -45390,7 +45476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -45468,7 +45554,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -45953,7 +46039,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -47424,7 +47510,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -49680,7 +49766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50000,7 +50086,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50104,7 +50190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50749,7 +50835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -51739,7 +51825,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -53284,7 +53370,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -54087,7 +54173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -54553,7 +54639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -55354,7 +55440,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -55494,7 +55580,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -56812,7 +56898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -56997,7 +57083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -57170,7 +57256,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692367557}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -57222,7 +57308,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 1
+  m_ShapeRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -57697,7 +57783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -57956,6 +58042,63 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697883043}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &697905804
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2464898995788345102, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_Name
+      value: KeypadDoorPuzzle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.5558571
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5.720318
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.8991656
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6175615043029797623, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fe2c25b38b5fc624fbc4571d2cb9497f, type: 3}
 --- !u!1 &699047606
 GameObject:
   m_ObjectHideFlags: 0
@@ -59242,7 +59385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -59554,7 +59697,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2373d5a3117a744f7a85804104e49171, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -61484,7 +61627,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -62861,7 +63004,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -64527,7 +64670,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -64807,7 +64950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -65425,7 +65568,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -66147,7 +66290,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -66235,7 +66378,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -66794,7 +66937,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -66956,7 +67099,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -67902,7 +68045,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -68199,7 +68342,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -68920,7 +69063,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -70909,7 +71052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -71052,7 +71195,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -72391,7 +72534,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -72619,7 +72762,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -72901,7 +73044,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -73756,7 +73899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74790,7 +74933,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74864,7 +75007,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74886,6 +75029,127 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: f22be1c9b7e6641bc89f8b7a0ca7d7c4, type: 3}
   m_PrefabInstance: {fileID: 1010438058}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &926552362
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 84724720051287450, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.238
+      objectReference: {fileID: 0}
+    - target: {fileID: 84724720051287450, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.758
+      objectReference: {fileID: 0}
+    - target: {fileID: 84724720051287450, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.185
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.2107
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -6.902693
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.3709955
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.72001415
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.6939595
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -87.889
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478121308009797381, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993413605062370415, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.493
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69978404
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.71435446
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309601196811212200, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 91.181
+      objectReference: {fileID: 0}
+    - target: {fileID: 3600061399465271744, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 3600061399465271744, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 3600061399465271744, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7161966254896195915, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 7161966254896195915, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 8938476304351675976, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
+      propertyPath: m_Name
+      value: XRayPatientsPuzzle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0dc40f0aae27eb847a7ba3675a440b1b, type: 3}
 --- !u!4 &927985790 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: c1f26c6aac2c44f0cb002fbd083f5d65, type: 3}
@@ -75017,7 +75281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -75212,7 +75476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -75820,7 +76084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -76616,7 +76880,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 144eb7e9858bb74419c68a81ab3b32c7, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrganPickup
   organName: Heart
   orderInDocument: 1
@@ -78109,7 +78373,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -78562,7 +78826,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -78640,7 +78904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -78983,7 +79247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -79258,7 +79522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -80286,7 +80550,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 144eb7e9858bb74419c68a81ab3b32c7, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrganPickup
   organName: liver
   orderInDocument: 3
@@ -80392,7 +80656,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -80634,7 +80898,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -80712,7 +80976,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -81190,7 +81454,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -82157,7 +82421,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 144eb7e9858bb74419c68a81ab3b32c7, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrganPickup
   organName: hand
   orderInDocument: 2
@@ -84288,7 +84552,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -84407,7 +84671,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -86258,7 +86522,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070017391}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -86310,7 +86574,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 1
+  m_ShapeRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -86799,7 +87063,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -87104,7 +87368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -87849,7 +88113,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2373d5a3117a744f7a85804104e49171, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -88083,7 +88347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -88297,7 +88561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -89086,7 +89350,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -89319,7 +89583,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -89825,7 +90089,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -89908,7 +90172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -90026,7 +90290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -90273,7 +90537,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -90693,7 +90957,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -90986,7 +91250,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -91105,7 +91369,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -92404,7 +92668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -92773,7 +93037,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -93230,7 +93494,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -93668,7 +93932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300002, guid: a56ec5a8a3e7949c899b02b8046aad26, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: ae47be14268e24bd086d9be62fe604af, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -95262,7 +95526,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -95381,7 +95645,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -95459,7 +95723,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -95754,7 +96018,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -97149,7 +97413,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -98464,7 +98728,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -99194,7 +99458,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -99750,7 +100014,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -99826,7 +100090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -99959,7 +100223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -100032,7 +100296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -100296,7 +100560,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -100451,23 +100715,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: c20dd5ccf3bf4994690944d942b17bc3, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: ffead0561f22c7b4eb9189644a364bdf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f3f4398df1210514ea6434255b15cf3b, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f73027f8718a93845b6c870787f3a8bf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 541ecd82d7725ca47b6e95dd09e4467e, type: 2}
     - target: {fileID: 919132149155446097, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: m_Name
@@ -100544,7 +100808,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -101431,7 +101695,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -102488,11 +102752,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: ed6949deb5e7a4d508169d3846a80cac, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 1053927bfe8a0486684fb9a1e94a3ecc, type: 2}
     - target: {fileID: 2300000, guid: ed6949deb5e7a4d508169d3846a80cac, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -102655,7 +102919,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -102728,7 +102992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -103223,7 +103487,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -103296,7 +103560,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -104323,7 +104587,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -104492,7 +104756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -106344,7 +106608,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -107604,7 +107868,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -107896,7 +108160,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4385b75c91b443e49987ea01efa9ba5a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrototypeGameManager
   incubationDuration: 10
   totalLevelDuration: 1800
@@ -107986,7 +108250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -108289,7 +108553,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -109730,6 +109994,92 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
   m_PrefabInstance: {fileID: 960236679}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &1365133345
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: head (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: cabf09f76f3388a4bb575e17b9b6ef12, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.4472136
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!4 &1366085467 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 5f5d01224d42f493598c626537b1ae8c, type: 3}
@@ -110317,7 +110667,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -110457,7 +110807,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -111698,7 +112048,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -112255,7 +112605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -112336,6 +112686,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 324e4d9a1e2f441c387213c9f91a4d3d, type: 3}
+--- !u!1001 &1398993467
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 100000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_Name
+      value: chair1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.709
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -6.902688
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.281
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6953842
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7186382
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 91.884
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 51a3effaff578524d8fe47870e921e27, type: 3}
 --- !u!1001 &1400587613
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -114253,7 +114660,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -114572,7 +114979,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -116245,7 +116652,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -116385,7 +116792,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -117523,7 +117930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -118117,7 +118524,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -118492,7 +118899,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 1466010573}
   audioSource: {fileID: 1466010569}
@@ -118611,7 +119018,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 1466010577}
   audioSource: {fileID: 1466010571}
@@ -118643,7 +119050,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c75273e32f69644da96a68dce3736cb, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExitDoorCodeLock
   exitCode: 739412
   codeLength: 6
@@ -119422,7 +119829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 36c308c4471ff476db77863a73adef02, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 512f4cdfdc42e4be8ab7788c44613605, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -119942,7 +120349,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -122056,7 +122463,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -122324,7 +122731,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -122393,7 +122800,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -122477,7 +122884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -124340,7 +124747,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -125998,7 +126405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -126336,7 +126743,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -126455,7 +126862,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -127612,92 +128019,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fb8454e22c7e45d78a74f31ed4215f2, type: 3}
---- !u!21 &1576346910
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: body (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance)
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties:
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ddf6b315d28eec34eb20cfc8d3a5d58b, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.4472136
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _UVSec: 0
-    - _ZWrite: 1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!4 &1576761750 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 6dc914dcb371345ccb072162240fe853, type: 3}
@@ -128385,7 +128706,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -128787,7 +129108,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -130129,7 +130450,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -130601,7 +130922,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -131628,7 +131949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -134174,7 +134495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -134510,7 +134831,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -136663,7 +136984,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -137190,8 +137511,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48d8f80df2324e2a9caef34dd29f5c12, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   screenObjectName: TV_Screen
   videoClip: {fileID: 32900000, guid: 2a9c9d1d876d1e34a8a11918c8c2b316, type: 3}
   targetTexture: {fileID: 8400000, guid: dfa4f769267284e469f55b706ab95c02, type: 2}
@@ -139646,7 +139967,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -140293,7 +140614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -140412,7 +140733,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d05c03a066b0ef848afbef5cac057591, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotController
   expectedOrganTag: hand
   slotNumber: 2
@@ -140823,7 +141144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2373d5a3117a744f7a85804104e49171, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -141466,7 +141787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 2373d5a3117a744f7a85804104e49171, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -141884,7 +142205,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -142024,7 +142345,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -142146,7 +142467,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25d9382f2eb848b3b1bb425540953209, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PatientPuzzlePickup
   itemId: oxygen
   itemLabel: oxygen mask
@@ -143576,7 +143897,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -143973,7 +144294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -144399,7 +144720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8273b78ecb39548adaef2934218dbb2c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -144441,7 +144762,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 632d7604bae10064a99a57f70118ad40, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSounds
   ambientSource: {fileID: 1636903839}
   actionSource: {fileID: 1189540280}
@@ -144486,7 +144807,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 096ab0071626f1d42a24955a51ee09a1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityIncubationVisual
   gameManager: {fileID: 1338952204}
   prisonVisual: {fileID: 0}
@@ -144500,7 +144821,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffb772e74bc152f4b8ee915797a71790, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityCapture
   playerTarget: {fileID: 406199568}
   captureDistance: 1.5
@@ -144516,7 +144837,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e0168405b527c84e9618369b256884a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicMonsterController
   playerTarget: {fileID: 406199568}
   gameManager: {fileID: 1338952204}
@@ -144636,7 +144957,7 @@ MonoBehaviour:
   idleClipResourceName: zombie idle
   walkClipResourceName: zombie walk
   runClipResourceName: zombie run
-  turnClipResourceName:
+  turnClipResourceName: 
   attackClipResourceName: zombie attack
   animationBlendDuration: 0.18
   animationMoveThreshold: 0.12
@@ -145310,7 +145631,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -146196,7 +146517,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25d9382f2eb848b3b1bb425540953209, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PatientPuzzlePickup
   itemId: blanket
   itemLabel: couverture
@@ -146665,7 +146986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -146738,11 +147059,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: ed6949deb5e7a4d508169d3846a80cac, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 1053927bfe8a0486684fb9a1e94a3ecc, type: 2}
     - target: {fileID: 2300000, guid: ed6949deb5e7a4d508169d3846a80cac, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -147154,7 +147475,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c9245a0c54be574f953a1d7ddb5ff32, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DocumentPickup
   interactDistance: 2.5
   interactKey: 101
@@ -147296,7 +147617,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7193a51a469dfa7479befcfddc251409, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrototypeHUD
   gameManager: {fileID: 1338952204}
 --- !u!4 &1795409781
@@ -147872,7 +148193,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -148544,7 +148865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -148781,7 +149102,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -149009,7 +149330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -149630,7 +149951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -149932,7 +150253,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -150261,7 +150582,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -154125,7 +154446,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -154459,7 +154780,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -155712,7 +156033,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -156175,7 +156496,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -156317,7 +156638,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -156528,7 +156849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 4ad399e4625d743a1952dc6e72083da8, type: 2}
     - target: {fileID: 2300002, guid: dff42937134964c3a98a1bd88caa1fe1, type: 3}
       propertyPath: m_LightmapIndex
@@ -156693,7 +157014,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -156771,7 +157092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -157346,7 +157667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -157742,7 +158063,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 172d2fc0f6d084c77b3936898732b7d5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -158018,7 +158339,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -158743,7 +159064,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -159399,7 +159720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -160221,7 +160542,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -160638,23 +160959,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: c20dd5ccf3bf4994690944d942b17bc3, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: ffead0561f22c7b4eb9189644a364bdf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f3f4398df1210514ea6434255b15cf3b, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f73027f8718a93845b6c870787f3a8bf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 541ecd82d7725ca47b6e95dd09e4467e, type: 2}
     - target: {fileID: 919132149155446097, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: m_Name
@@ -163068,7 +163389,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -163449,7 +163770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -163744,7 +164065,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -165431,7 +165752,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -166030,7 +166351,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -166170,7 +166491,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -166578,7 +166899,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -166697,7 +167018,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -167161,23 +167482,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: c20dd5ccf3bf4994690944d942b17bc3, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: ffead0561f22c7b4eb9189644a364bdf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f3f4398df1210514ea6434255b15cf3b, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f73027f8718a93845b6c870787f3a8bf, type: 2}
     - target: {fileID: -7511558181221131132, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 541ecd82d7725ca47b6e95dd09e4467e, type: 2}
     - target: {fileID: 919132149155446097, guid: 354290529b2ac574287db227790b96db, type: 3}
       propertyPath: m_Name
@@ -168051,92 +168372,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067843429}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!21 &2067971006
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: head (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance)
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties:
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: cabf09f76f3388a4bb575e17b9b6ef12, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.4472136
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _UVSec: 0
-    - _ZWrite: 1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!65 &2067984180
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -168265,7 +168500,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -168852,7 +169087,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -168999,7 +169234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 13405c1fe77f0428ea5ed1b694192b8a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -169227,7 +169462,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb0277adbad91a448adf644bc47b57e7, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrayManager
   totalSlots: 3
   countAsTask: 1
@@ -169768,7 +170003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 21769821a1f504ad0b5fe2535d17b143, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -169845,7 +170080,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 6312ed43899834d97a206b46db6c153f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -170573,7 +170808,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -171154,7 +171389,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -171468,7 +171703,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -171953,7 +172188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 85cd04397823f441383f618e5df390ce, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -172031,7 +172266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -172309,7 +172544,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -173487,7 +173722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -173575,7 +173810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 647fc3df9ef6f4729afd181d279e7e14, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: d08cba58134df417ea4dad4ffebb5337, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -174048,7 +174283,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -175221,7 +175456,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: b5c76fda37cc2425b8fa59a5b48d301d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: bcbbf18528df040af9f2986973f82b42, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -175370,7 +175605,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d24ef69c8293e3f4f9413e5fd1666cef, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
   hinge: {fileID: 0}
   audioSource: {fileID: 0}
@@ -175589,7 +175824,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3bf46799a8c8c4df6904609dd171df28, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 270a6ff3fa65c4b50b81eaf9119fce12, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -175734,3 +175969,6 @@ SceneRoots:
   - {fileID: 270083718}
   - {fileID: 461653880}
   - {fileID: 1749867793}
+  - {fileID: 697905804}
+  - {fileID: 926552362}
+  - {fileID: 1398993467}
