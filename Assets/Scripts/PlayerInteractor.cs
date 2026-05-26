@@ -27,6 +27,26 @@ public class PlayerInteractor : MonoBehaviour
     {
         UpdateCurrentInteractable();
 
+        if (currentInteractable is ExitDoorCodeLock)
+        {
+            if (Input.GetKeyDown(interactKey))
+            {
+                TryInteract();
+            }
+
+            return;
+        }
+
+        if (currentInteractable is PadlockButton padlockButton && padlockButton.TryHandlePromptKeyDown())
+        {
+            return;
+        }
+
+        if (currentInteractable is PadlockController padlockController && padlockController.TryHandleKeyboardInput())
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(interactKey))
         {
             TryInteract();
@@ -82,7 +102,7 @@ public class PlayerInteractor : MonoBehaviour
             interactRadius,
             interactDistance,
             Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore
+            QueryTriggerInteraction.Collide
         );
 
         if (hits == null || hits.Length == 0)
@@ -94,7 +114,7 @@ public class PlayerInteractor : MonoBehaviour
 
         for (int i = 0; i < hits.Length; i++)
         {
-            IInteractable interactable = hits[i].collider.GetComponentInParent<IInteractable>();
+            IInteractable interactable = ResolveInteractable(hits[i].collider);
             if (interactable == null || !IsInteractableUsable(interactable))
             {
                 continue;
@@ -119,8 +139,23 @@ public class PlayerInteractor : MonoBehaviour
 
     private static string BuildPromptText(IInteractable interactable, Collider sourceCollider)
     {
+        if (interactable is ExitDoorCodeLock exitDoorCodeLock)
+        {
+            return exitDoorCodeLock.GetInteractPrompt();
+        }
+
+        if (interactable is KeyDoor keyDoor)
+        {
+            return keyDoor.GetInteractPrompt();
+        }
+
         if (interactable is DoorInteractable door)
         {
+            if (door.IsInteractionLocked)
+            {
+                return "Appuie sur E pour entrer le code de sortie";
+            }
+
             return door.IsOpen
                 ? "Appuie sur E pour fermer"
                 : "Appuie sur E pour ouvrir";
@@ -131,7 +166,124 @@ public class PlayerInteractor : MonoBehaviour
             return "Appuie sur E pour utiliser le terminal";
         }
 
+        if (interactable is PadlockButton padlockButton)
+        {
+            return padlockButton.GetInteractPrompt();
+        }
+
+        if (interactable is PadlockController padlockController)
+        {
+            return padlockController.GetInteractPrompt();
+        }
+
+        if (interactable is PadlockPuzzle)
+        {
+            return "Appuie sur E pour interagir avec le cadenas";
+        }
+
+        if (interactable is RadioInteraction)
+        {
+            return "Appuie sur E pour activer la radio";
+        }
+
+        if (interactable is KeyPickup keyPickup)
+        {
+            return keyPickup.GetInteractPrompt();
+        }
+
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
         return "Appuie sur E pour interagir avec " + targetName;
+    }
+
+    private static IInteractable ResolveInteractable(Collider hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return null;
+        }
+
+        KeyDoor keyDoor = hitCollider.GetComponent<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        keyDoor = hitCollider.GetComponentInParent<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        keyDoor = hitCollider.GetComponentInChildren<KeyDoor>();
+        if (keyDoor != null)
+        {
+            return keyDoor;
+        }
+
+        ExitDoorCodeLock exitDoorLock = hitCollider.GetComponent<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        exitDoorLock = hitCollider.GetComponentInParent<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        exitDoorLock = hitCollider.GetComponentInChildren<ExitDoorCodeLock>();
+        if (exitDoorLock != null)
+        {
+            return exitDoorLock;
+        }
+
+        DoorInteractable linkedDoor = hitCollider.GetComponent<DoorInteractable>();
+        if (linkedDoor == null)
+        {
+            linkedDoor = hitCollider.GetComponentInParent<DoorInteractable>();
+        }
+
+        if (linkedDoor == null)
+        {
+            linkedDoor = hitCollider.GetComponentInChildren<DoorInteractable>();
+        }
+
+        if (ExitDoorCodeLock.TryGetLockForDoor(linkedDoor, out exitDoorLock))
+        {
+            return exitDoorLock;
+        }
+
+        PadlockPuzzle padlockPuzzle = hitCollider.GetComponent<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        padlockPuzzle = hitCollider.GetComponentInParent<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        padlockPuzzle = hitCollider.GetComponentInChildren<PadlockPuzzle>();
+        if (padlockPuzzle != null)
+        {
+            return padlockPuzzle;
+        }
+
+        IInteractable interactable = hitCollider.GetComponent<IInteractable>();
+        if (interactable != null)
+        {
+            return interactable;
+        }
+
+        interactable = hitCollider.GetComponentInParent<IInteractable>();
+        if (interactable != null)
+        {
+            return interactable;
+        }
+
+        return hitCollider.GetComponentInChildren<IInteractable>();
     }
 }

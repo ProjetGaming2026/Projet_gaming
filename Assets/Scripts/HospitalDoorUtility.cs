@@ -4,7 +4,7 @@ using UnityEngine;
 public static class HospitalDoorUtility
 {
     public static readonly string[] DoorKeywords = { "door", "cabinet", "closet", "locker", "wardrobe", "cupboard", "armoire" };
-    public static readonly string[] ExcludedKeywords = { "frame", "drawer", "body" };
+    public static readonly string[] ExcludedKeywords = { "frame", "drawer", "body", "padlock", "padlocker", "keypad" };
 
     public static bool IsDoorLeaf(Transform candidate)
     {

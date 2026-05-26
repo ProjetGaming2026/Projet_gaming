@@ -11,6 +11,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     [SerializeField] private float openSpeed = 6f;
     [SerializeField] private bool invertOpenDirection;
     [SerializeField] private bool startsOpen;
+    [SerializeField] private bool interactionLocked;
 
     [Header("Audio")]
     [SerializeField] private AudioClip openSound;
@@ -23,6 +24,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     private bool isInitialized;
 
     public bool IsOpen => isOpen;
+    public bool IsInteractionLocked => interactionLocked;
 
     private void Awake()
     {
@@ -49,6 +51,12 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     {
         InitializeIfNeeded();
 
+        if (interactionLocked)
+        {
+            Debug.Log("DoorInteractable: interaction locked on " + name + ".");
+            return;
+        }
+
         if (isOpen)
         {
             targetLocalRotation = closedLocalRotation;
@@ -61,6 +69,18 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
         isOpen = true;
         PlaySound(openSound);
+    }
+
+    public void SetInteractionLocked(bool locked)
+    {
+        InitializeIfNeeded();
+        interactionLocked = locked;
+
+        if (interactionLocked && isOpen)
+        {
+            targetLocalRotation = closedLocalRotation;
+            isOpen = false;
+        }
     }
 
     public void AssignAudioClips(AudioClip newOpenSound, AudioClip newCloseSound)
