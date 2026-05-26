@@ -117,6 +117,7 @@ public class PlayerInteractor : MonoBehaviour
 
         if (hits == null || hits.Length == 0)
         {
+            TryFindVisibleLaboratoryKey(ray);
             return;
         }
 
@@ -141,6 +142,54 @@ public class PlayerInteractor : MonoBehaviour
             currentPromptText = BuildPromptText(interactable, currentInteractableCollider);
             return;
         }
+
+        TryFindVisibleLaboratoryKey(ray);
+    }
+
+    private void TryFindVisibleLaboratoryKey(Ray ray)
+    {
+        KeyControl[] keys = FindObjectsByType<KeyControl>(FindObjectsSortMode.None);
+        KeyControl bestKey = null;
+        float bestScore = float.MaxValue;
+
+        for (int i = 0; i < keys.Length; i++)
+        {
+            KeyControl key = keys[i];
+            if (key == null || !key.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            Vector3 toKey = key.transform.position - ray.origin;
+            float forwardDistance = Vector3.Dot(ray.direction, toKey);
+            if (forwardDistance < 0f || forwardDistance > interactDistance)
+            {
+                continue;
+            }
+
+            Vector3 closestPoint = ray.origin + ray.direction * forwardDistance;
+            float sideDistance = Vector3.Distance(closestPoint, key.transform.position);
+            if (sideDistance > Mathf.Max(interactRadius * 4f, 0.65f))
+            {
+                continue;
+            }
+
+            float score = forwardDistance + sideDistance;
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestKey = key;
+            }
+        }
+
+        if (bestKey == null)
+        {
+            return;
+        }
+
+        currentInteractable = bestKey;
+        currentInteractableCollider = bestKey.GetComponent<Collider>();
+        currentPromptText = bestKey.GetInteractPrompt();
     }
 
     private static bool IsInteractableUsable(IInteractable interactable)
@@ -200,6 +249,26 @@ public class PlayerInteractor : MonoBehaviour
         if (interactable is RadioInteraction)
         {
             return GameLocalization.Text("Press E to activate the radio", "Appuie sur E pour activer la radio", "Pulsa E para activar la radio");
+        }
+
+        if (interactable is ChemistryPuzzleManager chemistryPuzzle)
+        {
+            return chemistryPuzzle.GetInteractPrompt();
+        }
+
+        if (interactable is FlaskClick flask)
+        {
+            return flask.GetInteractPrompt();
+        }
+
+        if (interactable is KeyControl labKey)
+        {
+            return labKey.GetInteractPrompt();
+        }
+
+        if (interactable is LockedDoor lockedDoor)
+        {
+            return lockedDoor.GetInteractPrompt();
         }
 
         if (interactable is KeyPickup keyPickup)

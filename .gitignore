@@ -23,4 +23,6 @@ Recordings/
 *.mdb
 *.opendb
 *.VC.db
+*.glb
+*.fbx
 Assets/_Recovery/
