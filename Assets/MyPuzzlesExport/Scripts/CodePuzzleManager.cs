@@ -5,6 +5,8 @@ using UnityEngine;
 public class CodePuzzleManager : MonoBehaviour, IInteractable
 {
     private const string ExpectedPuzzleCode = "6334";
+    private const string MediumSceneName = "demoScene_Moyen";
+    private const string TargetDoorPath = "_map/asylumLevel/door3a/door3a";
 
     public static CodePuzzleManager Instance { get; private set; }
     public bool IsPuzzleSolved => puzzleSolved;
@@ -43,11 +45,15 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private float puzzleDurationSeconds = 90f;
 
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
+
     private AudioSource audioSource;
     private bool isBusy;
     private bool puzzleActive;
     private bool puzzleSolved;
     private bool keypadDisabled;
+    private bool taskRegistered;
     private float timeRemaining;
     private Quaternion externalDoorClosedRotation;
     private bool externalDoorRotationCaptured;
@@ -230,6 +236,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         StopPuzzleTimer();
         puzzleSolved = true;
         LockAssignedDoor(false);
+        RegisterTaskProgress();
         PlayClip(successSound);
         KeypadUIManager.Instance?.ShowStatus("ACCES AUTORISE", Color.green);
         TryOpenDoor();
@@ -296,6 +303,11 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
 
     private void TryOpenDoor()
     {
+        if (TryOpenTargetSceneDoor())
+        {
+            return;
+        }
+
         UnlockAssignedDoor();
 
         if (TryOpenDoorInteractable())
@@ -319,6 +331,143 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         }
 
         Debug.LogWarning("[CodePuzzleManager] No external door reference is assigned. Assign Door Animator, Door Interactable, External Door Controller, or External Door Hinge on the KeypadDoorPuzzle instance.", this);
+    }
+
+    private void RegisterTaskProgress()
+    {
+        if (!countAsTask || taskRegistered)
+        {
+            return;
+        }
+
+        Component gameManager = FindPrototypeGameManagerComponent();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[CodePuzzleManager] PrototypeGameManager not found, keypad task progress was not registered.", this);
+            return;
+        }
+
+        System.Reflection.MethodInfo registerMethod = gameManager.GetType().GetMethod(
+            "RegisterTaskSuccess",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        if (registerMethod == null)
+        {
+            Debug.LogWarning("[CodePuzzleManager] PrototypeGameManager has no RegisterTaskSuccess method.", gameManager);
+            return;
+        }
+
+        registerMethod.Invoke(gameManager, null);
+        taskRegistered = true;
+        KeypadUIManager.Instance?.ShowToast("Tache reussie. Progression mise a jour.", 2.8f);
+    }
+
+    private Component FindPrototypeGameManagerComponent()
+    {
+        MonoBehaviour[] behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            MonoBehaviour behaviour = behaviours[i];
+            if (behaviour != null && behaviour.GetType().Name == "PrototypeGameManager")
+            {
+                return behaviour;
+            }
+        }
+
+        return null;
+    }
+
+    private bool TryOpenTargetSceneDoor()
+    {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != MediumSceneName)
+        {
+            return false;
+        }
+
+        Transform targetDoor = FindTransformByPath(TargetDoorPath) ?? FindTransformByPathWithoutSceneRoot(TargetDoorPath);
+        if (targetDoor == null)
+        {
+            Debug.LogWarning("[CodePuzzleManager] Target scene door path was not found: " + TargetDoorPath, this);
+            return false;
+        }
+
+        UnlockAndOpenDoorObject(targetDoor.gameObject);
+        return true;
+    }
+
+    private Transform FindTransformByPath(string hierarchyPath)
+    {
+        if (string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return null;
+        }
+
+        string[] pathParts = hierarchyPath.Split(new[] { '/' }, System.StringSplitOptions.RemoveEmptyEntries);
+        if (pathParts.Length == 0)
+        {
+            return null;
+        }
+
+        Transform[] transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform candidate = transforms[i];
+            if (candidate == null || candidate.name != pathParts[pathParts.Length - 1])
+            {
+                continue;
+            }
+
+            if (HasMatchingAncestorPath(candidate, pathParts))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private Transform FindTransformByPathWithoutSceneRoot(string hierarchyPath)
+    {
+        if (string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return null;
+        }
+
+        int firstSeparator = hierarchyPath.IndexOf('/');
+        if (firstSeparator < 0 || firstSeparator >= hierarchyPath.Length - 1)
+        {
+            return null;
+        }
+
+        return FindTransformByPath(hierarchyPath.Substring(firstSeparator + 1));
+    }
+
+    private bool HasMatchingAncestorPath(Transform candidate, string[] pathParts)
+    {
+        Transform current = candidate;
+        for (int partIndex = pathParts.Length - 1; partIndex >= 0; partIndex--)
+        {
+            if (current == null || current.name != pathParts[partIndex])
+            {
+                return false;
+            }
+
+            current = current.parent;
+        }
+
+        return true;
+    }
+
+    private void UnlockAndOpenDoorObject(GameObject targetDoor)
+    {
+        targetDoor.SendMessage("SetLocked", false, SendMessageOptions.DontRequireReceiver);
+        targetDoor.SendMessage("SetInteractionLocked", false, SendMessageOptions.DontRequireReceiver);
+        targetDoor.BroadcastMessage("SetLocked", false, SendMessageOptions.DontRequireReceiver);
+        targetDoor.BroadcastMessage("SetInteractionLocked", false, SendMessageOptions.DontRequireReceiver);
+
+        targetDoor.SendMessage("ForceOpen", null, SendMessageOptions.DontRequireReceiver);
+        targetDoor.BroadcastMessage("ForceOpen", null, SendMessageOptions.DontRequireReceiver);
+        targetDoor.SendMessage("OpenDoor", null, SendMessageOptions.DontRequireReceiver);
+        targetDoor.BroadcastMessage("OpenDoor", null, SendMessageOptions.DontRequireReceiver);
     }
 
     private bool TryOpenDoorInteractable()
@@ -513,19 +662,9 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     private void StartPuzzleTimer()
     {
         StopPuzzleTimer();
-        puzzleActive = true;
-        timeRemaining = puzzleDurationSeconds;
-        KeypadUIManager.Instance?.SetTimerVisible(true);
-        KeypadUIManager.Instance?.UpdateTimer(timeRemaining);
-
-        if (audioSource != null)
-        {
-            audioSource.Stop();
-            audioSource.clip = tensionSound != null ? tensionSound : GetFallbackTensionClip();
-            audioSource.loop = true;
-            audioSource.volume = 0.45f;
-            audioSource.Play();
-        }
+        puzzleActive = false;
+        timeRemaining = 0f;
+        KeypadUIManager.Instance?.SetTimerVisible(false);
     }
 
     private void StopPuzzleTimer()
