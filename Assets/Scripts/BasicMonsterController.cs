@@ -108,6 +108,8 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private bool expandPatrolRouteFromNavMesh = true;
     [SerializeField] private float explorationPointSpacing = 6.5f;
     [SerializeField] private int maxGeneratedExplorationPoints = 56;
+    [SerializeField] private bool prioritizeUnvisitedExploration = true;
+    [SerializeField] private float routeRevisitDelay = 45f;
 
     [Header("Search")]
     [SerializeField] private float maxPredictionTime = 1.1f;
@@ -115,6 +117,9 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float searchRadius = 5.5f;
     [SerializeField] private float searchRetargetInterval = 1.25f;
     [SerializeField] private int searchPointCount = 6;
+    [SerializeField] private float puzzleAlertMinimumDuration = 45f;
+    [SerializeField] private float puzzleAlertSpeedMultiplier = 1.18f;
+    [SerializeField] private float puzzleAlertSearchRadiusMultiplier = 1.45f;
     [SerializeField] private float exitGuardDistance = 3.5f;
     [SerializeField] private float exitGuardRetargetInterval = 1f;
 
@@ -125,6 +130,9 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float stuckEscapeDuration = 1.25f;
     [SerializeField] private float stuckMinimumProgressRatio = 0.18f;
     [SerializeField] private float wedgedContactAcceleration = 1.35f;
+    [SerializeField] private int emergencyUnstuckAttemptThreshold = 3;
+    [SerializeField] private float emergencyUnstuckSampleRadius = 6f;
+    [SerializeField] private float emergencyUnstuckMinPlayerDistance = 8f;
 
     [Header("Intelligence")]
     [SerializeField] private bool buildRuntimeNavMesh = true;
@@ -140,6 +148,13 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float easyBlockedRouteDistance = 5f;
     [SerializeField] private float stairStepOffset = 0.45f;
     [SerializeField] private float stairSlopeLimit = 52f;
+    [SerializeField] private float sightingAggressionBuildRate = 0.35f;
+    [SerializeField] private float hearingAggressionBuildRate = 0.18f;
+    [SerializeField] private float puzzleAlertAggressionBoost = 0.75f;
+    [SerializeField] private float aggressionDecayRate = 0.045f;
+    [SerializeField] private float aggressionChaseSpeedBonus = 0.18f;
+    [SerializeField] private float aggressionInvestigationSpeedBonus = 0.12f;
+    [SerializeField] private float aggressionDetectionBonus = 2.5f;
 
     [Header("Visual Motion")]
     [SerializeField] private Transform animatedVisual;
@@ -194,8 +209,11 @@ public class BasicMonsterController : MonoBehaviour
     private float roamRetargetTimer;
     private float roamPauseTimer;
     private float stuckTimer;
+    private int repeatedStuckCount;
     private float huntPersistenceTimer;
     private float avoidanceLockTimer;
+    private float puzzleAlertTimer;
+    private float aggressionLevel;
     private int patrolPointIndex;
     private int searchPointIndex;
     private int lastAvoidanceSign = 1;
@@ -207,6 +225,7 @@ public class BasicMonsterController : MonoBehaviour
     private float visualCycle;
     private Vector3 lastPosition;
     private Vector3 lastKnownPlayerPosition;
+    private Vector3 puzzleAlertOrigin;
     private Vector3 investigationTarget;
     private Vector3 roamTarget;
     private Vector3 guardTarget;
@@ -214,6 +233,8 @@ public class BasicMonsterController : MonoBehaviour
     private Vector3 stuckEscapeTarget;
     private Transform captureTarget;
     private Vector3[] navigationRoute;
+    private float[] routeLastVisitTimes;
+    private int[] routeVisitCounts;
     private NavMeshPath currentNavMeshPath;
     private Vector3 currentNavMeshTarget;
     private float navMeshRepathTimer;
@@ -288,6 +309,7 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         navigationRoute = BuildNavigationRoute();
+        InitializeRouteVisitMemory();
 
         lastPosition = transform.position;
         lastYaw = transform.eulerAngles.y;
@@ -404,9 +426,16 @@ public class BasicMonsterController : MonoBehaviour
             }
         }
 
-        float effectiveDuration = Mathf.Max(duration, forcedSearchDuration, memoryDuration);
+        float effectiveDuration = Mathf.Max(duration, puzzleAlertMinimumDuration, forcedSearchDuration, memoryDuration);
+        Vector3 alertPosition = playerTarget != null
+            ? playerTarget.position
+            : hasFallbackHuntPosition ? fallbackHuntPosition : transform.position;
+
         forcedRevealTimer = Mathf.Max(forcedRevealTimer, effectiveDuration);
         huntPersistenceTimer = Mathf.Max(huntPersistenceTimer, effectiveDuration);
+        puzzleAlertTimer = Mathf.Max(puzzleAlertTimer, effectiveDuration);
+        aggressionLevel = Mathf.Max(aggressionLevel, puzzleAlertAggressionBoost);
+        puzzleAlertOrigin = alertPosition;
         roamPauseTimer = 0f;
         patrolWaitTimer = 0f;
         searchRetargetTimer = 0f;
@@ -421,18 +450,9 @@ public class BasicMonsterController : MonoBehaviour
 
         currentNavMeshTarget = Vector3.positiveInfinity;
 
-        if (playerTarget != null)
-        {
-            RememberPlayerPosition(playerTarget.position, effectiveDuration);
-            investigationTarget = playerTarget.position;
-            hasInvestigationTarget = true;
-        }
-        else if (hasFallbackHuntPosition)
-        {
-            RememberPlayerPosition(fallbackHuntPosition, effectiveDuration);
-            investigationTarget = fallbackHuntPosition;
-            hasInvestigationTarget = true;
-        }
+        RememberPlayerPosition(alertPosition, effectiveDuration);
+        investigationTarget = alertPosition;
+        hasInvestigationTarget = true;
 
         Debug.Log("Echec de puzzle: l'Entite chasse le joueur pendant " + effectiveDuration + " secondes.");
     }
@@ -472,6 +492,29 @@ public class BasicMonsterController : MonoBehaviour
         patrolMoveSpeed = Mathf.Clamp(newPatrolMoveSpeed, 0.1f, moveSpeed);
         investigationMoveSpeed = Mathf.Clamp(newInvestigationMoveSpeed, patrolMoveSpeed, moveSpeed);
         hardPatrolSpeedMultiplier = Mathf.Max(0.5f, newHardPatrolSpeedMultiplier);
+    }
+
+    public void ApplyBehaviorTuning(
+        float newDetectionRadius,
+        float newHearingRadius,
+        float newSprintHearingRadius,
+        float newMemoryDuration,
+        float newForcedSearchDuration,
+        float newPuzzleAlertMinimumDuration,
+        float newPuzzleAlertSpeedMultiplier,
+        float newSearchRadius,
+        float newRouteRevisitDelay
+    )
+    {
+        detectionRadius = Mathf.Max(closeRangeDetectionRadius, newDetectionRadius);
+        hearingRadius = Mathf.Max(0f, newHearingRadius);
+        sprintHearingRadius = Mathf.Max(hearingRadius, newSprintHearingRadius);
+        memoryDuration = Mathf.Max(0.5f, newMemoryDuration);
+        forcedSearchDuration = Mathf.Max(0.5f, newForcedSearchDuration);
+        puzzleAlertMinimumDuration = Mathf.Max(forcedSearchDuration, newPuzzleAlertMinimumDuration);
+        puzzleAlertSpeedMultiplier = Mathf.Max(1f, newPuzzleAlertSpeedMultiplier);
+        searchRadius = Mathf.Max(1f, newSearchRadius);
+        routeRevisitDelay = Mathf.Max(5f, newRouteRevisitDelay);
     }
 
     private void ConfigureIntelligenceForScene(string sceneName)
@@ -648,6 +691,16 @@ public class BasicMonsterController : MonoBehaviour
             huntPersistenceTimer -= Time.deltaTime;
         }
 
+        if (puzzleAlertTimer > 0f)
+        {
+            puzzleAlertTimer -= Time.deltaTime;
+        }
+
+        if (aggressionLevel > 0f)
+        {
+            aggressionLevel = Mathf.Max(0f, aggressionLevel - aggressionDecayRate * Time.deltaTime);
+        }
+
         if (avoidanceLockTimer > 0f)
         {
             avoidanceLockTimer -= Time.deltaTime;
@@ -759,6 +812,7 @@ public class BasicMonsterController : MonoBehaviour
         // puis garde de sortie ou errance selon la phase et la difficulte.
         if (hasForcedReveal || canSeePlayer)
         {
+            RaiseAggression((hasForcedReveal ? sightingAggressionBuildRate * 0.6f : sightingAggressionBuildRate) * Time.deltaTime);
             huntPersistenceTimer = huntPersistenceDuration;
             RememberPlayerPosition(
                 CanPredictPlayerMovement() ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
@@ -772,6 +826,7 @@ public class BasicMonsterController : MonoBehaviour
 
         if (canHearPlayer)
         {
+            RaiseAggression(hearingAggressionBuildRate * Time.deltaTime);
             RememberPlayerPosition(
                 CanPredictPlayerMovement() ? GetPredictedPlayerPosition(distanceToPlayer) : playerTarget.position,
                 GetCurrentMemoryDuration() * 0.85f
@@ -788,7 +843,7 @@ public class BasicMonsterController : MonoBehaviour
             return MonsterState.Hunting;
         }
 
-        if (CanInvestigateMemory() && memoryTimer > 0f)
+        if ((CanInvestigateMemory() || puzzleAlertTimer > 0f) && memoryTimer > 0f)
         {
             velocity = GetInvestigationVelocity();
             isInvestigating = velocity.sqrMagnitude > 0.001f;
@@ -824,7 +879,9 @@ public class BasicMonsterController : MonoBehaviour
             return Vector3.zero;
         }
 
-        Vector3 anchor = lastKnownPlayerPosition;
+        Vector3 anchor = puzzleAlertTimer > 0f && !CanInvestigateMemory()
+            ? puzzleAlertOrigin
+            : lastKnownPlayerPosition;
         float distanceToAnchor = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(anchor));
         if (distanceToAnchor > patrolStoppingDistance + 0.35f)
         {
@@ -883,6 +940,7 @@ public class BasicMonsterController : MonoBehaviour
 
         if (hasAnchor && Vector3.Distance(planarPosition, planarAnchor) <= patrolStoppingDistance)
         {
+            MarkCurrentRoutePointVisited();
             patrolWaitTimer += Time.deltaTime;
             float effectiveWaitTime = GetEffectivePatrolWaitTime();
             if (patrolWaitTimer >= effectiveWaitTime)
@@ -1323,6 +1381,7 @@ public class BasicMonsterController : MonoBehaviour
         if (forwardProgress >= minimumProgress && (!touchingSide || planarDelta.magnitude >= minimumProgress * 1.6f))
         {
             stuckTimer = 0f;
+            repeatedStuckCount = 0;
             return;
         }
 
@@ -1335,6 +1394,7 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         stuckTimer = 0f;
+        repeatedStuckCount++;
         ClearCurrentNavMeshPath();
 
         Vector3 fallbackDirection = Vector3.Cross(Vector3.up, targetVelocity.normalized) * lastAvoidanceSign;
@@ -1368,6 +1428,13 @@ public class BasicMonsterController : MonoBehaviour
         avoidanceLockDirection = fallbackDirection.normalized;
         avoidanceLockTimer = avoidanceLockDuration * 1.5f;
 
+        if (repeatedStuckCount >= emergencyUnstuckAttemptThreshold &&
+            TryEmergencyReposition(targetVelocity.normalized, isChasing))
+        {
+            repeatedStuckCount = 0;
+            return;
+        }
+
         if (isChasing)
         {
             investigationTarget = transform.position + fallbackDirection.normalized * corridorRecoveryDistance;
@@ -1384,6 +1451,133 @@ public class BasicMonsterController : MonoBehaviour
         }
 
         AdvancePatrolPoint();
+    }
+
+    private bool TryEmergencyReposition(Vector3 preferredDirection, bool isChasing)
+    {
+        if (!runtimeNavMeshReady || controller == null)
+        {
+            return false;
+        }
+
+        if (playerTarget != null)
+        {
+            float distanceToPlayer = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(playerTarget.position));
+            if (distanceToPlayer < emergencyUnstuckMinPlayerDistance || IsVisibleFromPlayer())
+            {
+                return false;
+            }
+        }
+
+        if (preferredDirection.sqrMagnitude <= 0.001f)
+        {
+            preferredDirection = transform.forward;
+        }
+
+        preferredDirection.y = 0f;
+        preferredDirection.Normalize();
+
+        float[] radii = { emergencyUnstuckSampleRadius * 0.55f, emergencyUnstuckSampleRadius, emergencyUnstuckSampleRadius * 1.35f };
+        float[] angles = { 0f, -45f, 45f, -90f, 90f, 135f, -135f, 180f };
+        Vector3 bestPoint = transform.position;
+        float bestScore = float.NegativeInfinity;
+        bool foundPoint = false;
+
+        for (int radiusIndex = 0; radiusIndex < radii.Length; radiusIndex++)
+        {
+            for (int angleIndex = 0; angleIndex < angles.Length; angleIndex++)
+            {
+                Vector3 direction = Quaternion.Euler(0f, angles[angleIndex], 0f) * preferredDirection;
+                Vector3 probe = transform.position + direction.normalized * radii[radiusIndex];
+                if (!NavMesh.SamplePosition(probe, out NavMeshHit hit, navMeshSampleDistance, NavMesh.AllAreas))
+                {
+                    continue;
+                }
+
+                Vector3 candidate = hit.position;
+                if (!HasBodySpaceAt(candidate))
+                {
+                    continue;
+                }
+
+                float playerSafety = playerTarget != null
+                    ? Vector3.Distance(GetPlanarPosition(candidate), GetPlanarPosition(playerTarget.position))
+                    : emergencyUnstuckMinPlayerDistance;
+                if (playerSafety < emergencyUnstuckMinPlayerDistance * 0.7f)
+                {
+                    continue;
+                }
+
+                float targetScore = isChasing && playerTarget != null
+                    ? -Vector3.Distance(GetPlanarPosition(candidate), GetPlanarPosition(playerTarget.position))
+                    : Vector3.Dot(direction.normalized, preferredDirection);
+                float score = targetScore + playerSafety * 0.08f;
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestPoint = candidate;
+                    foundPoint = true;
+                }
+            }
+        }
+
+        if (!foundPoint)
+        {
+            return false;
+        }
+
+        controller.enabled = false;
+        transform.position = bestPoint;
+        controller.enabled = true;
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+        lastPosition = transform.position;
+        stuckEscapeTimer = 0f;
+        stuckTimer = 0f;
+        hasRoamTarget = false;
+        ClearCurrentNavMeshPath();
+        Debug.Log("L'Entite s'est debloquee sur une position NavMesh proche.");
+        return true;
+    }
+
+    private bool IsVisibleFromPlayer()
+    {
+        if (playerTarget == null)
+        {
+            return false;
+        }
+
+        Vector3 playerEye = playerTarget.position + Vector3.up * 1.5f;
+        Vector3 monsterCenter = transform.position + Vector3.up * GetNavigationLineCheckHeight();
+        Vector3 toMonster = monsterCenter - playerEye;
+        float distance = toMonster.magnitude;
+        if (distance <= 0.05f)
+        {
+            return true;
+        }
+
+        Vector3 playerForward = playerTarget.forward;
+        Camera playerCamera = playerTarget.GetComponentInChildren<Camera>(true);
+        if (playerCamera != null)
+        {
+            playerForward = playerCamera.transform.forward;
+            playerEye = playerCamera.transform.position;
+            toMonster = monsterCenter - playerEye;
+            distance = toMonster.magnitude;
+        }
+
+        if (Vector3.Angle(playerForward, toMonster.normalized) > 70f)
+        {
+            return false;
+        }
+
+        if (Physics.Linecast(playerEye, monsterCenter, out RaycastHit hit, sightBlockerMask, QueryTriggerInteraction.Ignore))
+        {
+            return hit.transform != null && hit.transform.IsChildOf(transform);
+        }
+
+        return true;
     }
 
     private void OnDrawGizmosSelected()
@@ -1856,6 +2050,18 @@ public class BasicMonsterController : MonoBehaviour
         return orderedRoute;
     }
 
+    private void InitializeRouteVisitMemory()
+    {
+        int routeLength = navigationRoute != null ? navigationRoute.Length : 0;
+        routeLastVisitTimes = new float[routeLength];
+        routeVisitCounts = new int[routeLength];
+
+        for (int i = 0; i < routeLastVisitTimes.Length; i++)
+        {
+            routeLastVisitTimes[i] = -routeRevisitDelay;
+        }
+    }
+
     private Vector3 GetIntelligentVelocityTo(Vector3 worldTarget, float speed, bool urgent, float targetStoppingDistance)
     {
         float distanceToTarget = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(worldTarget));
@@ -2219,7 +2425,9 @@ public class BasicMonsterController : MonoBehaviour
     {
         if (navigationRoute != null && navigationRoute.Length > 0)
         {
-            patrolPointIndex = (patrolPointIndex + 1) % navigationRoute.Length;
+            patrolPointIndex = prioritizeUnvisitedExploration
+                ? FindNextExplorationRouteIndex()
+                : (patrolPointIndex + 1) % navigationRoute.Length;
             patrolWaitTimer = 0f;
             roamRetargetTimer = 0f;
             hasRoamTarget = false;
@@ -2234,6 +2442,65 @@ public class BasicMonsterController : MonoBehaviour
         patrolWaitTimer = 0f;
         roamRetargetTimer = 0f;
         hasRoamTarget = false;
+    }
+
+    private void MarkCurrentRoutePointVisited()
+    {
+        if (navigationRoute == null ||
+            routeLastVisitTimes == null ||
+            routeVisitCounts == null ||
+            patrolPointIndex < 0 ||
+            patrolPointIndex >= navigationRoute.Length ||
+            patrolPointIndex >= routeLastVisitTimes.Length ||
+            patrolPointIndex >= routeVisitCounts.Length)
+        {
+            return;
+        }
+
+        routeLastVisitTimes[patrolPointIndex] = Time.time;
+        routeVisitCounts[patrolPointIndex]++;
+    }
+
+    private int FindNextExplorationRouteIndex()
+    {
+        if (navigationRoute == null || navigationRoute.Length == 0)
+        {
+            return 0;
+        }
+
+        if (routeLastVisitTimes == null ||
+            routeVisitCounts == null ||
+            routeLastVisitTimes.Length != navigationRoute.Length ||
+            routeVisitCounts.Length != navigationRoute.Length)
+        {
+            InitializeRouteVisitMemory();
+        }
+
+        int bestIndex = WrapRouteIndex(patrolPointIndex + 1);
+        float bestScore = float.NegativeInfinity;
+        Vector3 planarSelf = GetPlanarPosition(transform.position);
+
+        for (int i = 0; i < navigationRoute.Length; i++)
+        {
+            if (i == patrolPointIndex && navigationRoute.Length > 1)
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(planarSelf, GetPlanarPosition(navigationRoute[i]));
+            float timeSinceVisit = Time.time - routeLastVisitTimes[i];
+            float unvisitedBonus = routeVisitCounts[i] == 0 ? routeRevisitDelay * 2f : 0f;
+            float lineBonus = HasClearNavigationLine(navigationRoute[i]) ? 3f : 0f;
+            float score = timeSinceVisit + unvisitedBonus + lineBonus - distance * 0.65f - routeVisitCounts[i] * 5f;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
     }
 
     private void ClearCurrentNavMeshPath()
@@ -2980,12 +3247,23 @@ public class BasicMonsterController : MonoBehaviour
         searchRetargetTimer = 0f;
     }
 
+    private void RaiseAggression(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        aggressionLevel = Mathf.Clamp01(aggressionLevel + amount);
+    }
+
     private void PickNextSearchTarget()
     {
         Vector3 anchor = GetPlanarPosition(lastKnownPlayerPosition);
         float stepAngle = 360f / Mathf.Max(1, searchPointCount);
         float angle = stepAngle * searchPointIndex + Random.Range(-20f, 20f);
-        float radius = Random.Range(searchRadius * 0.45f, searchRadius);
+        float effectiveSearchRadius = searchRadius * (puzzleAlertTimer > 0f ? puzzleAlertSearchRadiusMultiplier : 1f);
+        float radius = Random.Range(effectiveSearchRadius * 0.45f, effectiveSearchRadius);
         Vector3 offset = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * radius;
 
         searchPointIndex = (searchPointIndex + 1) % Mathf.Max(1, searchPointCount);
@@ -3015,6 +3293,12 @@ public class BasicMonsterController : MonoBehaviour
     private float GetCurrentChaseSpeed()
     {
         float chaseSpeed = moveSpeed + GetTaskProgress01() * taskProgressChaseSpeedBonus;
+        if (puzzleAlertTimer > 0f)
+        {
+            chaseSpeed *= puzzleAlertSpeedMultiplier;
+        }
+
+        chaseSpeed *= 1f + aggressionLevel * aggressionChaseSpeedBonus;
         return IsSlowed ? slowedMoveSpeed : chaseSpeed;
     }
 
@@ -3022,6 +3306,7 @@ public class BasicMonsterController : MonoBehaviour
     {
         float roamSpeed = patrolMoveSpeed * GetPatrolSpeedMultiplier();
         float targetSpeed = Mathf.Max(investigationMoveSpeed, roamSpeed);
+        targetSpeed *= 1f + aggressionLevel * aggressionInvestigationSpeedBonus;
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, targetSpeed) : targetSpeed;
     }
 
@@ -3038,7 +3323,9 @@ public class BasicMonsterController : MonoBehaviour
 
     private float GetCurrentDetectionRadius()
     {
-        return detectionRadius + GetTaskProgress01() * taskProgressDetectionBonus * GetIntelligenceBonusScale();
+        return detectionRadius +
+            GetTaskProgress01() * taskProgressDetectionBonus * GetIntelligenceBonusScale() +
+            aggressionLevel * aggressionDetectionBonus;
     }
 
     private float GetCurrentHearingRadius()

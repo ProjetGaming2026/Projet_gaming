@@ -276,6 +276,16 @@ public class PlayerInteractor : MonoBehaviour
             return keyPickup.GetInteractPrompt();
         }
 
+        if (interactable is PatientPuzzleController patientPuzzle)
+        {
+            return patientPuzzle.GetInteractPrompt();
+        }
+
+        if (interactable is PatientPuzzlePickup patientPuzzlePickup)
+        {
+            return patientPuzzlePickup.GetInteractPrompt();
+        }
+
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
         return GameLocalization.Text(
             "Press E to interact with " + targetName,
