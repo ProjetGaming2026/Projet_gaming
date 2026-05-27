@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GameplayPauseOptionsMenu : MonoBehaviour
 {
@@ -113,6 +116,11 @@ public class GameplayPauseOptionsMenu : MonoBehaviour
             CloseMenu();
         }
 
+        if (GUILayout.Button(GameLocalization.Text("QUIT GAME", "QUITTER LE JEU", "SALIR DEL JUEGO"), buttonStyle, GUILayout.Height(66f)))
+        {
+            QuitGame();
+        }
+
         GUILayout.Label(GameLocalization.Text("Press Esc to resume", "Appuie sur Esc pour reprendre", "Pulsa Esc para continuar"), hintStyle);
         GUILayout.EndArea();
     }
@@ -134,6 +142,19 @@ public class GameplayPauseOptionsMenu : MonoBehaviour
         Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    public void QuitGame()
+    {
+        PlayerPrefs.Save();
+        IsOpen = false;
+        Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
+
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     private bool CanOpenMenu()
