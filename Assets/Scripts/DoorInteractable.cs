@@ -51,6 +51,13 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     {
         InitializeIfNeeded();
 
+        if (CodePuzzleManager.ShouldBlockTargetDoorInteraction(this))
+        {
+            KeypadUIManager.Instance?.ShowToast("Entrez le code sur le keypad.", 1.5f);
+            Debug.Log("DoorInteractable: " + name + " is locked by the keypad puzzle.");
+            return;
+        }
+
         if (!ExitDoorCodeLock.IsOpeningLinkedDoors &&
             ExitDoorCodeLock.TryGetOrCreateDefaultLockForDoor(this, out ExitDoorCodeLock exitDoorLock))
         {
@@ -79,6 +86,17 @@ public class DoorInteractable : MonoBehaviour, IInteractable
 
         int openDirection = ResolveOpenDirection();
         targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
+        isOpen = true;
+        PlaySound(openSound);
+    }
+
+    public void ForceOpen()
+    {
+        InitializeIfNeeded();
+
+        int openDirection = ResolveOpenDirection();
+        targetLocalRotation = closedLocalRotation * Quaternion.Euler(0f, openDirection * openAngle, 0f);
+        interactionLocked = false;
         isOpen = true;
         PlaySound(openSound);
     }

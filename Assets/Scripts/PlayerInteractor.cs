@@ -374,7 +374,6 @@ public class PlayerInteractor : MonoBehaviour
         {
             return baseInteractable.GetInteractPrompt();
         }
-
         string targetName = sourceCollider != null ? sourceCollider.name : "objet";
         return GameLocalization.Text(
             "Press E to interact with " + targetName,

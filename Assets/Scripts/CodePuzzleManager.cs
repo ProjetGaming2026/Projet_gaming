@@ -1,14 +1,41 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider))]
 public class CodePuzzleManager : MonoBehaviour, IInteractable
 {
     private const string ExpectedPuzzleCode = "6334";
+    private const string DefaultTargetDoorPath = "_map/asylumLevel/door3a/door3a";
+    private const string MediumSceneName = "demoScene_Moyen";
+    private const string KeypadObjectName = "SM_Pin_Pad";
 
     public static CodePuzzleManager Instance { get; private set; }
     public bool IsPuzzleSolved => puzzleSolved;
+    private static bool sceneLoadedRegistered;
+
+    public static bool ShouldBlockTargetDoorInteraction(DoorInteractable door)
+    {
+        if (door == null || SceneManager.GetActiveScene().name != MediumSceneName)
+        {
+            return false;
+        }
+
+        if (!IsTargetPuzzleDoor(door))
+        {
+            return false;
+        }
+
+        if (Instance != null && Instance.IsPuzzleSolved)
+        {
+            return false;
+        }
+
+        door.ForceClosed();
+        return true;
+    }
 
     [Header("Code")]
     public string secretCode = ExpectedPuzzleCode;
@@ -28,12 +55,17 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private float puzzleDurationSeconds = 90f;
     [SerializeField] private float controlledDoorRadius = 8f;
+    [SerializeField] private string targetDoorPath = DefaultTargetDoorPath;
+
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
 
     private AudioSource audioSource;
     private bool isBusy;
     private bool puzzleActive;
     private bool puzzleSolved;
     private bool keypadDisabled;
+    private bool taskRegistered;
     private float timeRemaining;
     private Coroutine timerRoutine;
     private readonly List<DoorInteractable> controlledDoors = new List<DoorInteractable>();
@@ -41,6 +73,152 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     private AudioClip generatedErrorClip;
     private AudioClip generatedTensionClip;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void EnsureMediumSceneKeypadPuzzle()
+    {
+        if (!sceneLoadedRegistered)
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            sceneLoadedRegistered = true;
+        }
+
+        ConfigureSceneKeypad(SceneManager.GetActiveScene());
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ConfigureSceneKeypad(scene);
+    }
+
+    private static void ConfigureSceneKeypad(Scene scene)
+    {
+        if (!scene.IsValid() || !scene.isLoaded || scene.name != MediumSceneName)
+        {
+            return;
+        }
+
+        if (FindSceneCodePuzzle(scene) != null)
+        {
+            return;
+        }
+
+        GameObject keypad = FindSceneKeypad(scene);
+        if (keypad == null)
+        {
+            return;
+        }
+
+        EnsureKeypadCollider(keypad);
+        keypad.AddComponent<CodePuzzleManager>();
+    }
+
+    private static CodePuzzleManager FindSceneCodePuzzle(Scene scene)
+    {
+        CodePuzzleManager[] managers = FindObjectsByType<CodePuzzleManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < managers.Length; i++)
+        {
+            if (managers[i] != null && managers[i].gameObject.scene == scene)
+            {
+                return managers[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static GameObject FindSceneKeypad(Scene scene)
+    {
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Transform candidate = transforms[i];
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                if (string.Equals(candidate.name, KeypadObjectName, StringComparison.Ordinal) ||
+                    candidate.name.IndexOf("Pin_Pad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    candidate.name.IndexOf("Keypad", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return candidate.gameObject;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static void EnsureKeypadCollider(GameObject keypad)
+    {
+        if (keypad == null || keypad.GetComponent<Collider>() != null)
+        {
+            return;
+        }
+
+        BoxCollider collider = keypad.AddComponent<BoxCollider>();
+        if (!TryGetLocalRendererBounds(keypad, out Bounds bounds))
+        {
+            collider.center = new Vector3(0f, 0f, 0f);
+            collider.size = new Vector3(0.45f, 0.12f, 0.65f);
+            return;
+        }
+
+        collider.center = bounds.center;
+        collider.size = bounds.size;
+    }
+
+    private static bool TryGetLocalRendererBounds(GameObject root, out Bounds bounds)
+    {
+        Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0)
+        {
+            bounds = default;
+            return false;
+        }
+
+        bool initialized = false;
+        Bounds localBounds = default;
+        Matrix4x4 worldToLocal = root.transform.worldToLocalMatrix;
+
+        for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+        {
+            Bounds rendererBounds = renderers[rendererIndex].bounds;
+            Vector3 center = rendererBounds.center;
+            Vector3 extents = rendererBounds.extents;
+
+            Vector3[] corners =
+            {
+                center + new Vector3( extents.x,  extents.y,  extents.z),
+                center + new Vector3( extents.x,  extents.y, -extents.z),
+                center + new Vector3( extents.x, -extents.y,  extents.z),
+                center + new Vector3( extents.x, -extents.y, -extents.z),
+                center + new Vector3(-extents.x,  extents.y,  extents.z),
+                center + new Vector3(-extents.x,  extents.y, -extents.z),
+                center + new Vector3(-extents.x, -extents.y,  extents.z),
+                center + new Vector3(-extents.x, -extents.y, -extents.z),
+            };
+
+            for (int cornerIndex = 0; cornerIndex < corners.Length; cornerIndex++)
+            {
+                Vector3 localCorner = worldToLocal.MultiplyPoint3x4(corners[cornerIndex]);
+                if (!initialized)
+                {
+                    localBounds = new Bounds(localCorner, Vector3.zero);
+                    initialized = true;
+                }
+                else
+                {
+                    localBounds.Encapsulate(localCorner);
+                }
+            }
+        }
+
+        bounds = localBounds;
+        return initialized;
+    }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -212,7 +390,9 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         isBusy = true;
         StopPuzzleTimer();
         puzzleSolved = true;
+        ResolveSceneReferences();
         LockPuzzleDoor(false);
+        RegisterTaskProgress();
         PlayClip(successSound);
         KeypadUIManager.Instance?.ShowStatus("ACCES AUTORISE", Color.green);
         TryOpenDoor();
@@ -280,18 +460,20 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
 
     private void TryOpenDoor()
     {
-        if (doorInteractable == null)
+        if (OpenTargetPuzzleDoors())
         {
+            return;
+        }
+
+        if (doorInteractable == null || controlledDoors.Count == 0)
+        {
+            ResolveSceneReferences();
             doorInteractable = FindNearestControlledDoor();
         }
 
         if (doorInteractable != null)
         {
-            if (!doorInteractable.IsOpen)
-            {
-                doorInteractable.Interact();
-            }
-
+            doorInteractable.ForceOpen();
             return;
         }
 
@@ -326,6 +508,63 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         doorAnimator.SetTrigger("Open");
     }
 
+    private void RegisterTaskProgress()
+    {
+        if (!countAsTask || taskRegistered)
+        {
+            return;
+        }
+
+        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[CodePuzzleManager] PrototypeGameManager not found, keypad task progress was not registered.", this);
+            return;
+        }
+
+        gameManager.RegisterTaskSuccess();
+        taskRegistered = true;
+        PrototypeHUD.ShowFeedback(
+            GameLocalization.Text(
+                "Task complete. Progress updated.",
+                "Tache reussie. Progression mise a jour.",
+                "Tarea completada. Progreso actualizado."),
+            PrototypeHUD.FeedbackTone.Success,
+            2.8f);
+    }
+
+    private bool OpenTargetPuzzleDoors()
+    {
+        bool openedAnyDoor = false;
+        DoorInteractable[] allDoors = FindObjectsByType<DoorInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        for (int i = 0; i < allDoors.Length; i++)
+        {
+            DoorInteractable candidate = allDoors[i];
+            if (!IsTargetPuzzleDoor(candidate))
+            {
+                continue;
+            }
+
+            candidate.SetInteractionLocked(false);
+            candidate.ForceOpen();
+            doorInteractable = candidate;
+
+            if (!controlledDoors.Contains(candidate))
+            {
+                controlledDoors.Add(candidate);
+            }
+
+            openedAnyDoor = true;
+        }
+
+        if (!openedAnyDoor)
+        {
+            Debug.LogWarning("[CodePuzzleManager] Target keypad door was not found for automatic opening.");
+        }
+
+        return openedAnyDoor;
+    }
     private void CloseUi()
     {
         StopPuzzleTimer();
@@ -408,11 +647,24 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         LockPuzzleDoor(true);
     }
 
-    // Finds nearby references automatically so the puzzle still works even if the inspector was not configured.
+    // Uses the scene path first so the keypad controls the intended asylum door, then falls back to nearby doors.
     private void ResolveSceneReferences()
     {
         controlledDoors.Clear();
 
+        DoorInteractable exactDoor = FindDoorByHierarchyPath(targetDoorPath) ?? FindDoorByHierarchyPathWithoutSceneRoot(targetDoorPath);
+        if (exactDoor != null)
+        {
+            controlledDoors.Add(exactDoor);
+            doorInteractable = exactDoor;
+
+            if (doorAnimator == null)
+            {
+                doorAnimator = exactDoor.GetComponent<Animator>() ?? exactDoor.GetComponentInChildren<Animator>(true);
+            }
+
+            return;
+        }
         DoorInteractable[] allDoors = FindObjectsByType<DoorInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (DoorInteractable candidate in allDoors)
         {
@@ -462,6 +714,119 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
         return closest;
     }
 
+    private DoorInteractable FindDoorByHierarchyPath(string hierarchyPath)
+    {
+        if (string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return null;
+        }
+
+        string[] pathParts = hierarchyPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        if (pathParts.Length == 0)
+        {
+            return null;
+        }
+
+        Transform[] allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < allTransforms.Length; i++)
+        {
+            Transform candidate = allTransforms[i];
+            if (candidate == null || !NameMatches(candidate, pathParts[pathParts.Length - 1]))
+            {
+                continue;
+            }
+
+            if (!HasMatchingAncestorPath(candidate, pathParts))
+            {
+                continue;
+            }
+
+            DoorInteractable door = candidate.GetComponent<DoorInteractable>();
+            if (door == null)
+            {
+                door = candidate.GetComponentInChildren<DoorInteractable>(true);
+            }
+
+            if (door != null)
+            {
+                return door;
+            }
+        }
+
+        return null;
+    }
+
+    private DoorInteractable FindDoorByHierarchyPathWithoutSceneRoot(string hierarchyPath)
+    {
+        if (string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return null;
+        }
+
+        int firstSeparator = hierarchyPath.IndexOf('/');
+        if (firstSeparator < 0 || firstSeparator >= hierarchyPath.Length - 1)
+        {
+            return null;
+        }
+
+        return FindDoorByHierarchyPath(hierarchyPath.Substring(firstSeparator + 1));
+    }
+
+    private static bool MatchesTargetDoorPath(Transform candidate, string hierarchyPath)
+    {
+        if (candidate == null || string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return false;
+        }
+
+        string[] pathParts = hierarchyPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        return pathParts.Length > 0 && HasMatchingAncestorPath(candidate, pathParts);
+    }
+
+    private static bool MatchesTargetDoorPathWithoutSceneRoot(Transform candidate, string hierarchyPath)
+    {
+        if (string.IsNullOrWhiteSpace(hierarchyPath))
+        {
+            return false;
+        }
+
+        int firstSeparator = hierarchyPath.IndexOf('/');
+        if (firstSeparator < 0 || firstSeparator >= hierarchyPath.Length - 1)
+        {
+            return false;
+        }
+
+        return MatchesTargetDoorPath(candidate, hierarchyPath.Substring(firstSeparator + 1));
+    }
+
+    private static bool HasMatchingAncestorPath(Transform candidate, string[] pathParts)
+    {
+        Transform current = candidate;
+        for (int partIndex = pathParts.Length - 1; partIndex >= 0; partIndex--)
+        {
+            if (current == null || !NameMatches(current, pathParts[partIndex]))
+            {
+                return false;
+            }
+
+            current = current.parent;
+        }
+
+        return true;
+    }
+
+    private static bool IsTargetPuzzleDoor(DoorInteractable door)
+    {
+        return door != null &&
+               (MatchesTargetDoorPath(door.transform, DefaultTargetDoorPath) ||
+                MatchesTargetDoorPathWithoutSceneRoot(door.transform, DefaultTargetDoorPath));
+    }
+
+    private static bool NameMatches(Transform transformToCheck, string expectedName)
+    {
+        return transformToCheck != null &&
+               string.Equals(transformToCheck.name, expectedName, StringComparison.Ordinal);
+    }
     private DoorInteractable FindNearestDoorInteractable()
     {
         DoorInteractable[] doors = FindObjectsByType<DoorInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -555,7 +920,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
                 continue;
             }
 
-            targetDoor.SetLocked(locked);
+            targetDoor.SetInteractionLocked(locked);
             if (locked)
             {
                 targetDoor.ForceClosed();
