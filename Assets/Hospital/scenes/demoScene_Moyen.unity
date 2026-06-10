@@ -145035,6 +145035,9 @@ MonoBehaviour:
   searchRetargetInterval: 1.25
   searchPointCount: 6
   puzzleAlertMinimumDuration: 60
+  puzzleAlertTravelBuffer: 12
+  puzzleAlertMinimumTravelDuration: 60
+  puzzleAlertMaximumTravelDuration: 180
   puzzleAlertSpeedMultiplier: 1
   puzzleAlertSearchRadiusMultiplier: 1.45
   exitGuardDistance: 3.5

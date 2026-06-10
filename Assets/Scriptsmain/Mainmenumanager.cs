@@ -744,7 +744,7 @@ public class MainMenuManager : MonoBehaviour
         SetFirstTextInObject("Language", TextFor(language, "Language", "Langue", "Idioma"), rightToLeft);
 
         SetTextByExactValue("Options Menu", TextFor(language, "Options Menu", "Parametres", "Opciones"), rightToLeft);
-        SetTextByExactValue("Title Of The Game", TextFor(language, "Title Of The Game", "Titre Du Jeu", "Titulo Del Juego"), rightToLeft);
+        SetTextByExactValue("Title Of The Game", TextFor(language, "WARD 404", "WARD 404", "WARD 404"), rightToLeft);
         FixOptionsLabelTextOnly();
 
         if (fullscreenDropdown != null && fullscreenDropdown.options.Count >= 2)
