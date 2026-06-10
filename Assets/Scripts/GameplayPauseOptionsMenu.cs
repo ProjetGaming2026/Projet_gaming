@@ -167,7 +167,9 @@ public class GameplayPauseOptionsMenu : MonoBehaviour
         if (LevelSelectBootstrap.IsMenuOpen ||
             CipherTerminal.IsAnyTerminalOpen ||
             PadlockPuzzle.IsAnyPadlockFocused ||
-            PadlockController.IsAnyPadlockActive)
+            PadlockController.IsAnyPadlockActive ||
+            PhoneAnswerInput.IsAnyAnswerInputOpen ||
+            PhoneAnswerInput.WasAnswerInputCancelledThisFrame)
         {
             return false;
         }

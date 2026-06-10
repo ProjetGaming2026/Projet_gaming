@@ -140,7 +140,7 @@ public class KeypadBoxCode : Interactable
             answerInput = GetComponent<PhoneAnswerInput>() ?? gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(maxInputLength, HandleCodeSubmitted);
+        answerInput.BeginAnswerMode(maxInputLength, HandleCodeSubmitted, HandleInputCancelled);
         isInputOpen = true;
         BindKeypadSoundButtons();
         Debug.Log("Puzzle 2 keypad input opened.");
@@ -150,6 +150,12 @@ public class KeypadBoxCode : Interactable
     {
         isInputOpen = false;
         answerInput?.EndAnswerMode();
+    }
+
+    private void HandleInputCancelled()
+    {
+        isInputOpen = false;
+        Debug.Log("Puzzle 2 keypad input cancelled.");
     }
 
     private void HandleCodeSubmitted(string submittedCode)
@@ -188,6 +194,7 @@ public class KeypadBoxCode : Interactable
     private void HandleWrongCode()
     {
         wrongAttempts++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         PlayOneShot(boxWrongCodeSound);
         ui ??= PhonePuzzleUI.EnsureExists();
         ui.Subtitles.ShowTimed("Something heard the noise.", 2.5f);

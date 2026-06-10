@@ -1,8 +1,12 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HiddenBloodWallClue : MonoBehaviour
 {
+    private const string MediumSceneName = "demoScene_Moyen";
+    private const string NikolasClueName = "Hidden_Blood_Nikolas";
+
     [Header("Reveal")]
     [SerializeField] private Transform revealPoint;
     [SerializeField] private float revealDistance = 12f;
@@ -22,6 +26,7 @@ public class HiddenBloodWallClue : MonoBehaviour
     private Color[] originalTextColors;
     private Color[] originalSpriteColors;
     private float currentVisibility;
+    private bool taskRegistered;
 
     public void Configure(TMP_Text[] texts, Transform point)
     {
@@ -65,10 +70,44 @@ public class HiddenBloodWallClue : MonoBehaviour
     {
         ResolveReferences();
 
-        float targetVisibility = ShouldReveal() ? 1f : 0f;
+        bool shouldReveal = ShouldReveal();
+        if (shouldReveal)
+        {
+            RegisterNikolasTaskProgress();
+        }
+
+        float targetVisibility = shouldReveal ? 1f : 0f;
         float speed = targetVisibility > currentVisibility ? revealSpeed : hideSpeed;
         currentVisibility = Mathf.MoveTowards(currentVisibility, targetVisibility, speed * Time.deltaTime);
         ApplyVisibility(currentVisibility, false);
+    }
+
+    private void RegisterNikolasTaskProgress()
+    {
+        if (taskRegistered ||
+            SceneManager.GetActiveScene().name != MediumSceneName ||
+            transform.root.name != NikolasClueName)
+        {
+            return;
+        }
+
+        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[HiddenBloodWallClue] PrototypeGameManager not found, Nikolas task progress was not registered.", this);
+            return;
+        }
+
+        gameManager.RegisterTaskSuccess();
+        taskRegistered = true;
+        Debug.Log("[HiddenBloodWallClue] NIKOLAS revealed with the flashlight and counted as one medium task.", this);
+        PrototypeHUD.ShowFeedback(
+            GameLocalization.Text(
+                "Task complete. NIKOLAS revealed.",
+                "Tache reussie. NIKOLAS est apparu.",
+                "Tarea completada. NIKOLAS aparecio."),
+            PrototypeHUD.FeedbackTone.Success,
+            2.8f);
     }
 
     private void ResolveReferences()

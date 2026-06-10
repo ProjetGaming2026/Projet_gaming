@@ -14,6 +14,14 @@ public class OperationOrderPuzzle : MonoBehaviour
     private const string PuzzleRootFallbackName = "Puzzle4_OperationOrder";
     private const string AllInstrumentsFallbackName = "All_Instruments";
     private const string MethodSheetFallbackName = "OperationMethodSheet";
+#if UNITY_EDITOR
+    private const string DefaultClampVoicePath = "Assets/audio/Clamp.mp3";
+    private const string DefaultScalpelVoicePath = "Assets/audio/Scalpel.mp3";
+    private const string DefaultScissorsVoicePath = "Assets/audio/Surgical scissors.mp3";
+    private const string DefaultRetractorHookVoicePath = "Assets/audio/RetractorHook.mp3";
+    private const string DefaultNeedleHolderVoicePath = "Assets/audio/Needle Holder.mp3";
+    private const string DefaultStethoscopeVoicePath = "Assets/audio/Stethoscope.mp3";
+#endif
 
     [Header("Puzzle 4")]
     [SerializeField, Min(1f)] private float puzzleTimeLimit = 600f;
@@ -108,6 +116,7 @@ public class OperationOrderPuzzle : MonoBehaviour
     private void Awake()
     {
         TryAssignEditorDefaultImage();
+        TryAssignEditorDefaultAudio();
         ResolveReferences();
         ConfigureChildren();
         SetPuzzleInteractable(false);
@@ -121,6 +130,7 @@ public class OperationOrderPuzzle : MonoBehaviour
     private void OnValidate()
     {
         TryAssignEditorDefaultImage();
+        TryAssignEditorDefaultAudio();
     }
 
     private void Update()
@@ -362,6 +372,7 @@ public class OperationOrderPuzzle : MonoBehaviour
 
     private IEnumerator WrongInstrumentFeedbackRoutine(SurgicalInstrumentInteractable instrument, int wrongAttemptCount)
     {
+        PuzzleFailureMonsterAlert.Alert(instrument != null ? instrument.transform : transform);
         ui ??= PhonePuzzleUI.EnsureExists();
         ui.Subtitles.ShowTimed(UnityEngine.Random.value > 0.5f ? "The mouth wakes too early." : "The order breaks.", 2.6f);
         PlayOneShot(wrongSequenceSound, "wrongSequenceSound");
@@ -399,6 +410,7 @@ public class OperationOrderPuzzle : MonoBehaviour
     private void HandleWrongPhoneAnswer()
     {
         wrongPhoneAttemptCount++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         ui ??= PhonePuzzleUI.EnsureExists();
         ui.Subtitles.ShowTimed("That mouth only tasted metal.", 2.8f);
 
@@ -1144,6 +1156,45 @@ public class OperationOrderPuzzle : MonoBehaviour
         }
 #endif
     }
+
+    private void TryAssignEditorDefaultAudio()
+    {
+        PhonePuzzleAudioLibrary library = PhonePuzzleAudioLibrary.Load();
+        if (library != null)
+        {
+            clampVoiceOrSound ??= library.ClampVoice;
+            scalpelVoiceOrSound ??= library.ScalpelVoice;
+            scissorsVoiceOrSound ??= library.ScissorsVoice;
+            retractorHookVoiceOrSound ??= library.RetractorHookVoice;
+            needleHolderVoiceOrSound ??= library.NeedleHolderVoice;
+            stethoscopeVoiceOrSound ??= library.StethoscopeVoice;
+        }
+
+#if UNITY_EDITOR
+        TryAssignEditorAudioClip(ref clampVoiceOrSound, DefaultClampVoicePath);
+        TryAssignEditorAudioClip(ref scalpelVoiceOrSound, DefaultScalpelVoicePath);
+        TryAssignEditorAudioClip(ref scissorsVoiceOrSound, DefaultScissorsVoicePath);
+        TryAssignEditorAudioClip(ref retractorHookVoiceOrSound, DefaultRetractorHookVoicePath);
+        TryAssignEditorAudioClip(ref needleHolderVoiceOrSound, DefaultNeedleHolderVoicePath);
+        TryAssignEditorAudioClip(ref stethoscopeVoiceOrSound, DefaultStethoscopeVoicePath);
+#endif
+    }
+
+#if UNITY_EDITOR
+    private void TryAssignEditorAudioClip(ref AudioClip target, string assetPath)
+    {
+        if (target != null)
+        {
+            return;
+        }
+
+        target = AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath);
+        if (target != null)
+        {
+            EditorUtility.SetDirty(this);
+        }
+    }
+#endif
 
     private static bool TryGetRenderBounds(Transform root, out Bounds bounds)
     {

@@ -45,7 +45,10 @@ public static class GameplayDifficultyBalanceBootstrap
             player.ApplyMovementTuning(profile.playerWalkSpeed, profile.playerSprintSpeed);
         }
 
-        BasicMonsterController[] monsters = Object.FindObjectsByType<BasicMonsterController>(FindObjectsSortMode.None);
+        BasicMonsterController[] monsters = Object.FindObjectsByType<BasicMonsterController>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
         for (int i = 0; i < monsters.Length; i++)
         {
             monsters[i].ApplyMovementTuning(
@@ -84,18 +87,18 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 5.4f,
                     playerSprintSpeed: 8.8f,
-                    monsterChaseSpeed: 4.6f,
-                    monsterSlowedSpeed: 2.4f,
-                    monsterPatrolSpeed: 1.45f,
-                    monsterInvestigationSpeed: 2.1f,
+                    monsterChaseSpeed: 2f,
+                    monsterSlowedSpeed: 1f,
+                    monsterPatrolSpeed: 2f,
+                    monsterInvestigationSpeed: 2f,
                     hardPatrolSpeedMultiplier: 1f,
-                    monsterDetectionRadius: 9f,
+                    monsterDetectionRadius: 5f,
                     monsterHearingRadius: 0f,
                     monsterSprintHearingRadius: 0f,
                     monsterMemoryDuration: 4f,
                     monsterForcedSearchDuration: 3f,
-                    monsterPuzzleAlertDuration: 35f,
-                    monsterPuzzleAlertSpeedMultiplier: 1.08f,
+                    monsterPuzzleAlertDuration: 60f,
+                    monsterPuzzleAlertSpeedMultiplier: 1f,
                     monsterSearchRadius: 3.8f,
                     monsterRouteRevisitDelay: 65f,
                     requiredTasks: 5,
@@ -108,18 +111,18 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 5f,
                     playerSprintSpeed: 8f,
-                    monsterChaseSpeed: 5.4f,
-                    monsterSlowedSpeed: 2.8f,
-                    monsterPatrolSpeed: 1.65f,
-                    monsterInvestigationSpeed: 2.45f,
-                    hardPatrolSpeedMultiplier: 1.02f,
-                    monsterDetectionRadius: 13f,
+                    monsterChaseSpeed: 2f,
+                    monsterSlowedSpeed: 1f,
+                    monsterPatrolSpeed: 2f,
+                    monsterInvestigationSpeed: 2f,
+                    hardPatrolSpeedMultiplier: 1f,
+                    monsterDetectionRadius: 5f,
                     monsterHearingRadius: 7f,
                     monsterSprintHearingRadius: 11f,
                     monsterMemoryDuration: 8f,
                     monsterForcedSearchDuration: 5f,
-                    monsterPuzzleAlertDuration: 50f,
-                    monsterPuzzleAlertSpeedMultiplier: 1.16f,
+                    monsterPuzzleAlertDuration: 60f,
+                    monsterPuzzleAlertSpeedMultiplier: 1f,
                     monsterSearchRadius: 5.5f,
                     monsterRouteRevisitDelay: 45f,
                     requiredTasks: 7,
@@ -131,21 +134,21 @@ public static class GameplayDifficultyBalanceBootstrap
                 profile = new BalanceProfile(
                     playerWalkSpeed: 4.8f,
                     playerSprintSpeed: 7.5f,
-                    monsterChaseSpeed: 6.9f,
-                    monsterSlowedSpeed: 3.3f,
-                    monsterPatrolSpeed: 1.9f,
-                    monsterInvestigationSpeed: 3f,
-                    hardPatrolSpeedMultiplier: 1.1f,
-                    monsterDetectionRadius: 17f,
+                    monsterChaseSpeed: 2f,
+                    monsterSlowedSpeed: 1f,
+                    monsterPatrolSpeed: 2f,
+                    monsterInvestigationSpeed: 2f,
+                    hardPatrolSpeedMultiplier: 1f,
+                    monsterDetectionRadius: 5f,
                     monsterHearingRadius: 9f,
                     monsterSprintHearingRadius: 14f,
                     monsterMemoryDuration: 12f,
                     monsterForcedSearchDuration: 7f,
-                    monsterPuzzleAlertDuration: 70f,
-                    monsterPuzzleAlertSpeedMultiplier: 1.28f,
+                    monsterPuzzleAlertDuration: 60f,
+                    monsterPuzzleAlertSpeedMultiplier: 1f,
                     monsterSearchRadius: 7f,
                     monsterRouteRevisitDelay: 30f,
-                    requiredTasks: 9,
+                    requiredTasks: 5,
                     levelDuration: 2400f
                 );
                 return true;

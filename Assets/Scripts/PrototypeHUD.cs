@@ -334,6 +334,11 @@ public class PrototypeHUD : MonoBehaviour
             return;
         }
 
+        if (monsterController != null && !monsterController.IsWithinVerticalSenseRange(playerTransform))
+        {
+            return;
+        }
+
         float distance = Vector3.Distance(playerTransform.position, monsterTransform.position);
 
         if (distance <= 4f)

@@ -121,7 +121,7 @@ public class FinalDoorKeypad : Interactable
             answerInput = GetComponent<PhoneAnswerInput>() ?? gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(maxInputLength, HandleCodeSubmitted);
+        answerInput.BeginAnswerMode(maxInputLength, HandleCodeSubmitted, HandleInputCancelled);
         isInputOpen = true;
         Debug.Log("Final door keypad input opened.");
     }
@@ -130,6 +130,12 @@ public class FinalDoorKeypad : Interactable
     {
         isInputOpen = false;
         answerInput?.EndAnswerMode();
+    }
+
+    private void HandleInputCancelled()
+    {
+        isInputOpen = false;
+        Debug.Log("Final door keypad input cancelled.");
     }
 
     private void HandleCodeSubmitted(string submittedCode)
@@ -182,6 +188,7 @@ public class FinalDoorKeypad : Interactable
     private void HandleWrongCode()
     {
         wrongAttemptCount++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         PlayOneShot(wrongCodeSound);
 
         ui ??= PhonePuzzleUI.EnsureExists();

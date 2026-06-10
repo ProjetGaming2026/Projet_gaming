@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 588e74cdc523495db7336a56c22552b8, type: 3}
+  m_Name: PhonePuzzleAudioLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::PhonePuzzleAudioLibrary
+  phoneRingingLoop: {fileID: 8300000, guid: a5ab191c6a019974aa76b122480009ce, type: 3}
+  phoneCall1Voice: {fileID: 8300000, guid: 3102ab740fd3a814494fbb0a171ab4fa, type: 3}
+  phoneCall2Voice: {fileID: 8300000, guid: 03c805ab4346cb748909a3cace5ab2fb, type: 3}
+  phoneCall3Voice: {fileID: 8300000, guid: 1256931cb7594ff9b47c3ad00978a3f4, type: 3}
+  phoneCall4Voice: {fileID: 8300000, guid: 8e57b1d06ca148bb9d97f64813bb0f05, type: 3}
+  phoneCall5Voice: {fileID: 8300000, guid: 70d597c46707476bbd082fde6575d94f, type: 3}
+  finalPhoneVoice: {fileID: 8300000, guid: bdb0e69056de49088aa363ba694b4a8e, type: 3}
+  puzzle1CorrectAnswer: {fileID: 8300000, guid: 66b13965ea33ba84b944044cb3b5bf61, type: 3}
+  clampVoice: {fileID: 8300000, guid: cbefe6de6be14f045a9cd76c4afb5451, type: 3}
+  scalpelVoice: {fileID: 8300000, guid: ed271e3e0804f3342a3121b10b9e6efd, type: 3}
+  scissorsVoice: {fileID: 8300000, guid: a0a6355331689ad4bac0b376f37cbb2e, type: 3}
+  retractorHookVoice: {fileID: 8300000, guid: 5f9e70493315d864da4683c5c138d52c, type: 3}
+  needleHolderVoice: {fileID: 8300000, guid: a1ee094f8f155b443ae42c7c77a79e99, type: 3}
+  stethoscopeVoice: {fileID: 8300000, guid: 049c4b18e30f75644b9870d027c3c3d0, type: 3}

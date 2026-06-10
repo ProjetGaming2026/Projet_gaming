@@ -9,6 +9,7 @@ using UnityEditor;
 public class PhoneAnswerInput : MonoBehaviour
 {
     public static bool IsAnyAnswerInputOpen { get; private set; }
+    public static bool WasAnswerInputCancelledThisFrame => answerInputCancelledFrame == Time.frameCount;
 
     [Header("Answer")]
     [SerializeField, Min(1)] private int maxAnswerLength = 3;
@@ -32,6 +33,8 @@ public class PhoneAnswerInput : MonoBehaviour
     private bool isActive;
     private string currentAnswer = string.Empty;
     private Action<string> submitCallback;
+    private Action cancelCallback;
+    private static int answerInputCancelledFrame = -1;
 
     public string CurrentAnswer => currentAnswer;
 
@@ -59,6 +62,12 @@ public class PhoneAnswerInput : MonoBehaviour
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CancelAnswer();
+            return;
+        }
+
         for (int i = 0; i <= 9; i++)
         {
             if (Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha0 + i)) || Input.GetKeyDown((KeyCode)((int)KeyCode.Keypad0 + i)))
@@ -78,11 +87,12 @@ public class PhoneAnswerInput : MonoBehaviour
         }
     }
 
-    public void BeginAnswerMode(int maximumLength, Action<string> onSubmit)
+    public void BeginAnswerMode(int maximumLength, Action<string> onSubmit, Action onCancel = null)
     {
         ui = PhonePuzzleUI.EnsureExists();
         maxAnswerLength = Mathf.Max(1, maximumLength);
         submitCallback = onSubmit;
+        cancelCallback = onCancel;
         currentAnswer = string.Empty;
         isActive = true;
         IsAnyAnswerInputOpen = true;
@@ -102,11 +112,26 @@ public class PhoneAnswerInput : MonoBehaviour
         isActive = false;
         IsAnyAnswerInputOpen = false;
         submitCallback = null;
+        cancelCallback = null;
 
         if (ui != null)
         {
             ui.SetAnswerInputVisible(false);
         }
+    }
+
+    public void CancelAnswer()
+    {
+        if (!isActive)
+        {
+            return;
+        }
+
+        Action callback = cancelCallback;
+        answerInputCancelledFrame = Time.frameCount;
+        EndAnswerMode();
+        callback?.Invoke();
+        Debug.Log("Phone answer input cancelled with Escape.");
     }
 
     public void ClearAnswer()

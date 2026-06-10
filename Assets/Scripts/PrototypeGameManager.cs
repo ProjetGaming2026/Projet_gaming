@@ -211,8 +211,44 @@ public class PrototypeGameManager : MonoBehaviour
             return;
         }
 
-        int randomIndex = Random.Range(0, exitZones.Length);
-        ActiveExitZone = exitZones[randomIndex];
+        int validExitCount = 0;
+        for (int i = 0; i < exitZones.Length; i++)
+        {
+            if (exitZones[i] != null)
+            {
+                validExitCount++;
+            }
+        }
+
+        if (validExitCount == 0)
+        {
+            Debug.LogWarning("Aucune ExitZone valide assignee au GameManager. Le flux de sortie configure peut continuer.");
+            return;
+        }
+
+        int selectedValidIndex = Random.Range(0, validExitCount);
+        for (int i = 0; i < exitZones.Length; i++)
+        {
+            if (exitZones[i] == null)
+            {
+                continue;
+            }
+
+            if (selectedValidIndex == 0)
+            {
+                ActiveExitZone = exitZones[i];
+                break;
+            }
+
+            selectedValidIndex--;
+        }
+
+        if (ActiveExitZone == null)
+        {
+            Debug.LogWarning("Impossible de selectionner une ExitZone valide. Le flux de sortie configure peut continuer.");
+            return;
+        }
+
         ActiveExitZone.ActivateExit();
 
         Debug.Log("Une sortie aleatoire a ete activee : " + ActiveExitZone.name);

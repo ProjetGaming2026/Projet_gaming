@@ -57,6 +57,7 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float detectionRadius = 15f;
     [SerializeField, Range(20f, 180f)] private float visionAngle = 110f;
     [SerializeField] private float closeRangeDetectionRadius = 2f;
+    [SerializeField] private float maxVerticalSenseDistance = 2f;
     [SerializeField] private float hearingRadius = 7f;
     [SerializeField] private float sprintHearingRadius = 11f;
     [SerializeField] private float movementNoiseThreshold = 4f;
@@ -117,7 +118,10 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float searchRadius = 5.5f;
     [SerializeField] private float searchRetargetInterval = 1.25f;
     [SerializeField] private int searchPointCount = 6;
-    [SerializeField] private float puzzleAlertMinimumDuration = 45f;
+    [SerializeField] private float puzzleAlertMinimumDuration = 60f;
+    [SerializeField] private float puzzleAlertTravelBuffer = 12f;
+    [SerializeField] private float puzzleAlertMinimumTravelDuration = 60f;
+    [SerializeField] private float puzzleAlertMaximumTravelDuration = 180f;
     [SerializeField] private float puzzleAlertSpeedMultiplier = 1.18f;
     [SerializeField] private float puzzleAlertSearchRadiusMultiplier = 1.45f;
     [SerializeField] private float exitGuardDistance = 3.5f;
@@ -130,9 +134,9 @@ public class BasicMonsterController : MonoBehaviour
     [SerializeField] private float stuckEscapeDuration = 1.25f;
     [SerializeField] private float stuckMinimumProgressRatio = 0.18f;
     [SerializeField] private float wedgedContactAcceleration = 1.35f;
-    [SerializeField] private int emergencyUnstuckAttemptThreshold = 3;
-    [SerializeField] private float emergencyUnstuckSampleRadius = 6f;
-    [SerializeField] private float emergencyUnstuckMinPlayerDistance = 8f;
+    [SerializeField] private float physicalDetourDistance = 3.5f;
+    [SerializeField] private float physicalDetourDuration = 4f;
+    [SerializeField] private float physicalDetourVerticalTolerance = 1.25f;
 
     [Header("Intelligence")]
     [SerializeField] private bool buildRuntimeNavMesh = true;
@@ -197,6 +201,7 @@ public class BasicMonsterController : MonoBehaviour
     public bool IsGuardingExitState => currentState == MonsterState.GuardingExit;
     public bool IsRoamingState => currentState == MonsterState.Roaming;
     public bool IsCaptureInProgress => captureTarget != null;
+    public float MaxVerticalSenseDistance => maxVerticalSenseDistance;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -270,19 +275,7 @@ public class BasicMonsterController : MonoBehaviour
         EnsureRuntimeNavMesh();
         currentNavMeshPath = new NavMeshPath();
 
-        if (playerTarget == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                playerTarget = player.transform;
-            }
-        }
-
-        if (playerController == null)
-        {
-            playerController = FindFirstObjectByType<BasicFirstPersonController>();
-        }
+        TryAssignPlayerTarget();
 
         if (gameManager == null)
         {
@@ -390,8 +383,7 @@ public class BasicMonsterController : MonoBehaviour
 
     public void RevealPlayerPosition(float duration)
     {
-        forcedRevealTimer = Mathf.Max(forcedRevealTimer, duration);
-        Debug.Log("Position du joueur revelee a l'Entite pendant " + duration + " secondes.");
+        InvestigatePlayerPositionSnapshot(duration);
     }
 
     public void AssignPlayerTarget(Transform target)
@@ -403,6 +395,50 @@ public class BasicMonsterController : MonoBehaviour
 
         playerTarget = target;
         playerController = target.GetComponent<BasicFirstPersonController>();
+    }
+
+    private bool TryAssignPlayerTarget()
+    {
+        if (playerTarget != null)
+        {
+            if (playerController == null)
+            {
+                playerController = playerTarget.GetComponent<BasicFirstPersonController>();
+            }
+
+            return true;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerTarget = player.transform;
+            playerController = player.GetComponent<BasicFirstPersonController>();
+            return true;
+        }
+
+        if (playerController == null)
+        {
+            playerController = FindFirstObjectByType<BasicFirstPersonController>();
+        }
+
+        if (playerController != null)
+        {
+            playerTarget = playerController.transform;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool IsWithinVerticalSenseRange(Transform target)
+    {
+        return target != null && IsWithinVerticalSenseRange(target.position);
+    }
+
+    public bool IsWithinVerticalSenseRange(Vector3 worldPosition)
+    {
+        return Mathf.Abs(worldPosition.y - transform.position.y) <= maxVerticalSenseDistance;
     }
 
     public void HuntPlayerAfterPuzzleFailure(float duration)
@@ -417,25 +453,48 @@ public class BasicMonsterController : MonoBehaviour
 
     private void HuntPlayerAfterPuzzleFailure(float duration, Vector3 fallbackHuntPosition, bool hasFallbackHuntPosition)
     {
-        if (playerTarget == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                playerTarget = player.transform;
-            }
-        }
+        TryAssignPlayerTarget();
 
         float effectiveDuration = Mathf.Max(duration, puzzleAlertMinimumDuration, forcedSearchDuration, memoryDuration);
         Vector3 alertPosition = playerTarget != null
             ? playerTarget.position
             : hasFallbackHuntPosition ? fallbackHuntPosition : transform.position;
 
-        forcedRevealTimer = Mathf.Max(forcedRevealTimer, effectiveDuration);
-        huntPersistenceTimer = Mathf.Max(huntPersistenceTimer, effectiveDuration);
+        InvestigatePosition(alertPosition, effectiveDuration, true);
+    }
+
+    public void InvestigatePlayerPositionSnapshot(float duration)
+    {
+        TryAssignPlayerTarget();
+
+        if (playerTarget == null)
+        {
+            Debug.LogWarning("L'Entite ne peut pas enqueter: aucun joueur trouve.");
+            return;
+        }
+
+        InvestigatePosition(playerTarget.position, duration, true);
+    }
+
+    public void InvestigatePosition(Vector3 worldPosition, float duration, bool highPriority)
+    {
+        float baseDuration = highPriority
+            ? Mathf.Max(duration, puzzleAlertMinimumDuration, forcedSearchDuration, memoryDuration)
+            : Mathf.Max(duration, forcedSearchDuration);
+        float effectiveDuration = highPriority
+            ? GetPuzzleAlertDurationFor(worldPosition, baseDuration)
+            : baseDuration;
+
+        // An alert records one position only. It never reveals the player's future movement.
+        forcedRevealTimer = 0f;
+        huntPersistenceTimer = 0f;
         puzzleAlertTimer = Mathf.Max(puzzleAlertTimer, effectiveDuration);
-        aggressionLevel = Mathf.Max(aggressionLevel, puzzleAlertAggressionBoost);
-        puzzleAlertOrigin = alertPosition;
+        if (highPriority)
+        {
+            aggressionLevel = Mathf.Max(aggressionLevel, puzzleAlertAggressionBoost);
+        }
+
+        puzzleAlertOrigin = worldPosition;
         roamPauseTimer = 0f;
         patrolWaitTimer = 0f;
         searchRetargetTimer = 0f;
@@ -450,11 +509,11 @@ public class BasicMonsterController : MonoBehaviour
 
         currentNavMeshTarget = Vector3.positiveInfinity;
 
-        RememberPlayerPosition(alertPosition, effectiveDuration);
-        investigationTarget = alertPosition;
+        RememberPlayerPosition(worldPosition, effectiveDuration);
+        investigationTarget = worldPosition;
         hasInvestigationTarget = true;
 
-        Debug.Log("Echec de puzzle: l'Entite chasse le joueur pendant " + effectiveDuration + " secondes.");
+        Debug.Log("L'Entite enquete sur la derniere position connue pendant " + effectiveDuration.ToString("0.0") + " secondes.");
     }
 
     public void ApplyStaticTrap(float duration)
@@ -633,21 +692,7 @@ public class BasicMonsterController : MonoBehaviour
 
     public void NotifySuspiciousActivity(Vector3 worldPosition, float duration, bool highPriority)
     {
-        if (!CanInvestigateMemory())
-        {
-            return;
-        }
-
-        float effectiveDuration = highPriority && intelligenceLevel == IntelligenceLevel.Hard
-            ? Mathf.Max(duration, forcedSearchDuration)
-            : duration;
-        RememberPlayerPosition(worldPosition, effectiveDuration);
-        investigationTarget = worldPosition;
-        hasInvestigationTarget = true;
-        searchRetargetTimer = highPriority ? 0f : searchRetargetInterval * 0.6f;
-        roamPauseTimer = 0f;
-        patrolWaitTimer = 0f;
-        stuckTimer = 0f;
+        InvestigatePosition(worldPosition, duration, highPriority);
     }
 
     private void TickTimers()
@@ -796,9 +841,33 @@ public class BasicMonsterController : MonoBehaviour
         isChasing = false;
         isInvestigating = false;
 
-        if (!canMove || playerTarget == null)
+        if (!canMove)
         {
             return MonsterState.Dormant;
+        }
+
+        if (playerTarget == null)
+        {
+            TryAssignPlayerTarget();
+        }
+
+        if (playerTarget == null)
+        {
+            if ((CanInvestigateMemory() || puzzleAlertTimer > 0f) && memoryTimer > 0f)
+            {
+                velocity = GetInvestigationVelocity();
+                isInvestigating = velocity.sqrMagnitude > 0.001f;
+                return MonsterState.Investigating;
+            }
+
+            if (CanGuardExit() && TryGetExitGuardVelocity(out velocity))
+            {
+                isInvestigating = true;
+                return MonsterState.GuardingExit;
+            }
+
+            velocity = GetRoamingVelocity();
+            return MonsterState.Roaming;
         }
 
         Vector3 offsetToPlayer = playerTarget.position - transform.position;
@@ -1403,37 +1472,24 @@ public class BasicMonsterController : MonoBehaviour
             fallbackDirection = transform.right * lastAvoidanceSign;
         }
 
+        if (TryBeginPhysicalDetour(targetVelocity.normalized, out Vector3 detourDirection))
+        {
+            fallbackDirection = detourDirection;
+            lastAvoidanceSign = Vector3.Dot(detourDirection, transform.right) >= 0f ? 1 : -1;
+            avoidanceLockDirection = detourDirection;
+            avoidanceLockTimer = avoidanceLockDuration * 1.5f;
+            Debug.Log("L'Entite contourne physiquement un obstacle par le chemin libre.");
+            return;
+        }
+
         if (TryGetDepenetrationEscapeDirection(out Vector3 depenetrationDirection))
         {
             fallbackDirection = depenetrationDirection;
-            if (TryFindOpenEscapePoint(transform.position + depenetrationDirection.normalized * stuckEscapeProbeDistance, out Vector3 depenetrationEscapePoint))
-            {
-                stuckEscapeTarget = depenetrationEscapePoint;
-            }
-            else
-            {
-                stuckEscapeTarget = transform.position + depenetrationDirection.normalized * corridorRecoveryDistance;
-            }
-
-            stuckEscapeTimer = stuckEscapeDuration;
-        }
-        else if (TryFindOpenEscapePoint(transform.position + targetVelocity.normalized * stuckEscapeProbeDistance, out Vector3 escapePoint))
-        {
-            stuckEscapeTarget = escapePoint;
-            stuckEscapeTimer = stuckEscapeDuration;
-            fallbackDirection = GetFlatDirectionTo(escapePoint);
         }
 
         lastAvoidanceSign *= -1;
         avoidanceLockDirection = fallbackDirection.normalized;
         avoidanceLockTimer = avoidanceLockDuration * 1.5f;
-
-        if (repeatedStuckCount >= emergencyUnstuckAttemptThreshold &&
-            TryEmergencyReposition(targetVelocity.normalized, isChasing))
-        {
-            repeatedStuckCount = 0;
-            return;
-        }
 
         if (isChasing)
         {
@@ -1453,65 +1509,85 @@ public class BasicMonsterController : MonoBehaviour
         AdvancePatrolPoint();
     }
 
-    private bool TryEmergencyReposition(Vector3 preferredDirection, bool isChasing)
+    private bool TryBeginPhysicalDetour(Vector3 desiredDirection, out Vector3 detourDirection)
     {
-        if (!runtimeNavMeshReady || controller == null)
+        detourDirection = Vector3.zero;
+        if (!runtimeNavMeshReady || controller == null || desiredDirection.sqrMagnitude <= 0.001f)
         {
             return false;
         }
 
-        if (playerTarget != null)
+        desiredDirection.y = 0f;
+        desiredDirection.Normalize();
+        float preferredSide = lastAvoidanceSign >= 0 ? 1f : -1f;
+        float[] angles =
         {
-            float distanceToPlayer = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(playerTarget.position));
-            if (distanceToPlayer < emergencyUnstuckMinPlayerDistance || IsVisibleFromPlayer())
-            {
-                return false;
-            }
+            65f * preferredSide,
+            -65f * preferredSide,
+            95f * preferredSide,
+            -95f * preferredSide,
+            130f * preferredSide,
+            -130f * preferredSide,
+            180f
+        };
+        float[] distances =
+        {
+            Mathf.Max(corridorRecoveryDistance, physicalDetourDistance * 0.65f),
+            Mathf.Max(corridorRecoveryDistance, physicalDetourDistance),
+            Mathf.Max(corridorRecoveryDistance, physicalDetourDistance * 1.25f)
+        };
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit startHit, navMeshSampleDistance, NavMesh.AllAreas))
+        {
+            return false;
         }
 
-        if (preferredDirection.sqrMagnitude <= 0.001f)
-        {
-            preferredDirection = transform.forward;
-        }
-
-        preferredDirection.y = 0f;
-        preferredDirection.Normalize();
-
-        float[] radii = { emergencyUnstuckSampleRadius * 0.55f, emergencyUnstuckSampleRadius, emergencyUnstuckSampleRadius * 1.35f };
-        float[] angles = { 0f, -45f, 45f, -90f, 90f, 135f, -135f, 180f };
         Vector3 bestPoint = transform.position;
         float bestScore = float.NegativeInfinity;
         bool foundPoint = false;
+        NavMeshPath detourPath = new NavMeshPath();
 
-        for (int radiusIndex = 0; radiusIndex < radii.Length; radiusIndex++)
+        for (int distanceIndex = 0; distanceIndex < distances.Length; distanceIndex++)
         {
             for (int angleIndex = 0; angleIndex < angles.Length; angleIndex++)
             {
-                Vector3 direction = Quaternion.Euler(0f, angles[angleIndex], 0f) * preferredDirection;
-                Vector3 probe = transform.position + direction.normalized * radii[radiusIndex];
+                Vector3 direction = Quaternion.Euler(0f, angles[angleIndex], 0f) * desiredDirection;
+                Vector3 probe = transform.position + direction.normalized * distances[distanceIndex];
                 if (!NavMesh.SamplePosition(probe, out NavMeshHit hit, navMeshSampleDistance, NavMesh.AllAreas))
                 {
                     continue;
                 }
 
                 Vector3 candidate = hit.position;
+                if (Mathf.Abs(candidate.y - transform.position.y) > physicalDetourVerticalTolerance)
+                {
+                    continue;
+                }
+
                 if (!HasBodySpaceAt(candidate))
                 {
                     continue;
                 }
 
-                float playerSafety = playerTarget != null
-                    ? Vector3.Distance(GetPlanarPosition(candidate), GetPlanarPosition(playerTarget.position))
-                    : emergencyUnstuckMinPlayerDistance;
-                if (playerSafety < emergencyUnstuckMinPlayerDistance * 0.7f)
+                detourPath.ClearCorners();
+                if (!NavMesh.CalculatePath(startHit.position, candidate, NavMesh.AllAreas, detourPath) ||
+                    detourPath.status != NavMeshPathStatus.PathComplete ||
+                    detourPath.corners == null ||
+                    detourPath.corners.Length < 2)
                 {
                     continue;
                 }
 
-                float targetScore = isChasing && playerTarget != null
-                    ? -Vector3.Distance(GetPlanarPosition(candidate), GetPlanarPosition(playerTarget.position))
-                    : Vector3.Dot(direction.normalized, preferredDirection);
-                float score = targetScore + playerSafety * 0.08f;
+                float pathLength = GetPathLength(detourPath);
+                if (pathLength < corridorRecoveryDistance * 0.7f)
+                {
+                    continue;
+                }
+
+                float sidePreference = Mathf.Sign(Vector3.Dot(direction, transform.right)) == Mathf.Sign(preferredSide) ? 0.8f : 0f;
+                float targetProgress = Vector3.Dot(direction.normalized, desiredDirection);
+                float candidateDistance = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(candidate));
+                float score = sidePreference + targetProgress * 0.35f + candidateDistance * 0.12f - pathLength * 0.04f;
 
                 if (score > bestScore)
                 {
@@ -1527,18 +1603,62 @@ public class BasicMonsterController : MonoBehaviour
             return false;
         }
 
-        controller.enabled = false;
-        transform.position = bestPoint;
-        controller.enabled = true;
-        horizontalVelocity = Vector3.zero;
-        verticalVelocity = 0f;
-        lastPosition = transform.position;
-        stuckEscapeTimer = 0f;
-        stuckTimer = 0f;
-        hasRoamTarget = false;
+        stuckEscapeTarget = bestPoint;
+        stuckEscapeTimer = Mathf.Max(stuckEscapeDuration, physicalDetourDuration);
+        detourDirection = GetFlatDirectionTo(bestPoint);
         ClearCurrentNavMeshPath();
-        Debug.Log("L'Entite s'est debloquee sur une position NavMesh proche.");
         return true;
+    }
+
+    private float GetPathLength(NavMeshPath path)
+    {
+        if (path == null || path.corners == null || path.corners.Length < 2)
+        {
+            return 0f;
+        }
+
+        float length = 0f;
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            length += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+        }
+
+        return length;
+    }
+
+    private float GetPuzzleAlertDurationFor(Vector3 worldPosition, float requestedDuration)
+    {
+        float travelDistance = EstimateTravelDistanceTo(worldPosition);
+        float travelSpeed = Mathf.Max(GetCurrentInvestigationSpeed(), 0.1f);
+        float travelDuration = travelDistance / travelSpeed + puzzleAlertTravelBuffer;
+        float minimumDuration = Mathf.Max(requestedDuration, puzzleAlertMinimumTravelDuration);
+        float maximumDuration = Mathf.Max(minimumDuration, puzzleAlertMaximumTravelDuration);
+
+        return Mathf.Clamp(Mathf.Max(minimumDuration, travelDuration), minimumDuration, maximumDuration);
+    }
+
+    private float EstimateTravelDistanceTo(Vector3 worldPosition)
+    {
+        float planarDistance = Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(worldPosition));
+        if (!runtimeNavMeshReady)
+        {
+            return planarDistance;
+        }
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit startHit, navMeshSampleDistance, NavMesh.AllAreas) ||
+            !NavMesh.SamplePosition(worldPosition, out NavMeshHit targetHit, navMeshSampleDistance, NavMesh.AllAreas))
+        {
+            return planarDistance;
+        }
+
+        NavMeshPath estimatedPath = new NavMeshPath();
+        if (!NavMesh.CalculatePath(startHit.position, targetHit.position, NavMesh.AllAreas, estimatedPath) ||
+            estimatedPath.status != NavMeshPathStatus.PathComplete)
+        {
+            return planarDistance;
+        }
+
+        return Mathf.Max(planarDistance, GetPathLength(estimatedPath));
     }
 
     private bool IsVisibleFromPlayer()
@@ -2073,6 +2193,11 @@ public class BasicMonsterController : MonoBehaviour
         if (stuckEscapeTimer > 0f &&
             Vector3.Distance(GetPlanarPosition(transform.position), GetPlanarPosition(stuckEscapeTarget)) > routeWaypointReachDistance * 0.65f)
         {
+            if (TryGetNavMeshVelocityTo(stuckEscapeTarget, speed, routeWaypointReachDistance * 0.45f, out Vector3 detourVelocity))
+            {
+                return detourVelocity;
+            }
+
             return GetFlatDirectionTo(stuckEscapeTarget) * speed;
         }
 
@@ -2086,6 +2211,11 @@ public class BasicMonsterController : MonoBehaviour
         {
             if (!HasClearNavigationLine(worldTarget) && TryFindOpenEscapePoint(worldTarget, out Vector3 escapePoint))
             {
+                if (TryGetNavMeshVelocityTo(escapePoint, speed, routeWaypointReachDistance * 0.45f, out Vector3 escapeVelocity))
+                {
+                    return escapeVelocity;
+                }
+
                 return GetFlatDirectionTo(escapePoint) * speed;
             }
 
@@ -3162,7 +3292,9 @@ public class BasicMonsterController : MonoBehaviour
 
     private bool CanSeePlayer(float distanceToPlayer)
     {
-        if (playerTarget == null || distanceToPlayer > GetCurrentDetectionRadius())
+        if (playerTarget == null ||
+            !IsWithinVerticalSenseRange(playerTarget) ||
+            distanceToPlayer > GetCurrentDetectionRadius())
         {
             return false;
         }
@@ -3172,7 +3304,8 @@ public class BasicMonsterController : MonoBehaviour
 
         if (distanceToPlayer > closeRangeDetectionRadius)
         {
-            float angle = Vector3.Angle(transform.forward, flatToPlayer.normalized);
+            Vector3 flatForward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+            float angle = Vector3.Angle(flatForward, flatToPlayer.normalized);
             if (angle > visionAngle * 0.5f)
             {
                 return false;
@@ -3197,7 +3330,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private bool CanHearPlayer(float distanceToPlayer)
     {
-        if (playerController == null)
+        if (playerController == null || !IsWithinVerticalSenseRange(playerTarget))
         {
             return false;
         }
@@ -3292,14 +3425,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private float GetCurrentChaseSpeed()
     {
-        float chaseSpeed = moveSpeed + GetTaskProgress01() * taskProgressChaseSpeedBonus;
-        if (puzzleAlertTimer > 0f)
-        {
-            chaseSpeed *= puzzleAlertSpeedMultiplier;
-        }
-
-        chaseSpeed *= 1f + aggressionLevel * aggressionChaseSpeedBonus;
-        return IsSlowed ? slowedMoveSpeed : chaseSpeed;
+        return IsSlowed ? slowedMoveSpeed : moveSpeed;
     }
 
     private float GetCurrentInvestigationSpeed()
@@ -3307,12 +3433,13 @@ public class BasicMonsterController : MonoBehaviour
         float roamSpeed = patrolMoveSpeed * GetPatrolSpeedMultiplier();
         float targetSpeed = Mathf.Max(investigationMoveSpeed, roamSpeed);
         targetSpeed *= 1f + aggressionLevel * aggressionInvestigationSpeedBonus;
+        targetSpeed = Mathf.Min(targetSpeed, moveSpeed);
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, targetSpeed) : targetSpeed;
     }
 
     private float GetCurrentRoamSpeed()
     {
-        float roamSpeed = patrolMoveSpeed * GetPatrolSpeedMultiplier();
+        float roamSpeed = Mathf.Min(patrolMoveSpeed * GetPatrolSpeedMultiplier(), moveSpeed);
         return IsSlowed ? Mathf.Min(slowedMoveSpeed, roamSpeed) : roamSpeed;
     }
 
@@ -3323,9 +3450,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private float GetCurrentDetectionRadius()
     {
-        return detectionRadius +
-            GetTaskProgress01() * taskProgressDetectionBonus * GetIntelligenceBonusScale() +
-            aggressionLevel * aggressionDetectionBonus;
+        return detectionRadius;
     }
 
     private float GetCurrentHearingRadius()
@@ -3360,7 +3485,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private bool CanInvestigateMemory()
     {
-        return intelligenceLevel != IntelligenceLevel.Easy;
+        return true;
     }
 
     private bool CanGuardExit()
@@ -3375,7 +3500,7 @@ public class BasicMonsterController : MonoBehaviour
 
     private bool CanWanderAroundPatrolAnchors()
     {
-        return intelligenceLevel != IntelligenceLevel.Easy;
+        return true;
     }
 
     private float GetIntelligenceBonusScale()

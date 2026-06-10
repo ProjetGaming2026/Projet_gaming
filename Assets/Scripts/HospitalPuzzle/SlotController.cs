@@ -63,6 +63,7 @@ public class SlotController : MonoBehaviour
         if (trayManager != null)
             trayManager.ShowPlacementFeedback("Wrong organ. Check the paper and use tray " + slotNumber + ".");
 
+        PuzzleFailureMonsterAlert.Alert(transform);
         PlayWrongSound();
         // Optionally: flash the slot red
         StartCoroutine(FlashRed());

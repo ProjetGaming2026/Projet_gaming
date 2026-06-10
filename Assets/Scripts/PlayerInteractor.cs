@@ -13,6 +13,9 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private float interactRadius = 0.16f;
 
+    [Header("Prompt UI")]
+    [SerializeField] private bool showPromptInInteractionPromptUI = true;
+
     public bool HasInteractableTarget => currentInteractable != null;
     public string CurrentPromptText => currentPromptText;
 
@@ -381,8 +384,18 @@ public class PlayerInteractor : MonoBehaviour
             "Pulsa E para interactuar con " + targetName);
     }
 
-    private static void SetPromptVisible(string message)
+    private void SetPromptVisible(string message)
     {
+        if (!showPromptInInteractionPromptUI)
+        {
+            if (InteractionPromptUI.Instance != null)
+            {
+                InteractionPromptUI.Instance.Hide();
+            }
+
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(message))
         {
             if (InteractionPromptUI.Instance != null)

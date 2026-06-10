@@ -421,6 +421,7 @@ public class CodePuzzleManager : MonoBehaviour, IInteractable
     private IEnumerator IncorrectCodeRoutine()
     {
         isBusy = true;
+        PuzzleFailureMonsterAlert.Alert(transform);
         PlayClip(horrorSound);
         KeypadUIManager.Instance?.ShowStatus("CODE INCORRECT", Color.red);
         yield return new WaitForSecondsRealtime(1f);

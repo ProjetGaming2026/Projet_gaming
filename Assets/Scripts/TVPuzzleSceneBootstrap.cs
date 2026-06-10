@@ -14,7 +14,7 @@ public static class TVPuzzleSceneBootstrap
     private const string TriggerName = "TV_Interaction_Trigger";
     private const string CanvasName = "TV_Code_Canvas";
     private const string NotebookName = "Notebook_Under_Bed";
-    private const string CorrectCode = "1234";
+    private const string CorrectCode = "0417";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Install()

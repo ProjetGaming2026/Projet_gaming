@@ -1,8 +1,15 @@
 using UnityEngine;
 using UnityEngine.Events;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class FinalEscapeFlow : MonoBehaviour
 {
+#if UNITY_EDITOR
+    private const string DefaultFinalPhoneVoicePath = "Assets/audio/The last voice for exit.mp3";
+#endif
+
     [Header("Puzzle Flow")]
     [SerializeField] private Puzzle5MorgueController puzzle5MorgueController;
     [SerializeField] private FinalDoorKeypad finalDoorKeypad;
@@ -25,8 +32,14 @@ public class FinalEscapeFlow : MonoBehaviour
 
     private void Awake()
     {
+        TryAssignEditorDefaultAudio();
         ResolveReferences();
         finalDoorKeypad?.SetKeypadEnabled(false);
+    }
+
+    private void OnValidate()
+    {
+        TryAssignEditorDefaultAudio();
     }
 
     private void Start()
@@ -41,6 +54,8 @@ public class FinalEscapeFlow : MonoBehaviour
 
     public void Configure(Puzzle5MorgueController puzzle5, FinalDoorKeypad keypad, PhoneCallSequenceManager sequenceManager, AudioSource phoneSource)
     {
+        TryAssignEditorDefaultAudio();
+
         if (puzzle5 != null)
         {
             Unsubscribe();
@@ -132,6 +147,26 @@ public class FinalEscapeFlow : MonoBehaviour
         OnFinalPhoneMessageFinished.Invoke();
         OnLevelEscapeReady.Invoke();
         Debug.Log("Final escape flow enabled the final door keypad.");
+    }
+
+    private void TryAssignEditorDefaultAudio()
+    {
+        PhonePuzzleAudioLibrary library = PhonePuzzleAudioLibrary.Load();
+        if (library != null)
+        {
+            finalPhoneVoiceClip ??= library.FinalPhoneVoice;
+        }
+
+#if UNITY_EDITOR
+        if (finalPhoneVoiceClip == null)
+        {
+            finalPhoneVoiceClip = AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultFinalPhoneVoicePath);
+            if (finalPhoneVoiceClip != null)
+            {
+                EditorUtility.SetDirty(this);
+            }
+        }
+#endif
     }
 
     private void ResolveReferences()

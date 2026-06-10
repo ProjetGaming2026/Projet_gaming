@@ -78,17 +78,17 @@ public class CipherPuzzle : MonoBehaviour
     {
         CorrectPhrase = possiblePhrases[Random.Range(0, possiblePhrases.Length)];
         ShiftValue = Random.Range(2, 6);
-        bool useClearWriting = IsEasyScene() || wallShowsClearPhrase;
+        bool useClearWriting = wallShowsClearPhrase;
 
         string encryptedPhrase = Encrypt(CorrectPhrase, ShiftValue);
-        ExpectedAnswer = useClearWriting ? CorrectPhrase : encryptedPhrase;
+        ExpectedAnswer = useClearWriting ? encryptedPhrase : CorrectPhrase;
 
         if (cipherWall != null)
         {
             cipherWall.DisplayText(
                 useClearWriting ? CorrectPhrase : encryptedPhrase,
                 ShiftValue,
-                showShift: !useClearWriting
+                showShift: useClearWriting
             );
         }
         else

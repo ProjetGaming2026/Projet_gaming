@@ -254,6 +254,7 @@ public class Puzzle5MorgueController : MonoBehaviour
     private void HandleWrongPhoneAnswer()
     {
         wrongPhoneAnswerCount++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         ui ??= PhonePuzzleUI.EnsureExists();
         ui.Subtitles.ShowTimed("That shape belonged to another record.", 2.8f);
         PlayOneShot(wrongAnswerSound, "wrongAnswerSound");

@@ -123,6 +123,10 @@ public class WallPhoneController : Interactable
 #if UNITY_EDITOR
     private const string DefaultRingingClipPath = "Assets/audio/ringing_voice.mp3";
     private const string DefaultPuzzleOneSpeechClipPath = "Assets/audio/puzzle1_Speech.mp3";
+    private const string DefaultPuzzleTwoSpeechClipPath = "Assets/audio/Puzzle 2 voice.mp3";
+    private const string DefaultPuzzleThreeSpeechClipPath = "Assets/audio/Puzzle 3 voice.mp3";
+    private const string DefaultPuzzleFourSpeechClipPath = "Assets/audio/Puzzle 4 voice.mp3";
+    private const string DefaultPuzzleFiveSpeechClipPath = "Assets/audio/Puzzle 5 voice.mp3";
     private const string DefaultCorrectAnswerClipPath = "Assets/audio/He was not dead, not yet...mp3";
 #endif
 
@@ -773,7 +777,7 @@ public class WallPhoneController : Interactable
             answerInput = gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(3, HandleAnswerSubmitted);
+        answerInput.BeginAnswerMode(3, HandleAnswerSubmitted, HandleAnswerCancelled);
         Debug.Log("Phone answer mode started.");
     }
 
@@ -815,7 +819,7 @@ public class WallPhoneController : Interactable
             answerInput = gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(doctorReportsPuzzle.MaxAnswerLength, HandlePuzzle3AnswerSubmitted);
+        answerInput.BeginAnswerMode(doctorReportsPuzzle.MaxAnswerLength, HandlePuzzle3AnswerSubmitted, HandleAnswerCancelled);
         Debug.Log("Puzzle 3 phone answer mode started.");
     }
 
@@ -861,7 +865,7 @@ public class WallPhoneController : Interactable
             answerInput = gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(operationOrderPuzzle.MaxAnswerLength, HandlePuzzle4AnswerSubmitted);
+        answerInput.BeginAnswerMode(operationOrderPuzzle.MaxAnswerLength, HandlePuzzle4AnswerSubmitted, HandleAnswerCancelled);
         Debug.Log("Puzzle 4 phone answer mode started.");
     }
 
@@ -912,8 +916,29 @@ public class WallPhoneController : Interactable
             answerInput = gameObject.AddComponent<PhoneAnswerInput>();
         }
 
-        answerInput.BeginAnswerMode(puzzle5MorgueController.MaxAnswerLength, HandlePuzzle5AnswerSubmitted);
+        answerInput.BeginAnswerMode(puzzle5MorgueController.MaxAnswerLength, HandlePuzzle5AnswerSubmitted, HandleAnswerCancelled);
         Debug.Log("Puzzle 5 phone answer mode started.");
+    }
+
+    private void HandleAnswerCancelled()
+    {
+        switch (state)
+        {
+            case PhoneState.Answering:
+                state = PhoneState.PuzzleActive;
+                break;
+            case PhoneState.Puzzle3Answering:
+                state = PhoneState.Puzzle3Active;
+                break;
+            case PhoneState.Puzzle4Answering:
+                state = PhoneState.Puzzle4Active;
+                break;
+            case PhoneState.Puzzle5Answering:
+                state = PhoneState.Puzzle5Active;
+                break;
+        }
+
+        Debug.Log("Phone answer mode cancelled.");
     }
 
     private void HandlePuzzle5AnswerSubmitted(string answer)
@@ -955,6 +980,7 @@ public class WallPhoneController : Interactable
     private void HandleWrongAnswer()
     {
         wrongAttemptCount++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         answerInput?.ClearAnswer();
         PlayOneShot(wrongAnswerSound);
         ui.Subtitles.ShowTimed(wrongAnswerMessage, postAnswerMessageDuration);
@@ -1347,6 +1373,18 @@ public class WallPhoneController : Interactable
 
     private void TryAssignEditorDefaultAudio()
     {
+        PhonePuzzleAudioLibrary library = PhonePuzzleAudioLibrary.Load();
+        if (library != null)
+        {
+            phoneRingingLoop ??= library.PhoneRingingLoop;
+            phoneCallVoiceClip ??= library.PhoneCall1Voice;
+            phoneCall2VoiceClip ??= library.PhoneCall2Voice;
+            phoneCall3VoiceClip ??= library.PhoneCall3Voice;
+            phoneCall4VoiceClip ??= library.PhoneCall4Voice;
+            phoneCall5VoiceClip ??= library.PhoneCall5Voice;
+            correctAnswerSound ??= library.Puzzle1CorrectAnswer;
+        }
+
 #if UNITY_EDITOR
         if (phoneRingingLoop == null)
         {
@@ -1366,6 +1404,11 @@ public class WallPhoneController : Interactable
             }
         }
 
+        TryAssignEditorAudioClip(ref phoneCall2VoiceClip, DefaultPuzzleTwoSpeechClipPath);
+        TryAssignEditorAudioClip(ref phoneCall3VoiceClip, DefaultPuzzleThreeSpeechClipPath);
+        TryAssignEditorAudioClip(ref phoneCall4VoiceClip, DefaultPuzzleFourSpeechClipPath);
+        TryAssignEditorAudioClip(ref phoneCall5VoiceClip, DefaultPuzzleFiveSpeechClipPath);
+
         if (correctAnswerSound == null)
         {
             correctAnswerSound = AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultCorrectAnswerClipPath);
@@ -1376,6 +1419,22 @@ public class WallPhoneController : Interactable
         }
 #endif
     }
+
+#if UNITY_EDITOR
+    private void TryAssignEditorAudioClip(ref AudioClip target, string assetPath)
+    {
+        if (target != null)
+        {
+            return;
+        }
+
+        target = AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath);
+        if (target != null)
+        {
+            EditorUtility.SetDirty(this);
+        }
+    }
+#endif
 
     private void ResolveReferences()
     {

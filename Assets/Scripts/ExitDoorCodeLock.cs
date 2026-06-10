@@ -18,6 +18,8 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
     public const string DefaultExitDoorSecondLeafName = "connectorDoor1-1-b";
     private const string DefaultExitDoorSectionName = "section1";
     private const string DefaultExitCode = "1946";
+    private const string HardSceneName = "demoScene_Difficile";
+    private const string HardExitCode = "024645";
     private const string MediumSceneName = "demoScene_Moyen";
     private const string MediumExitDoorName = "porte1";
     private const string MediumExitDoorSecondLeafName = "porte2";
@@ -26,6 +28,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
     private static readonly ExitDoorProfile[] ExitDoorProfiles =
     {
+        new ExitDoorProfile(HardSceneName, DefaultExitDoorName, DefaultExitDoorSecondLeafName, DefaultExitDoorSectionName, HardExitCode),
         new ExitDoorProfile(MediumSceneName, MediumExitDoorName, MediumExitDoorSecondLeafName, MediumExitDoorSectionName, MediumExitCode),
         new ExitDoorProfile(null, DefaultExitDoorName, DefaultExitDoorSecondLeafName, DefaultExitDoorSectionName, DefaultExitCode),
     };
@@ -85,6 +88,7 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        ApplyActiveSceneCodeOverride();
         gameManager = FindFirstObjectByType<PrototypeGameManager>();
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
@@ -99,6 +103,13 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         BuildCanvas();
         HidePanel();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ApplyActiveSceneCodeOverride();
+    }
+#endif
 
     private void OnDestroy()
     {
@@ -242,6 +253,18 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         SetLinkedDoorInteractionLocked(true);
     }
 
+    private void ApplyActiveSceneCodeOverride()
+    {
+        if (!string.Equals(SceneManager.GetActiveScene().name, HardSceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        exitCode = HardExitCode;
+        codeLength = HardExitCode.Length;
+        countAsTask = false;
+    }
+
     private static bool TryFindDefaultExitDoorProfile(out DoorInteractable firstDoor, out DoorInteractable secondDoor, out ExitDoorProfile profile)
     {
         for (int i = 0; i < ExitDoorProfiles.Length; i++)
@@ -378,7 +401,8 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
         public bool MatchesActiveScene()
         {
             if (string.IsNullOrEmpty(SceneName) &&
-                string.Equals(SceneManager.GetActiveScene().name, MediumSceneName, StringComparison.OrdinalIgnoreCase))
+                (string.Equals(SceneManager.GetActiveScene().name, MediumSceneName, StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(SceneManager.GetActiveScene().name, HardSceneName, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }

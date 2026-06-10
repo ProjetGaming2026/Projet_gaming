@@ -58,8 +58,12 @@ public class MonsterPresenceEffects : MonoBehaviour
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, playerTarget.position);
+        bool sameFloor = monsterController.IsWithinVerticalSenseRange(playerTarget);
+        float distance = sameFloor
+            ? Vector3.Distance(transform.position, playerTarget.position)
+            : float.PositiveInfinity;
         bool threatening =
+            sameFloor &&
             (monsterController.IsHuntingState || monsterController.IsInvestigatingState) &&
             distance <= influenceRadius;
 

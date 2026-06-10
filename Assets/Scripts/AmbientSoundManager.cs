@@ -109,9 +109,13 @@ public class AmbientSoundManager : MonoBehaviour
             return;
         }
 
-        float distance = Vector3.Distance(playerTransform.position, monsterTransform.position);
+        bool sameFloor = monsterController == null || monsterController.IsWithinVerticalSenseRange(playerTransform);
+        float distance = sameFloor
+            ? Vector3.Distance(playerTransform.position, monsterTransform.position)
+            : float.PositiveInfinity;
         bool monsterIsClose = distance <= chaseDistance;
-        bool monsterThreatening = monsterController != null &&
+        bool monsterThreatening = sameFloor &&
+            monsterController != null &&
             (monsterController.IsHuntingState || monsterController.IsInvestigatingState || monsterController.IsGuardingExitState);
 
         if (monsterIsClose)

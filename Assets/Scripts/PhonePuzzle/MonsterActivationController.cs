@@ -50,7 +50,8 @@ public class MonsterActivationController : MonoBehaviour
             }
         }
 
+        PuzzleFailureMonsterAlert.Alert(monsterEntity, transform);
         OnMonsterTriggered.Invoke();
-        Debug.Log("Monster activation triggered.");
+        Debug.Log("Monster activation triggered and sent to the player's last known position.");
     }
 }

@@ -138,7 +138,6 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
     private bool currentRequestHasBeenAsked;
     private bool finalLineReady;
     private bool puzzleSolved;
-    private bool taskRegistered;
     private bool firstInteractionCoughPlayed;
     private bool dialogueCoughPlayed;
 
@@ -275,10 +274,6 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
             PlayRequestCough();
         }
 
-        if (string.Equals(request.requiredItemId, "oxygen", System.StringComparison.OrdinalIgnoreCase))
-        {
-            RegisterTaskProgress();
-        }
         requestIndex++;
 
         if (requestIndex >= requests.Length)
@@ -316,30 +311,6 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
         }
     }
 
-    private void RegisterTaskProgress()
-    {
-        if (!countAsSolvedTask || taskRegistered)
-        {
-            return;
-        }
-
-        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
-        if (gameManager == null)
-        {
-            Debug.LogWarning("[PatientPuzzleController] PrototypeGameManager not found, patient puzzle task progress was not registered.", this);
-            return;
-        }
-
-        gameManager.RegisterTaskSuccess();
-        taskRegistered = true;
-        PrototypeHUD.ShowFeedback(
-            GameLocalization.Text(
-                "Task complete. Progress updated.",
-                "Tache reussie. Progression mise a jour.",
-                "Tarea completada. Progreso actualizado."),
-            PrototypeHUD.FeedbackTone.Success,
-            2.8f);
-    }
     private void Speak(Speaker speaker, string line, MessageTone tone)
     {
         activeSpeakerName = GetSpeakerName(speaker);

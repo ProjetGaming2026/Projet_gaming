@@ -33,6 +33,7 @@ public class MorgueCabinetDoor : Interactable
 
     private Quaternion initialLocalRotation;
     private bool initialRotationCaptured;
+    private bool wholeCabinetPrepared;
     private Puzzle5MorgueController puzzleController;
     private Coroutine activeRoutine;
 
@@ -45,7 +46,7 @@ public class MorgueCabinetDoor : Interactable
     private void Awake()
     {
         TryAssignEditorDefaultCabinetAudio();
-        ClearStaticFlagsForAnimatedCabinet();
+        PrepareWholeCabinetForAnimation();
         EnsureInteractionCollider();
         RefreshPromptText();
     }
@@ -65,7 +66,7 @@ public class MorgueCabinetDoor : Interactable
         TryAssignEditorDefaultCabinetAudio();
         cabinetNumber = number;
         puzzleController = controller != null ? controller : puzzleController;
-        ClearStaticFlagsForAnimatedCabinet();
+        PrepareWholeCabinetForAnimation();
 
         if (openSound == null)
         {
@@ -79,6 +80,44 @@ public class MorgueCabinetDoor : Interactable
 
         EnsureInteractionCollider();
         RefreshPromptText();
+    }
+
+    private void PrepareWholeCabinetForAnimation()
+    {
+        ClearStaticFlagsForAnimatedCabinet();
+
+        if (wholeCabinetPrepared)
+        {
+            return;
+        }
+
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
+        int preparedMeshCount = 0;
+        for (int i = 0; i < meshFilters.Length; i++)
+        {
+            MeshFilter meshFilter = meshFilters[i];
+            if (meshFilter == null || meshFilter.sharedMesh == null)
+            {
+                continue;
+            }
+
+            Mesh dynamicMesh = Instantiate(meshFilter.sharedMesh);
+            dynamicMesh.name = meshFilter.sharedMesh.name + "_Cabinet_" + cabinetNumber + "_Dynamic";
+            meshFilter.sharedMesh = dynamicMesh;
+            preparedMeshCount++;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+            {
+                renderers[i].staticShadowCaster = false;
+            }
+        }
+
+        wholeCabinetPrepared = true;
+        Debug.Log("Cabinet " + cabinetNumber + " prepared as one animated object with " + preparedMeshCount + " dynamic mesh(es).");
     }
 
     public void SetPuzzleController(Puzzle5MorgueController controller)
@@ -204,7 +243,17 @@ public class MorgueCabinetDoor : Interactable
 
     private void ClearStaticFlagsForAnimatedCabinet()
     {
-        Transform[] transforms = GetComponentsInChildren<Transform>(true);
+        ClearStaticFlags(transform);
+    }
+
+    private static void ClearStaticFlags(Transform root)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < transforms.Length; i++)
         {
             if (transforms[i] != null)
@@ -229,6 +278,7 @@ public class MorgueCabinetDoor : Interactable
     private IEnumerator RotateDoorRoutine(bool opening)
     {
         isAnimating = true;
+        PrepareWholeCabinetForAnimation();
 
         Quaternion startRotation = transform.localRotation;
         Quaternion targetRotation = opening

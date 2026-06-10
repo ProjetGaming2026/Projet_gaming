@@ -74,7 +74,8 @@ public class MonsterSounds : MonoBehaviour
             roarCooldownTimer -= Time.deltaTime;
         }
 
-        float distance = Vector3.Distance(transform.position, playerTarget.position);
+        bool sameFloor = monsterController == null || monsterController.IsWithinVerticalSenseRange(playerTarget);
+        float distance = sameFloor ? Vector3.Distance(transform.position, playerTarget.position) : float.PositiveInfinity;
         bool isClose = distance <= growlDistance;
         bool isThreatening =
             monsterController != null &&

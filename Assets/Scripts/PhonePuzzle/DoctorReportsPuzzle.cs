@@ -238,6 +238,7 @@ public class DoctorReportsPuzzle : MonoBehaviour
     private void HandleWrongAnswer()
     {
         wrongAttemptCount++;
+        PuzzleFailureMonsterAlert.Alert(transform);
         ui ??= PhonePuzzleUI.EnsureExists();
         ui.Subtitles.ShowTimed("That report was not written for the night.", 2.8f);
 

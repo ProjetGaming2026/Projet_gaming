@@ -5,7 +5,10 @@ using UnityEngine;
 public class TVCodePuzzleController : MonoBehaviour, IInteractable
 {
     [Header("Code")]
-    [SerializeField] private string correctCode = "1234";
+    [SerializeField] private string correctCode = "0417";
+
+    [Header("Task Progression")]
+    [SerializeField] private bool countAsTask = true;
 
     [Header("UI")]
     [SerializeField] private GameObject pressEText;
@@ -35,6 +38,7 @@ public class TVCodePuzzleController : MonoBehaviour, IInteractable
     [SerializeField] private float frontDotThreshold = 0.25f;
 
     private bool codeValidated;
+    private bool taskRegistered;
     private bool uiOpen;
     private bool videoFinishedListenerRegistered;
     private Coroutine wrongCodeRoutine;
@@ -361,9 +365,36 @@ public class TVCodePuzzleController : MonoBehaviour, IInteractable
     private void HandleCorrectCode()
     {
         codeValidated = true;
+        RegisterTaskProgress();
         SetActiveIfAssigned(pressEText, false);
         CloseCodeUI();
         ReplayVideo();
+    }
+
+    private void RegisterTaskProgress()
+    {
+        if (!countAsTask || taskRegistered)
+        {
+            return;
+        }
+
+        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogWarning("TVCodePuzzleController: PrototypeGameManager not found, patient code task was not registered.", this);
+            return;
+        }
+
+        gameManager.RegisterTaskSuccess();
+        taskRegistered = true;
+        Debug.Log("TVCodePuzzleController: patient code 0417 accepted and counted as one medium task.", this);
+        PrototypeHUD.ShowFeedback(
+            GameLocalization.Text(
+                "Task complete. Patient code accepted.",
+                "Tache reussie. Code du patient accepte.",
+                "Tarea completada. Codigo del paciente aceptado."),
+            PrototypeHUD.FeedbackTone.Success,
+            2.8f);
     }
 
     private void ReplayVideo()
@@ -386,6 +417,10 @@ public class TVCodePuzzleController : MonoBehaviour, IInteractable
         {
             Vector3 huntPosition = player != null ? player.position : transform.position;
             entityHuntTrigger.TriggerHunt(huntPosition);
+        }
+        else
+        {
+            PuzzleFailureMonsterAlert.Alert(transform);
         }
 
         if (codeInput != null)

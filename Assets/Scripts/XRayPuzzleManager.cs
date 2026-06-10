@@ -370,6 +370,7 @@ public class XRayPuzzleManager : MonoBehaviour
         }
 
         horrorActive = true;
+        PuzzleFailureMonsterAlert.Alert(transform);
         wrongXRay.MarkErrorVisual();
         PlayOneShot(horrorSound);
         XRayUIManager.Instance?.ShowToast("Mauvais ordre", new Color(1f, 0.25f, 0.25f, 1f), 1f);

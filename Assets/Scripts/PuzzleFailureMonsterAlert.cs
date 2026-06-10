@@ -23,16 +23,25 @@ public static class PuzzleFailureMonsterAlert
         }
 
         BasicMonsterController monsterController = explicitMonster != null
-            ? explicitMonster.GetComponent<BasicMonsterController>()
+            ? explicitMonster.GetComponentInChildren<BasicMonsterController>(true)
             : null;
 
         if (monsterController == null)
         {
-            monsterController = Object.FindFirstObjectByType<BasicMonsterController>();
+            monsterController = Object.FindFirstObjectByType<BasicMonsterController>(FindObjectsInactive.Include);
         }
 
         if (monsterController != null)
         {
+            ActivateHierarchy(explicitMonster != null ? explicitMonster : monsterController.gameObject);
+            ActivateHierarchy(monsterController.gameObject);
+
+            monsterController.enabled = true;
+            if (!monsterController.gameObject.activeInHierarchy)
+            {
+                Debug.LogWarning("PuzzleFailureMonsterAlert: monstre trouve, mais sa hierarchie reste inactive.");
+            }
+
             if (failureSource != null)
             {
                 monsterController.HuntPlayerAfterPuzzleFailure(huntDuration, failureSource.position);
@@ -46,6 +55,25 @@ public static class PuzzleFailureMonsterAlert
         }
 
         AlertLegacyNavMeshMonster(explicitMonster);
+    }
+
+    private static void ActivateHierarchy(GameObject target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        Transform current = target.transform;
+        while (current != null)
+        {
+            if (!current.gameObject.activeSelf)
+            {
+                current.gameObject.SetActive(true);
+            }
+
+            current = current.parent;
+        }
     }
 
     private static void AlertLegacyNavMeshMonster(GameObject explicitMonster)
@@ -67,6 +95,8 @@ public static class PuzzleFailureMonsterAlert
             return;
         }
 
-        agent.SetDestination(player.transform.position);
+        Vector3 lastKnownPlayerPosition = player.transform.position;
+        agent.SetDestination(lastKnownPlayerPosition);
+        Debug.Log("PuzzleFailureMonsterAlert: legacy monster sent to the player's last known position.");
     }
 }

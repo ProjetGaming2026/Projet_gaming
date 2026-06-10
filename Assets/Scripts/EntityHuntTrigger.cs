@@ -40,6 +40,16 @@ public class EntityHuntTrigger : MonoBehaviour
         ResolveMissingReferences();
         lastHuntTime = Time.time;
 
+        PrototypeGameManager gameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (gameManager != null &&
+            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Chase &&
+            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Escape &&
+            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Win &&
+            gameManager.CurrentPhase != PrototypeGameManager.GamePhase.Lose)
+        {
+            gameManager.SetPhase(PrototypeGameManager.GamePhase.Chase);
+        }
+
         if (entity != null && !entity.activeSelf)
         {
             entity.SetActive(true);
@@ -58,9 +68,9 @@ public class EntityHuntTrigger : MonoBehaviour
         bool huntMovementTriggered = false;
         if (monsterController != null)
         {
-            monsterController.RevealPlayerPosition(huntDuration);
+            monsterController.InvestigatePosition(playerPosition, huntDuration, true);
             huntMovementTriggered = true;
-            Debug.Log("EntityHuntTrigger: BasicMonsterController alerted by wrong TV code.");
+            Debug.Log("EntityHuntTrigger: BasicMonsterController investigating the wrong TV code position.");
         }
 
         if (agent != null)
