@@ -23,9 +23,9 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.039546248, g: 0.039546248, b: 0.039546248, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
-  m_AmbientMode: 3
-  m_SubtractiveShadowColor: {r: 0.36862746, g: 0.36862746, b: 0.36862746, a: 1}
+  m_AmbientIntensity: 0.5
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.5239943, g: 0.6361674, b: 0.7735849, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -35,7 +35,7 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 0.15
+  m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_UseRadianceAmbientProbe: 0
@@ -95299,8 +95299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicFirstPersonController
   cameraHolder: {fileID: 37764452}
-  walkSpeed: 5
-  sprintSpeed: 8
+  walkSpeed: 3
+  sprintSpeed: 5
   acceleration: 12
   gravity: -20
   jumpHeight: 1.2
@@ -109270,6 +109270,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   freezeTimeOnEnd: 1
+  campaignAutoAdvanceDelay: 2.5
 --- !u!4 &1338952205
 Transform:
   m_ObjectHideFlags: 0

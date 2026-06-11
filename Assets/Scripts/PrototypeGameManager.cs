@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PrototypeGameManager : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class PrototypeGameManager : MonoBehaviour
 
     [Header("End State")]
     [SerializeField] private bool freezeTimeOnEnd = true;
+    [SerializeField] private float campaignAutoAdvanceDelay = 2.5f;
 
     public GamePhase CurrentPhase { get; private set; }
     public int CompletedTasks { get; private set; }
@@ -39,6 +42,7 @@ public class PrototypeGameManager : MonoBehaviour
     private float phaseTimer;
     private float levelTimer;
     private BasicFirstPersonController playerController;
+    private Coroutine campaignAdvanceRoutine;
 
     private void Awake()
     {
@@ -125,13 +129,42 @@ public class PrototypeGameManager : MonoBehaviour
 
     public void TriggerWin(string message = null)
     {
+        string sceneName = SceneManager.GetActiveScene().name;
+        CampaignProgression.MarkLevelCompleted(sceneName);
+        bool hasNextLevel = CampaignProgression.TryGetNextLevel(
+            sceneName,
+            out string nextScenePath,
+            out string nextSceneName,
+            out DifficultyWarningTransition.VoiceClip nextVoiceClip);
+
         LastWinMessage = string.IsNullOrWhiteSpace(message)
             ? GameLocalization.Text(
-                "You survived. Evacuation complete.",
-                "Tu as survecu. L'evacuation est reussie.",
-                "Has sobrevivido. Evacuacion completada.")
+                hasNextLevel ? "Level complete. Loading the next ward..." : "You survived. Evacuation complete.",
+                hasNextLevel ? "Niveau termine. Chargement du prochain secteur..." : "Tu as survecu. L'evacuation est reussie.",
+                hasNextLevel ? "Nivel completado. Cargando el siguiente sector..." : "Has sobrevivido. Evacuacion completada.")
             : message;
         SetPhase(GamePhase.Win);
+
+        if (hasNextLevel)
+        {
+            if (campaignAdvanceRoutine != null)
+            {
+                StopCoroutine(campaignAdvanceRoutine);
+            }
+
+            campaignAdvanceRoutine = StartCoroutine(LoadNextCampaignLevelAfterDelay(nextScenePath, nextSceneName, nextVoiceClip));
+        }
+    }
+
+    private IEnumerator LoadNextCampaignLevelAfterDelay(
+        string nextScenePath,
+        string nextSceneName,
+        DifficultyWarningTransition.VoiceClip voiceClip)
+    {
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, campaignAutoAdvanceDelay));
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        DifficultyWarningTransition.PlayBeforeScene(nextScenePath, nextSceneName, voiceClip);
     }
 
     public void SetPhase(GamePhase newPhase)

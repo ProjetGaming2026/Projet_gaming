@@ -25,6 +25,7 @@ public class LevelSelectBootstrap : MonoBehaviour
     private GUIStyle hintStyle;
     private GUIStyle backButtonStyle;
     private GUIStyle badgeStyle;
+    private GUIStyle lockedStyle;
     private static Texture2D pixelTexture;
 
     public static bool IsMenuOpen => instance != null && instance.showMenu;
@@ -123,14 +124,25 @@ public class LevelSelectBootstrap : MonoBehaviour
 
     private void DrawLevelCard(Rect cardRect, string label, string scenePath, string sceneName, Color cardColor, string badge, DifficultyWarningTransition.VoiceClip voiceClip)
     {
-        bool hovered = cardRect.Contains(Event.current.mousePosition);
-        DrawButtonFrame(cardRect, cardColor, hovered, true);
+        bool isUnlocked = CampaignProgression.IsLevelUnlocked(sceneName);
+        bool hovered = isUnlocked && cardRect.Contains(Event.current.mousePosition);
+        Color effectiveColor = isUnlocked ? cardColor : new Color(0.36f, 0.36f, 0.36f, 1f);
+        DrawButtonFrame(cardRect, effectiveColor, hovered, true);
 
         Rect badgeRect = new Rect(cardRect.x + 14f, cardRect.y + 12f, 48f, cardRect.height - 24f);
-        DrawSolidRect(badgeRect, hovered ? new Color(0.62f, 0.02f, 0.02f, 0.95f) : new Color(0.2f, 0.015f, 0.015f, 0.86f));
-        DrawSolidRect(new Rect(badgeRect.x, badgeRect.y, badgeRect.width, 2f), new Color(cardColor.r, cardColor.g, cardColor.b, 0.75f));
+        DrawSolidRect(badgeRect, hovered ? new Color(0.62f, 0.02f, 0.02f, 0.95f) : new Color(0.2f, 0.015f, 0.015f, isUnlocked ? 0.86f : 0.55f));
+        DrawSolidRect(new Rect(badgeRect.x, badgeRect.y, badgeRect.width, 2f), new Color(effectiveColor.r, effectiveColor.g, effectiveColor.b, 0.75f));
         GUI.Label(badgeRect, badge, badgeStyle);
         GUI.Label(new Rect(cardRect.x + 18f, cardRect.y, cardRect.width - 36f, cardRect.height), label, cardTitleStyle);
+
+        if (!isUnlocked)
+        {
+            GUI.Label(
+                new Rect(cardRect.x + 86f, cardRect.y + cardRect.height * 0.57f, cardRect.width - 112f, cardRect.height * 0.34f),
+                CampaignProgression.GetLockedLabel(sceneName),
+                lockedStyle);
+            return;
+        }
 
         if (GUI.Button(cardRect, GUIContent.none, GUIStyle.none))
         {
@@ -254,6 +266,15 @@ public class LevelSelectBootstrap : MonoBehaviour
             badgeStyle.fontSize = 22;
             badgeStyle.fontStyle = FontStyle.Bold;
             badgeStyle.normal.textColor = Color.white;
+        }
+
+        if (lockedStyle == null)
+        {
+            lockedStyle = new GUIStyle(GUI.skin.label);
+            lockedStyle.alignment = TextAnchor.MiddleCenter;
+            lockedStyle.fontSize = 15;
+            lockedStyle.fontStyle = FontStyle.Bold;
+            lockedStyle.normal.textColor = new Color(0.72f, 0.72f, 0.72f, 0.95f);
         }
     }
 

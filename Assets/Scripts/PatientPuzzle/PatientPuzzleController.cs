@@ -138,6 +138,7 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
     private bool currentRequestHasBeenAsked;
     private bool finalLineReady;
     private bool puzzleSolved;
+    private bool taskProgressRegistered;
     private bool firstInteractionCoughPlayed;
     private bool dialogueCoughPlayed;
 
@@ -267,8 +268,6 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
                 request.placementLocalScale);
         }
 
-        Speak(Speaker.Patient, request.successLine, MessageTone.Success);
-
         if (request.playCoughAfterSuccess)
         {
             PlayRequestCough();
@@ -279,8 +278,15 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
         if (requestIndex >= requests.Length)
         {
             finalLineReady = true;
+            string completionLine = string.IsNullOrWhiteSpace(request.successLine)
+                ? finalLine
+                : request.successLine + "\n\n" + finalLine;
+            CompletePuzzle(completionLine);
+            currentRequestHasBeenAsked = false;
+            return;
         }
 
+        Speak(Speaker.Patient, request.successLine, MessageTone.Success);
         currentRequestHasBeenAsked = false;
     }
 
@@ -296,19 +302,57 @@ public class PatientPuzzleController : MonoBehaviour, IInteractable
 
     private void CompletePuzzle()
     {
+        CompletePuzzle(finalLine);
+    }
+
+    private void CompletePuzzle(string completionLine)
+    {
         if (puzzleSolved)
         {
             return;
         }
 
         puzzleSolved = true;
-        SpeakTimed(Speaker.Patient, finalLine, MessageTone.Success);
+        SpeakTimed(Speaker.Patient, completionLine, MessageTone.Success);
         onPuzzleSolved.Invoke();
 
-        if (countAsSolvedTask && GameManager.Instance != null)
+        if (!countAsSolvedTask)
+        {
+            return;
+        }
+
+        RegisterTaskProgress();
+
+        if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterPuzzleSolved();
         }
+    }
+
+    private void RegisterTaskProgress()
+    {
+        if (taskProgressRegistered)
+        {
+            return;
+        }
+
+        PrototypeGameManager prototypeGameManager = FindFirstObjectByType<PrototypeGameManager>();
+        if (prototypeGameManager == null)
+        {
+            Debug.LogWarning("PatientPuzzleController: PrototypeGameManager not found, patient task was not registered.", this);
+            return;
+        }
+
+        prototypeGameManager.RegisterTaskSuccess();
+        taskProgressRegistered = true;
+        Debug.Log("PatientPuzzleController: patient helped and counted as one medium task.", this);
+        PrototypeHUD.ShowFeedback(
+            GameLocalization.Text(
+                "Task complete. Patient helped.",
+                "Tache reussie. Patient aide.",
+                "Tarea completada. Paciente ayudado."),
+            PrototypeHUD.FeedbackTone.Success,
+            2.8f);
     }
 
     private void Speak(Speaker speaker, string line, MessageTone tone)

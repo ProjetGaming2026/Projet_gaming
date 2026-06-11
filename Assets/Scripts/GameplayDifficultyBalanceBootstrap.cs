@@ -85,8 +85,8 @@ public static class GameplayDifficultyBalanceBootstrap
         {
             case EasyScene:
                 profile = new BalanceProfile(
-                    playerWalkSpeed: 5.4f,
-                    playerSprintSpeed: 8.8f,
+                    playerWalkSpeed: 3f,
+                    playerSprintSpeed: 5f,
                     monsterChaseSpeed: 2f,
                     monsterSlowedSpeed: 1f,
                     monsterPatrolSpeed: 2f,
@@ -109,8 +109,8 @@ public static class GameplayDifficultyBalanceBootstrap
             case MediumScene:
             case DefaultScene:
                 profile = new BalanceProfile(
-                    playerWalkSpeed: 5f,
-                    playerSprintSpeed: 8f,
+                    playerWalkSpeed: 3f,
+                    playerSprintSpeed: 5f,
                     monsterChaseSpeed: 2f,
                     monsterSlowedSpeed: 1f,
                     monsterPatrolSpeed: 2f,
@@ -132,8 +132,8 @@ public static class GameplayDifficultyBalanceBootstrap
 
             case HardScene:
                 profile = new BalanceProfile(
-                    playerWalkSpeed: 4.8f,
-                    playerSprintSpeed: 7.5f,
+                    playerWalkSpeed: 3f,
+                    playerSprintSpeed: 5f,
                     monsterChaseSpeed: 2f,
                     monsterSlowedSpeed: 1f,
                     monsterPatrolSpeed: 2f,

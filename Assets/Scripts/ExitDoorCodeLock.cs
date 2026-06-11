@@ -255,7 +255,16 @@ public class ExitDoorCodeLock : MonoBehaviour, IInteractable
 
     private void ApplyActiveSceneCodeOverride()
     {
-        if (!string.Equals(SceneManager.GetActiveScene().name, HardSceneName, StringComparison.OrdinalIgnoreCase))
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (string.Equals(sceneName, MediumSceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            exitCode = MediumExitCode;
+            codeLength = MediumExitCode.Length;
+            countAsTask = true;
+            return;
+        }
+
+        if (!string.Equals(sceneName, HardSceneName, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }

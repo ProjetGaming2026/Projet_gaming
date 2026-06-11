@@ -30525,8 +30525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicFirstPersonController
   cameraHolder: {fileID: 1907421088}
-  walkSpeed: 5
-  sprintSpeed: 8
+  walkSpeed: 3
+  sprintSpeed: 5
   acceleration: 12
   gravity: -20
   jumpHeight: 1.2

@@ -39,6 +39,7 @@ public class MainMenuManager : MonoBehaviour
     private GUIStyle levelButtonStyle;
     private GUIStyle levelBackButtonStyle;
     private GUIStyle levelBadgeStyle;
+    private GUIStyle levelLockedStyle;
     private static Texture2D levelPixelTexture;
     private AudioSource levelSelectAudioSource;
     private AudioClip levelHoverSound;
@@ -253,16 +254,32 @@ public class MainMenuManager : MonoBehaviour
     private void DrawLevelChoice(Rect buttonRect, string title, string scenePath, string sceneName, Color accentColor, string badge, DifficultyWarningTransition.VoiceClip voiceClip)
     {
         string buttonId = sceneName;
-        bool hovered = buttonRect.Contains(Event.current.mousePosition);
-        PlayLevelHoverSound(buttonId, buttonRect);
-        DrawModernButtonFrame(buttonRect, accentColor, hovered, false, true);
+        bool isUnlocked = CampaignProgression.IsLevelUnlocked(sceneName);
+        bool hovered = isUnlocked && buttonRect.Contains(Event.current.mousePosition);
+        if (isUnlocked)
+        {
+            PlayLevelHoverSound(buttonId, buttonRect);
+        }
+
+        Color effectiveAccent = isUnlocked ? accentColor : new Color(0.36f, 0.36f, 0.36f, 1f);
+        DrawModernButtonFrame(buttonRect, effectiveAccent, hovered, !isUnlocked, true);
 
         Rect badgeRect = new Rect(buttonRect.x + 14f, buttonRect.y + 12f, 48f, buttonRect.height - 24f);
-        DrawSolidRect(badgeRect, hovered ? new Color(0.62f, 0.02f, 0.02f, 0.95f) : new Color(0.2f, 0.015f, 0.015f, 0.86f));
-        DrawSolidRect(new Rect(badgeRect.x, badgeRect.y, badgeRect.width, 2f), new Color(accentColor.r, accentColor.g, accentColor.b, 0.75f));
+        DrawSolidRect(badgeRect, hovered ? new Color(0.62f, 0.02f, 0.02f, 0.95f) : new Color(0.2f, 0.015f, 0.015f, isUnlocked ? 0.86f : 0.55f));
+        DrawSolidRect(new Rect(badgeRect.x, badgeRect.y, badgeRect.width, 2f), new Color(effectiveAccent.r, effectiveAccent.g, effectiveAccent.b, 0.75f));
         GUI.Label(badgeRect, badge, levelBadgeStyle);
 
-        if (GUI.Button(buttonRect, title, levelButtonStyle))
+        GUI.Label(buttonRect, title, levelButtonStyle);
+        if (!isUnlocked)
+        {
+            GUI.Label(
+                new Rect(buttonRect.x + 86f, buttonRect.y + buttonRect.height * 0.57f, buttonRect.width - 112f, buttonRect.height * 0.34f),
+                CampaignProgression.GetLockedLabel(sceneName),
+                levelLockedStyle);
+            return;
+        }
+
+        if (GUI.Button(buttonRect, GUIContent.none, GUIStyle.none))
         {
             PlayLevelClickSound();
             showLevelSelect = false;
@@ -407,6 +424,14 @@ public class MainMenuManager : MonoBehaviour
             fontSize = 22,
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
+        };
+
+        levelLockedStyle = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = 15,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = new Color(0.72f, 0.72f, 0.72f, 0.95f) }
         };
     }
 
